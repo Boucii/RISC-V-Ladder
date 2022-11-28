@@ -3,6 +3,7 @@ import Chisel._
 
 class branch_predict_pack extends Bundle
 {
+    //TODO: valid and is_branch?
     val valid = Bool()
     val taken = Bool()
     val target = UInt(32.W)
@@ -13,7 +14,7 @@ class branch_presolve_pack extends Bundle
 {
     val mispred = Bool()
     val pc = UInt(32.W)
-    val target = UInt(32.W) //correct target
+    //val target = UInt(32.W) //TODO: really needed?correct target
 }
 //?
 class branch_resolve_pack extends Bundle

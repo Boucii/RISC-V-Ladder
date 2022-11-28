@@ -1,6 +1,7 @@
 package cpu
 import Chisel._
 
+//TODO: implement using C++ verilator
 class icache extends Module
 {
    val io = new Bundle {

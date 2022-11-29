@@ -1,4 +1,4 @@
-package cpu
+package ladder
 import chisel._
 
 class PC_Gen extends Module

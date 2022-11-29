@@ -1,4 +1,4 @@
-package cpu
+package ladder
 import Chisel._
 
 class BPU extends Module

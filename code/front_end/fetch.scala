@@ -1,4 +1,4 @@
-package cpu
+package ladder
 import Chisel._
 
 class Front_End extends Module

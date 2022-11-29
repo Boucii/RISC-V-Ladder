@@ -1,4 +1,4 @@
-package cpu
+package ladder
 import Chisel._
 
 //TODO: implement using C++ verilator

@@ -1,4 +1,4 @@
-package cpu
+package ladder
 import chisel._
 
 class if2_if3 extends Module

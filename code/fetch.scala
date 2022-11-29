@@ -3,10 +3,10 @@ import Chisel._
 
 class Front_End extends Module
 {
-    val io = new Bundle{
+    val io = IO(new Bundle{
         val i_branch_resolve_pack = ?
 
-    }
+    })
     val pc_gen = new PC_Gen()
     val bpu = new BPU()
     val imem = new Icache()

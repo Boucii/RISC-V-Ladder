@@ -7,7 +7,7 @@ class branch_predict_pack extends Bundle
     val valid = Bool()
     val taken = Bool()
     val target = UInt(32.W)
-    val type = vec(2,Bool())    //type of branch
+    //val type = vec(2,Bool())    //type of branch
 }
 
 class branch_presolve_pack extends Bundle

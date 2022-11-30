@@ -1,6 +1,9 @@
 package ladder
 import Chisel._
 
+//control signals of bundles are all decoupled
+//aka. ready-valid to exchange signals are not in the bundles
+//the valid signal is in the bundle stands for the validity of the data 
 class branch_predict_pack extends Bundle
 {
     //TODO: valid and is_branch?
@@ -44,4 +47,26 @@ class imem_fetch_res_interface extends Bundle
     //val stall = Bool()
     val data = UInt(64.W)
 
+}
+class commit_pack extends Bundle()
+{
+   val valids     = Vec(2, Bool())
+   val uops       = Vec(2, new MicroOp())
+}
+
+class ex_res_pack extends BoomBundle()(p)
+{
+   val uop = new MicroOp()
+}
+
+class rollback_pack extends Bundle()
+{
+   val valids     = Vec(2, Bool())//roll back on this one?
+   val uops       = Vec(2, new MicroOp())
+}
+
+class rob_allocation_pack extends Bundle()
+{
+   val valids     = Vec(2, Bool())
+   val uops       = Vec(2, new MicroOp())
 }

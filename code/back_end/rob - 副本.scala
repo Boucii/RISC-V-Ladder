@@ -1,23 +1,23 @@
 class Reorder_Buffer extends Module{
     val io =IO(new Bundle{
+        //from and to decode stage
+        val i_allocate_valids =
+        val i_allocate_uops =
+        
         val flush = Input(Bool())
+
         val o_empty = Output(Bool())
         val o_full =Output(Bool())
 
-        //from and to decode stage
-        val i_rob_allocation_pack = Input(new rob_allocation_pack())
-        //to rename stage 
-        val o_roll_back_pack = Output(new rollback_pack())
-        //from exe stage
-        val i_ex_result_pack = Output(Valid(Vec(2,new ex_result_pack())))
+        val i_ex_result_pack = Output(Vec(2,new ex_result_pack()))))
         //commit stage
         val o_commit_pack = Output(new commit_pack())
-    })
 
+
+    })
     val commit_ptr = RegInit(0.U(log2Ceil(numRobRows).W))//rob head
     val allocate_ptr = RegInit(0.U(log2Ceil(numRobRows).W))//rob tail
-    val mispred_ptr = RegInit(0.U(log2Ceil(numRobRows).W))//used when rollback
-
+    val mispred_ptr = UInt()
     commit_ptr:=0.U
     allocate_ptr:=0.U
     mispred_ptr:=0.U
@@ -25,11 +25,11 @@ class Reorder_Buffer extends Module{
     val will_commit = Wire(Vec(2,Bool()))
     val can_commit = Wire(Vec(2,Bool()))
 
-    val s_reset :: s_normal :: s_rollback :: Nil = Enum(4)//modify this
+    val s_reset :: s_normal :: s_rollback :: s_wait_till_empty :: Nil = Enum(4)//modify this
     val rob_state = RegInit(s_reset)
 
     io.o_commit_pack.valid(0) := will_commit(0)
-    io.o_commit_pack.valid(1) := will_commit(1)&&will_commit(0)
+    io.o_commit_pack.valid(1) := will_commit(1)
     io.o_commit_pack.uops(0) := rob_uop(commit_ptr)
     io.o_commit_pack.uops(1) := rob_uop(commit_ptr+1)
 
@@ -38,6 +38,13 @@ class Reorder_Buffer extends Module{
     val rob_uop = Reg(Vec(numRobRows, new MicroOp()))
     val rob_exception = Reg(Vec(numRobRows, Bool()))
     val rob_done = Reg(Vec(numRobRows, Bool())) // is this instr written back and ready to commit?
+
+    when(will_commit(0)){
+      rob_valid(commit_ptr) := false.B 
+    }
+    when(will_commit(1)){
+      rob_valid(commit_ptr+1) := false.B
+    }
 
     //dispatch unit
     when(io.i_dispatch_pack.valid(0)){
@@ -54,11 +61,12 @@ class Reorder_Buffer extends Module{
     }
 
     //write from exe, aka write back
-    when(i_ex_result_pack.valid){
+    when(i_ex_result_pack.valid && rob_state === s_normal){
       rob_valid(i_ex_result_pack(0).rob_idx) := true.B
       rob_uop(i_ex_result_pack(0).rob_idx) := i_ex_result_pack.uop
       rob_exception(i_ex_result_pack(0).rob_idx) := i_ex_result_pack.exception
       rob_done(i_ex_result_pack(0).rob_idx) := true.B
+
 
       rob_valid(i_ex_result_pack(1).rob_idx) := true.B
       rob_uop(i_ex_result_pack(1).rob_idx) := i_ex_result_pack.uop
@@ -70,28 +78,20 @@ class Reorder_Buffer extends Module{
     can_commit(0) := rob_valid(commit_ptr) && rob_done(commit_ptr)
     can_commit(1) := rob_valid(commit_ptr+1) && rob_done(commit_ptr+1)
 
-    will_commit(0) := can_commit(0)
-    will_commit(1) := will_commit(0) && can_commit(1) //control conflict within 2 here? aka 1nc=>2nc 
+    will_commit(0) := rob_valid(
+    will_commit(1) := rob_valid(  
 
-    o_commit_pack(0):=rob(commit_ptr)
-    o_commit_pack(1):=rob(commit_ptr+1)
-
-    when(will_commit(0) && will_commit(1)){
-      rob_valid(commit_ptr) := false.B
-      rob_valid(commit_ptr+1) := false.B
-      commit_ptr := commit_ptr + 2.U
-    }.elsewhen(will_commit(0)){
-      rob_valid(commit_ptr) := false.B
-      commit_ptr := commit_ptr + 1.U
+    when(rob_state===s_normal){
+      o_commit_pack:=rob(commit_ptr,commit_ptr+1)
+      when(will_commit(0) && will_commit(1)){
+        rob_valid(commit_ptr) := false.B
+        rob_valid(commit_ptr+1) := false.B
+        commit_ptr := commit_ptr + 2.U
+      }.elsewhen(will_commit(0)){
+        rob_valid(commit_ptr) := false.B
+        commit_ptr := commit_ptr + 1.U
+      }
     }
-    
-    when(will_commit(0)){//commit on this cyc, free next cyc
-      rob_valid(commit_ptr) := false.B 
-    }
-    when(will_commit(0) && will_commit(1)){//can only commit if the front one is ready
-      rob_valid(commit_ptr+1) := false.B
-    }
-
     //exception
     when(rob_state===s_normal){
       allocate_ptr:=0.U
@@ -109,16 +109,15 @@ class Reorder_Buffer extends Module{
     will_commit(0) = can_commit(0) && !rob_exception(commit_ptr)
     will_commit(1) = can_commit(1) &&!rob_exception
 
-    //mispredict aka rollback
-    //...skip 4 now
 
+    
     switch (rob_state) {
        is (s_reset) {
          rob_state := s_normal
        }
        is (s_normal) {
          when (exception) {
-            //exceptions can be dealt with in one cyc
+           ; //rob_state := s_rollback roll back within1 cycle
          }.elsewhen(mispred){
              rob_state := s_rollback
          }

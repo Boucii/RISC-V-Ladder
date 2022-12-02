@@ -70,3 +70,6 @@ class rob_allocation_pack extends Bundle()
    val valids     = Vec(2, Bool())
    val uops       = Vec(2, new MicroOp())
 }
+class uop extends Bundle(){
+    pregidx
+}

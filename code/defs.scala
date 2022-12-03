@@ -71,5 +71,23 @@ class rob_allocation_pack extends Bundle()
    val uops       = Vec(2, new MicroOp())
 }
 class uop extends Bundle(){
-    pregidx
+    val valid=Bool()
+    val pc=UInt(32.W)
+    val inst=UInt(32.W)
+    val func_unit=UInt(3.W)//TODO: change to enum
+
+    val branch_predict_pack=new branch_predict_pack
+
+    val dst_valid=Bool()
+    val phy_dst=UInt(7.W)
+    val stale_dst=UInt(7.W)
+    val arch_dst=UInt(5.W)
+
+    val src1_valid=Bool()
+    val phy_src1=UInt(7.W)
+    val arch_src1=UInt(5.W)
+
+    val src2_valid=Bool()
+    val phy_src2=UInt(7.W)
+    val arch_src2=UInt(5.W)
 }

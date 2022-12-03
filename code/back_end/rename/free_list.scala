@@ -2,39 +2,40 @@ package ladder
 
 import chisel3._
 
-class FreeList extends module{
+class Free_List extends module{
     val io=IO(new Bundle{
-        val req=Input(Vec(2,freelist_req_pack()))
-        val allocated=Output(Vec(2,preg_alloc_pack())){#preg0,#preg1}
-        val full=Output(Bool())
+        val i_free_list_reqs=Input(Vec(2,new uop()))
+        val o_allocated_pregs=Output(Vec(2,UInt(7.W)))
+        val o_full=Output(Bool())
 
-        val i_commit_pack=Input(Vec(2,commit_pack()))
-
-        val rollback=Input(Vec(2,rollback_pack()))
+        val i_commit_packs=Input(Vec(2,commit_pack()))
+        val i_rollback=Input(Vec(2,rollback_pack()))
     })
     val free_queue=free_queue
 
+    //allocate new pregs to dsts
     io.full:=free_queue.full
-    allocated.preg0:=free_queue.preg0
+    allocated.preg0:=free_queue.preg0//allocate only one for same dsts?
     allocated.preg1:=free_queue.preg1
 
-    free_queue.wen0:=i_commit_pack.valid0 || rollback.valid0
-    free_queue.wen1:=i_commit_pack.rollback0 || rollback.valid1
+    //add to free lists (commit+rollback)
+    free_queue.wen0:=i_commit_packs.valid0 || rollback.valid0
+    free_queue.wen1:=i_commit_packs.rollback0 || rollback.valid1
 
     freequeu.req0=req.pr0
     freequeu.req1=req.pr1
 
     val sel=UInt(2.W)
-    sel(1):=(i_commit_pack.valid0 && !i_commit_pack.valid1 && !(ealloc.valid1&&(i_commit_pack.uop.pregidx1===i_commit_pack.uop.pregidx0)))
-    sel(0):=(i_commit_pack.valid1&&i_commit_pack.valid0&&(i_commit_pack.uop.pregidx1===i_commit_pack.uop.pregidx0))
+    sel(1):=(i_commit_packs.valid0 && !i_commit_packs.valid1 && !(ealloc.valid1&&(i_commit_packs.uop.pregidx1===i_commit_packs.uop.pregidx0)))
+    sel(0):=(i_commit_packs.valid1&&i_commit_packs.valid0&&(i_commit_packs.uop.pregidx1===i_commit_packs.uop.pregidx0))
     Muxcase(sel,Array(
          0.U -> rollback.pregidx,
-         1.U -> i_commit_pack.old,
-         2.U -> i_commit_pack.newpreg,
+         1.U -> i_commit_packs.old,
+         2.U -> i_commit_packs.newpreg,
     ))
 
-    free_queue.wpregidx0:=Mux(i_commit_pack.commit.preg1idx=!=i_commit_pack.commit.preg0idx,i_commit_pack.pregidx0,rollback.pregidx0)
-    free_queue.wpregidx1:=Mux(i_commit_pack.commit.pregidx=!=0,i_commit_pack.pregidx1,rollback.pregidx1)
+    free_queue.wpregidx0:=Mux(i_commit_packs.commit.preg1idx=!=i_commit_packs.commit.preg0idx,i_commit_packs.pregidx0,rollback.pregidx0)
+    free_queue.wpregidx1:=Mux(i_commit_packs.commit.pregidx=!=0,i_commit_packs.pregidx1,rollback.pregidx1)
 }
 class Free_Queue extends module{
     val io=IO(new Bundle{
@@ -75,7 +76,7 @@ class Free_Queue extends module{
         head:=head+1.U
     }
 
-    //i_commit_packate
+    //i_commit_packsate
     when(io.wen0&&io.wen1){
         queue(tail):=io.wpregidx0
         queue(tail+1.U):=io.wpregidx1

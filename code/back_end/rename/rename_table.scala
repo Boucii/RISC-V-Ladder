@@ -1,3 +1,5 @@
+package Ladder
+
 class rename_req_pack extends Bundle
 {
   val arch_rs1 = UInt(5.W)
@@ -17,8 +19,8 @@ class Rename_Table extends Module{
 
         val i_allocation_pack=Input(new allocation_pack())
 
-        val i_commit_packss=Input(Vec(2,new rename_req_pack()))
-        val i_rollback_packs=Input(Vec(2,new rename_req_pack()))
+        val i_commit_packss=Input(Vec(2,new commit_pack()))
+        val i_rollback_packs=Input(Vec(2,new rollback_pack()))
 
         val i_exception=Input(Bool())
         //val i_branch_backuptables //well....what to do with this one..

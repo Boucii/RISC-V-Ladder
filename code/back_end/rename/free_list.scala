@@ -9,7 +9,7 @@ class Free_List extends module{
         val o_full=Output(Bool())
 
         val i_commit_packs=Input(Vec(2,commit_pack()))
-        val i_rollback=Input(Vec(2,rollback_pack()))
+        val i_rollback_packs=Input(Vec(2,rollback_pack()))
     })
     val free_queue=free_queue
 

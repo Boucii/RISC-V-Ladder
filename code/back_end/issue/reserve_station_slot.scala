@@ -11,7 +11,7 @@ class age_pack extends Bundle {
 
 //TODO: how to add a age scheme?when to release this slot
 //2 reservation stations, one for INT, one for MEM
-class Issue_Slot extends Module{
+class Reservation_Station_Slot extends Module{
     val io=IO(new Bundle{
         val o_valid = Output(Bool()) //is this slot occupied
         val o_ready_to_issue = Output(Bool())

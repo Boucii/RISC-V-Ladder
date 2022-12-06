@@ -18,7 +18,7 @@ class Decoder extends Module{
 //just occupy the place, replace it with actual table complying to my uop
 abstract trait defalut_decode_table{
   def decode_default: List[BitPat] = //follow the format of the uop
-              List(N, N, X, uopX    , IQT_INT, FU_X   , RT_X  , DC2    ,DC2    ,X, IS_X, X, X, X, X, N, M_X,   DC2, X, X, N, N, X, CSR.X)
+              List(N, X, uopX    , IQT_INT, FU_X   , RT_X  , DC2    ,DC2    ,X, IS_X, X, X, X, X, N, M_X,   DC2, X, X, N, N, X, CSR.X)
   val table: Array[(BitPat, List[BitPat])]
 }
 object decode_table extends defalut_decode_table

@@ -19,6 +19,7 @@ class Reservation_Station extends Module{
      }
      //Issue Logic
      //val idx1 = indexes.minBy(age_considering_issue(_))//????wtf is this???
+     //TODO:funccode of the 1st issue inst must mask out all the relavent func codes when comparing the 2nd issue inst's func code
      val indexes = VecInit.tabulate(64){_.U}
      val age_considering_issue = VecInit.tabulate(64){i=> (age(i) | Fill(8,reservation_station(i).io.o_ready_to_issue) +
           | !(Fill(8,(reservation_station(i).io.uop.funccode & io.i_available_funcs).reduce(_||_))))}

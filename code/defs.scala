@@ -91,3 +91,13 @@ class uop extends Bundle(){
     val phy_src2=UInt(7.W)
     val arch_src2=UInt(5.W)
 }
+
+object FuntionCode {
+    val ALU = 1.U(6.W)
+    val BRU = 2.U(6.W)
+    val MEM = 4.U(6.W)
+    val MUL = 8.U(6.W)
+    val DIV = 16.U(6.W)
+    val CSR = 32.U(6.W)
+}
+

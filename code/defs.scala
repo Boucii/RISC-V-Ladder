@@ -83,6 +83,8 @@ class uop extends Bundle(){
     val stale_dst=UInt(7.W)
     val arch_dst=UInt(5.W)
 
+    val regWen=Bool()
+
     val src1_valid=Bool()
     val phy_src1=UInt(7.W)
     val arch_src1=UInt(5.W)
@@ -90,7 +92,33 @@ class uop extends Bundle(){
     val src2_valid=Bool()
     val phy_src2=UInt(7.W)
     val arch_src2=UInt(5.W)
+
+    val rob_idx = UInt(7.W)
+    val imm = UInt(64.W)
+    val imm_sel = Bool()
+
+    val dst_value = UInt(64.W)
+    val src1_value = UInt(64.W)
+    val src2_value = UInt(64.W)
+
+    val exception = Bool()
+
+    val op1_sel = UInt(2.W)
+    val op2_sel = UInt(3.W)//
+    val imm_sel = UInt(3.W)//??select kind of imm
+    val alu_sel = UInt(3.W)//??select alu functions
 }
+  // RS1 Operand Select Signal
+  val OP1_RS1 = 0.U(2.W) // Register Source #1
+  val OP1_ZERO= 1.U(2.W)
+  val OP1_PC  = 2.U(2.W)
+  val OP1_X   = BitPat("b??")
+
+  // RS2 Operand Select Signal
+  val OP2_RS2 = 0.U(3.W) // Register Source #2
+  val OP2_IMM = 1.U(3.W) // immediate
+  val OP2_ZERO= 2.U(3.W) // constant 0
+  val OP2_X   = BitPat("b???")
 
 object FuntionCode {
     val ALU = 1.U(6.W)

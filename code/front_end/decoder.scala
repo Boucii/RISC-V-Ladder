@@ -11,9 +11,12 @@ class Decoder extends Module{
     uops(1).inst:=io.i_fetch_pack.bits.inst
     io.o_decode_packs:=uops
 
-    
+   var table=decode_table.table 
+   val inst0=io.i_fetch_pack.bits.inst
+   val inst1=io.i_fetch_pack.bits.inst
 
-
+   uops(0).uop:= wire(new ).decode(inst0,table)  
+   uops(1).uop:= Wire(new ).decode(inst1,table)
 }
 //just occupy the place, replace it with actual table complying to my uop
 abstract trait defalut_decode_table{

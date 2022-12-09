@@ -6,8 +6,9 @@ import Chisel._
 //the valid signal is in the bundle stands for the validity of the data 
 class branch_predict_pack extends Bundle
 {
-    //TODO: valid and is_branch?
-    val valid = Bool()
+    //TODO: valid and is_branch?,valid?
+    val valid = Bool() //validity of the branch
+    val is_branch = Bool()
     val taken = Bool()
     val target = UInt(32.W)
     //val type = vec(2,Bool())    //type of branch
@@ -22,7 +23,9 @@ class branch_presolve_pack extends Bundle
 //?
 class branch_resolve_pack extends Bundle
 {
+    val is_branch = Bool()//aka valid
     val mispred = Bool()
+    val taken = Bool()
     val pc = UInt(32.W)
     val target = UInt(32.W)
 }
@@ -107,6 +110,8 @@ class uop extends Bundle(){
     val op2_sel = UInt(3.W)//
     val imm_sel = UInt(3.W)//??select kind of imm
     val alu_sel = UInt(3.W)//??select alu functions
+
+    val branch_type = UInt(3.W)
 }
   // RS1 Operand Select Signal
   val OP1_RS1 = 0.U(2.W) // Register Source #1
@@ -128,4 +133,32 @@ object FuntionCode {
     val DIV = 16.U(6.W)
     val CSR = 32.U(6.W)
 }
+object BRANCH_TYPE{
+    val BR_N   = 0.U(3.W)
+    val BR_NE  = 1.U(3.W)
+    val BR_EQ  = 2.U(3.W)
+    val BR_GE  = 3.U(3.W)
+    val BR_GEU = 4.U(3.W)
+    val BR_LT  = 5.U(3.W)
+    val BR_LTU = 6.U(3.W)
+    val BR_J   = 7.U(3.W)
+    val BR_JR  = 8.U(3.W)
+}
 
+// ???package CPUTypes {
+object Branch_Type extends ChiselEnum {
+  val selectRSBR_N   = Value  // Next
+  val BR_NE  = Value  // Branch on NotEqual
+  val BR_EQ  = Value  // Branch on Equal
+  val BR_GE  = Value  // Branch on Greater/Equal
+  val BR_GEU = Value  // Branch on Greater/Equal Unsigned
+  val BR_LT  = Value  // Branch on Less Than
+  val BR_LTU = Value  // Branch on Less Than Unsigned
+  val BR_J   = Value  // Jump
+  val BR_JR  = Value  // Jump Register
+}
+object PC_Selector extends ChiselEnum {
+  val PC_PLUS4   = Value  // Next
+  val PC_BRJMP = Value  // Branch/Jump Target
+  val PC_JALR= Value  // Jump and Link Register
+}

@@ -11,3 +11,4 @@ Optional features:
 
 - rat roll back instantly when mispredicting using backup rats per br/jumps (in the mean time limiting number of brs in flight) 
 - VIPT cache
+- load/store queue with load to load bypass , load to store bypass and store to load forwarding.

@@ -1,11 +1,11 @@
 abstract class Function_Unit extends Module{
     val io=IO(new Bundle{
         val i_uop=Input(new uop)
-        val i_select=Input(Bool())//select the function unit
-        val i_select_to_commit=Input(Bool())
+        val i_select=Input(Bool())//select the function unit aka ready from input
+        val i_select_to_commit=Input(Bool())//aka valid from output
 
         val o_func_idx=Output(UInt(5.W))
-        val o_ex_res_pack=Output(new ex_result_pack())
+        val o_ex_res_pack=Output(new ex_result_pack())//include a valid(ready bit) TODO:decouple this
     })    
     val uop = RegInit(new uop())//null uop
         when(io.i_select){
@@ -100,3 +100,36 @@ class BRU extends Function_Unit{
   branch_resolve_pack.taken          := is_taken
   branch_resolve_pack.target         := target_address
 }
+//lsu that only has one load/store in flight
+class LSU extends Function_Unit{
+    o_ex_res_pack.valid := dcache.io.valid
+    uop.dst_value := dcache.io.data
+    
+    dcache.io.req.ready:= io.i_select
+    dcache.io.rea.addr:= uop.src1_value//??
+    dcache.io.write := uop.mem_type
+    dcache.io.res.valid := io.i_select_to_commit
+    io.o_ex_res_pack.uop := uop
+
+    when(io.i_select_to_commit){
+        o_func_idx:= NULL
+    }
+    val s_Free :: s_BUSY ::  :: Nil = Enum(3)
+    val state = RegInit(FREE)
+
+    switch(state){
+        is(s_FREE){
+            when(io.i_select){
+                state := s_BUSY
+            }
+        }
+        is(s_BUSY){
+            when(io.i_select_to_commit){
+                state := s_FREE
+            }
+        }
+    }
+    io.o_func_idx := Mux(state === s_BUSY, NULL , MEM)
+
+}
+

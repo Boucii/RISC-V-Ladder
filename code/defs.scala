@@ -112,6 +112,7 @@ class uop extends Bundle(){
     val alu_sel = UInt(3.W)//??select alu functions
 
     val branch_type = UInt(3.W)
+    val mem_type = UInt(1.W)
 }
   // RS1 Operand Select Signal
   val OP1_RS1 = 0.U(2.W) // Register Source #1
@@ -126,12 +127,13 @@ class uop extends Bundle(){
   val OP2_X   = BitPat("b???")
 
 object FuntionCode {
-    val ALU = 1.U(6.W)
-    val BRU = 2.U(6.W)
-    val MEM = 4.U(6.W)
-    val MUL = 8.U(6.W)
-    val DIV = 16.U(6.W)
-    val CSR = 32.U(6.W)
+    val ALU = 1.U(7.W)
+    val BRU = 2.U(7.W)
+    val MEM = 4.U(7.W)
+    val MUL = 8.U(7.W)
+    val DIV = 16.U(7.W)
+    val CSR = 32.U(7.W)
+    val NUL = 64.U(7.W)
 }
 object BRANCH_TYPE{
     val BR_N   = 0.U(3.W)

@@ -1,85 +1,102 @@
+class DecodeInfo extends Bundle with consts{
+    val valid=Bool()
+    val func_unit=UInt(7.W)//TODO: change to enum
+    val regWen=Bool()
+    val inst_type = UInt(7.W)
+    val op1_sel = UInt(2.W)
+    val op2_sel = UInt(3.W)//
+    val alu_sel = UInt(3.W)//??select alu functions
+    val branch_type = UInt(3.W)
+    val mem_type = UInt(2.W)
+
+    def decode(inst: UInt, table: Iterable[(BitPat, List[BitPat])]) = {
+    val decoder = decoder(QMCMinimizer,inst,table)
+    val sigs =
+      Seq(valid, func_unit, regWen, inst_type, op1_sel, op2_sel, alu_sel, branch_type, mem_type)
+      sigs zip decoder map {case(s,d) => s := d}
+      this
+  }
+}
+
 class Decoder extends Module{
     val io = IO(new Bundle {
         val i_fetch_pack = Decoupled(new fetchpack)
         val o_decode_packs = Output(Vec(2,new decode_pack()))
     })
     val uops = Reg(Vec(2,new decode_pack()))//aka uop
+    val inst0 = uops(0).inst
+    val inst1 = uops(1).inst
+
+    val immI0=Mux(inst0(31)=/=1.U,inst0(31,20),Cat(0xfffffffffffffL.U,inst0(31,20)))
+    val immS0=Mux(inst0(31)=/=1.U,Cat(inst0(31,25),inst0(11,7)),Cat(Cat(0xffffffffL.U,inst0(31,25)),inst0(11,7)))
+    val immU0=inst0(31,12)<<12
+    val immJ0=(Mux(inst0(31)===1.U,0xfffffffffffL.U,inst0(31,31))<<20).asUInt+(inst0(19,12)<<12).asUInt+(inst0(20,20)<<11).asUInt+(inst0(30,21)<<1).asUInt //optimization?
+    val immB0=(Mux(inst0(31)=/=1.U,inst0(31,31),0xfffffffffffL.U)<<12).asUInt+(inst0(7,7)<<11).asUInt+(inst0(30,25)<<5).asUInt+(inst0(11,8)<<1).asUInt
+
+    val immI1=Mux(inst1(31)=/=1.U,inst1(31,20),Cat(0xfffffffffffffL.U,inst1(31,20)))
+    val immS1=Mux(inst1(31)=/=1.U,Cat(inst1(31,25),inst1(11,7)),Cat(Cat(0xffffffffL.U,inst1(31,25)),inst(11,7)))
+    val immU1=inst1(31,12)<<12
+    val immJ1=(Mux(inst1(31)===1.U,0xfffffffffffL.U,inst1(31,31))<<20).asUInt+(inst1(19,12)<<12).asUInt+(inst1(20,20)<<11).asUInt+(inst1(30,21)<<1).asUInt //optimization?
+    val immB1=(Mux(inst1(31)=/=1.U,inst1(31,31),0xfffffffffffL.U)<<12).asUInt+(inst1(7,7)<<11).asUInt+(inst1(30,25)<<5).asUInt+(inst1(11,8)<<1).asUInt
     //IOs
-    uops(0).pc:=io.i_fetch_pack.bits.pc
-    uops(0).inst:=io.i_fetch_pack.bits.inst
-    uops(1).pc:=io.i_fetch_pack.bits.pc
-    uops(1).inst:=io.i_fetch_pack.bits.inst
     io.o_decode_packs:=uops
-
    var table=decode_table.table 
-   val inst0=io.i_fetch_pack.bits.inst
-   val inst1=io.i_fetch_pack.bits.inst
 
-   uops(0).uop:= wire(new ).decode(inst0,table)  
-   uops(1).uop:= Wire(new ).decode(inst1,table)
-}
-//just occupy the place, replace it with actual table complying to my uop
-abstract trait defalut_decode_table{
-  def decode_default: List[BitPat] = //follow the format of the uop
-              List(N, X, uopX    , IQT_INT, FU_X   , RT_X  , DC2    ,DC2    ,X, IS_X, X, X, X, X, N, M_X,   DC2, X, X, N, N, X, CSR.X)
-  val table: Array[(BitPat, List[BitPat])]
-}
-object decode_table extends defalut_decode_table
-{
-           //                                                                 frs3_en                        wakeup_delay
-           //     is val inst?                                                |  imm sel                     |    bypassable (aka, known/fixed latency)
-           //     |                                                           |  |     uses_ldq              |    |  is_br
-           //     |    is single-prec?                        rs1 regtype     |  |     |  uses_stq           |    |  |
-           //     |    |  micro-code                          |       rs2 type|  |     |  |  is_amo          |    |  |
-           //     |    |  |         iq-type  func unit        |       |       |  |     |  |  |  is_fence     |    |  |
-           //     |    |  |         |        |                |       |       |  |     |  |  |  |  is_fencei |    |  |  is breakpoint or ecall?
-           //     |    |  |         |        |        dst     |       |       |  |     |  |  |  |  |  mem    |    |  |  |  is unique? (clear pipeline for it)
-           //     |    |  |         |        |        regtype |       |       |  |     |  |  |  |  |  cmd    |    |  |  |  |  flush on commit
-           //     |    |  |         |        |        |       |       |       |  |     |  |  |  |  |  |      |    |  |  |  |  |  csr cmd
-  val table: Array[(BitPat, List[BitPat])] = Array(// |       |       |       |  |     |  |  |  |  |  |      |    |  |  |  |  |  |
-  LW      -> List(Y, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  LH      -> List(Y, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  LHU     -> List(Y, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  LB      -> List(Y, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  LBU     -> List(Y, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-            
-  SW      -> List(Y, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-  SH      -> List(Y, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-  SB      -> List(Y, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-            
-  LUI     -> List(Y, X, uopLUI  , IQT_INT, FU_ALU , RT_FIX, RT_X  , RT_X  , N, IS_U, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-            
-  ADDI    -> List(Y, X, uopADDI , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  ANDI    -> List(Y, X, uopANDI , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  ORI     -> List(Y, X, uopORI  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  XORI    -> List(Y, X, uopXORI , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SLTI    -> List(Y, X, uopSLTI , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SLTIU   -> List(Y, X, uopSLTIU, IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-            
-  SLL     -> List(Y, X, uopSLL  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  ADD     -> List(Y, X, uopADD  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SUB     -> List(Y, X, uopSUB  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SLT     -> List(Y, X, uopSLT  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SLTU    -> List(Y, X, uopSLTU , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  AND     -> List(Y, X, uopAND  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  OR      -> List(Y, X, uopOR   , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  XOR     -> List(Y, X, uopXOR  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SRA     -> List(Y, X, uopSRA  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_I, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-  SRL     -> List(Y, X, uopSRL  , IQT_INT, FU_ALU , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 1.U, Y, N, N, N, N, CSR.N),
-            
-  MUL     -> List(Y, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  MULH    -> List(Y, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  MULHU   -> List(Y, X, uopMULHU, IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  MULHSU  -> List(Y, X, uopMULHSU,IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  MULW    -> List(Y, X, uopMULW , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-            
-  DIV     -> List(Y, X, uopDIV  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  DIVU    -> List(Y, X, uopDIVU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  REM     -> List(Y, X, uopREM  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  REMU    -> List(Y, X, uopREMU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  DIVW    -> List(Y, X, uopDIVW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  DIVUW   -> List(Y, X, uopDIVUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  REMW    -> List(Y, X, uopREMW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  REMUW   -> List(Y, X, uopREMUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  )
+   for(i <- 0 until 2){
+       uops(i).pc:=io.i_fetch_pack.bits.pc
+       uops(i).inst:=io.i_fetch_pack.bits.inst
+       uops(i).uop:= wire(new ).decode(inst0,table)  
+       uops(i).op1_sel := Muxcase(SRC_RS,uop.inst_type,seq(//change for pc
+          I_TYPE->SRC_RS,
+          U_TYPE->SRC_IMM,
+          S_TYPE ->OP1_RS1,
+          J_TYPE->OP1_IMM,
+          B_TYPE ->OP1_RS1,
+          R_TYPE ->OP1_RS1,
+       ))
+       uops(i).op2_sel := Muxcase(OP2_RS2,uop.inst_type,seq(//change for pc
+          I_TYPE->OP1_IMM,
+          U_TYPE->OP1_IMM,
+          S_TYPE ->OP1_RS1,
+          J_TYPE->OP1_IMM,
+          B_TYPE ->OP1_RS1,
+          R_TYPE ->OP1_RS1,
+       ))
+      uops(i).imm := Muxcase(0.U,uop.inst_type,seq(
+          I_TYPE->IMM_I,
+          U_TYPE->IMM_U,
+          S_TYPE ->IMM_S,
+          J_TYPE->IMM_J,
+          B_TYPE ->IMM_B,
+          R_TYPE ->0.U,
+      ))
+      uops(i).arch_rs1:= inst(i)(19,15)
+      uops(i).arch_rs2:= inst(i)(24,20)
+      uops(i).arch_dst:= Muxcase(inst(i)(11,7),uop(i).inst_type,seq(
+          S_TYPE ->IMM_S,
+          B_TYPE ->IMM_B,
+      ))
+      uops(i).src1_valid:=Muxcase(false.B,uop(i).op1_sel,seq(
+        OP_RS -> false.B,
+        OP_IMM ->true.B,
+        OP_PC ->true.B,
+        OP_ZERO -> true.B,
+        OP_N -> true.B,
+      ))
+      uops(i).src2_valid:=Muxcase(false.B,uop(i).op2_sel,seq(
+        OP_RS -> false.B,
+        OP_IMM ->true.B,
+        OP_PC ->true.B,
+        OP_ZERO -> true.B,
+        OP_N -> true.B,
+      ))
+      uops(i).src1_value:=Muxcase(0.U,uop(i).op1_sel,seq(
+        OP_IMM ->uop(i).imm,
+        OP_PC ->uop(i).pc,
+      ))
+      uops(i).src2_value:=Muxcase(0.U,uop(i).op2_sel,seq(
+        OP_IMM ->uop(i).imm,
+        OP_PC ->uop(i).pc,
+      ))
+   }
 }

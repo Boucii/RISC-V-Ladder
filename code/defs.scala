@@ -72,7 +72,7 @@ class rob_allocation_pack extends Bundle()
 {
    val valids     = Vec(2, Bool())
    val uops       = Vec(2, new MicroOp())
-}
+}/*
 class uop extends Bundle(){
     val valid=Bool()
     val pc=UInt(32.W)
@@ -81,28 +81,29 @@ class uop extends Bundle(){
 
     val branch_predict_pack=new branch_predict_pack
 
-    val dst_valid=Bool()
+    //val dst_valid=Bool()
     val phy_dst=UInt(7.W)
     val stale_dst=UInt(7.W)
     val arch_dst=UInt(5.W)
 
+    val inst_type = UInt(3.W)
     val regWen=Bool()
 
-    val src1_valid=Bool()
-    val phy_src1=UInt(7.W)
-    val arch_src1=UInt(5.W)
+    val rs1_valid=Bool()//is this operatee written back
+    val phy_rs1=UInt(7.W)
+    val arch_rs1=UInt(5.W)
 
-    val src2_valid=Bool()
-    val phy_src2=UInt(7.W)
-    val arch_src2=UInt(5.W)
+    val rs2_valid=Bool()
+    val phy_rs2=UInt(7.W)
+    val arch_rs2=UInt(5.W)
 
     val rob_idx = UInt(7.W)
     val imm = UInt(64.W)
     val imm_sel = Bool()
 
     val dst_value = UInt(64.W)
-    val src1_value = UInt(64.W)
-    val src2_value = UInt(64.W)
+    val rs1_value = UInt(64.W)
+    val rs2_value = UInt(64.W)
 
     val exception = Bool()
 
@@ -113,7 +114,47 @@ class uop extends Bundle(){
 
     val branch_type = UInt(3.W)
     val mem_type = UInt(1.W)
+}*/
+class uop extends Bundle(){
+    val valid=Bool()
+    val pc=UInt(32.W)
+    val inst=UInt(32.W)
+    val func_unit=UInt(3.W)//TODO: change to enum
+
+    val branch_predict_pack=new branch_predict_pack
+
+    val phy_dst=UInt(7.W)
+    val stale_dst=UInt(7.W)
+    val arch_dst=UInt(5.W)
+
+    val inst_type = UInt(3.W)
+    val regWen=Bool()
+
+    val src1_valid=Bool()//is this operatee written back
+    val phy_rs1=UInt(7.W)
+    val arch_rs1=UInt(5.W)
+
+    val src2_valid=Bool()
+    val phy_rs2=UInt(7.W)
+    val arch_rs2=UInt(5.W)
+
+    val rob_idx = UInt(7.W)
+    val imm = UInt(64.W)
+
+    val dst_value = UInt(64.W)
+    val src1_value = UInt(64.W)
+    val src2_value = UInt(64.W)
+
+    val exception = Bool()
+
+    val op1_sel = UInt(2.W)
+    val op2_sel = UInt(3.W)//
+    val alu_sel = UInt(3.W)//??select alu functions
+
+    val branch_type = UInt(3.W)
+    val mem_type = UInt(1.W)
 }
+/*
   // RS1 Operand Select Signal
   val OP1_RS1 = 0.U(2.W) // Register Source #1
   val OP1_ZERO= 1.U(2.W)
@@ -126,17 +167,25 @@ class uop extends Bundle(){
   val OP2_ZERO= 2.U(3.W) // constant 0
   val OP2_X   = BitPat("b???")
 
+object SRC_TYPE{
+    val SRC_RS = 0.U(3.W) 
+    val SRC_ZERO = 1.U(3.W)
+    val SRC_PC = 2.U(3.W)
+    val SRC_IMM = 3.U(3.W)
+    val SRC_N = 4.U(3.W)
+}
+
 object FuntionCode {
-    val ALU = 1.U(7.W)
-    val BRU = 2.U(7.W)
-    val MEM = 4.U(7.W)
-    val MUL = 8.U(7.W)
-    val DIV = 16.U(7.W)
-    val CSR = 32.U(7.W)
-    val NUL = 64.U(7.W)
+    val FU_ALU = 1.U(7.W)
+    val FU_BRU = 2.U(7.W)
+    val FU_MEM = 4.U(7.W)
+    val FU_MUL = 8.U(7.W)
+    val FU_DIV = 16.U(7.W)
+    val FU_CSR = 32.U(7.W)
+    val FU_NUL = 64.U(7.W)
 }
 object BRANCH_TYPE{
-    val BR_N   = 0.U(3.W)
+    val BR_N   = 0.U(3.W)//none
     val BR_NE  = 1.U(3.W)
     val BR_EQ  = 2.U(3.W)
     val BR_GE  = 3.U(3.W)
@@ -146,19 +195,12 @@ object BRANCH_TYPE{
     val BR_J   = 7.U(3.W)
     val BR_JR  = 8.U(3.W)
 }
-
-// ???package CPUTypes {
-object Branch_Type extends ChiselEnum {
-  val selectRSBR_N   = Value  // Next
-  val BR_NE  = Value  // Branch on NotEqual
-  val BR_EQ  = Value  // Branch on Equal
-  val BR_GE  = Value  // Branch on Greater/Equal
-  val BR_GEU = Value  // Branch on Greater/Equal Unsigned
-  val BR_LT  = Value  // Branch on Less Than
-  val BR_LTU = Value  // Branch on Less Than Unsigned
-  val BR_J   = Value  // Jump
-  val BR_JR  = Value  // Jump Register
+object Mem_Type{
+    val MEM_READ    = 0.U(2.W)
+    val MEM_WRITE   = 1.U(2.W)
+    val MEM_N       = 2.U(2.W)
 }
+*/
 object PC_Selector extends ChiselEnum {
   val PC_PLUS4   = Value  // Next
   val PC_BRJMP = Value  // Branch/Jump Target

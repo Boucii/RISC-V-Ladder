@@ -12,6 +12,7 @@ class Execute extends Module{
 
         //to rob
         val o_ex_res_packs = Output(Vec(2, new o_ex_result_pack()))//rename result to res 
+        val i_ROB_first_entry = Input(UInt(7.W))
 
         val o_prediction_resolve_pack=Output(new prediction_resolve_pack())
     })
@@ -33,6 +34,9 @@ class Execute extends Module{
         io.o_ex_res_packs(i) := func_units(i).io.o_ex_res_pack//??
         if(func_units(i).isInstanceOf[BRU]){
             io.o_prediction_resolve_pack := func_units(i).io.o_prediction_resolve_pack
+        }
+        if(func_units(i).isInstanceOf[LSU]){
+            func_units(i).io.i_ROB_first_entry:=io.i_ROB_first_entry
         }
     }
 

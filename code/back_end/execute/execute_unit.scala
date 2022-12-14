@@ -102,10 +102,13 @@ class BRU extends Function_Unit{
 }
 //lsu that only has one load/store in flight
 class LSU extends Function_Unit{
+    val io=IO(new Bundle{
+        val i_ROB_first_entry = UInt(7.W)
+    })
     o_ex_res_pack.valid := dcache.io.valid
     uop.dst_value := dcache.io.data
     
-    dcache.io.req.ready:= io.i_select
+    dcache.io.req.ready:= (io.i_select && io.uop.type=!=1.U) || (io.uop.type && io.i_ROB_first_entry === uop.rob_idx)
     dcache.io.rea.addr:= uop.src1_value//??
     dcache.io.write := uop.mem_type
     dcache.io.res.valid := io.i_select_to_commit

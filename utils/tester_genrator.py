@@ -12,13 +12,11 @@ def get_column(data, column):
 import numpy as np
 import pandas as pd
 data = pd.read_csv("./test.CSV", sep=',', header=None)
-print(data)
 data = data.T
 #print (data[1][0])
 
 num_rows = len(data.columns)
 num_cols = len(data[0])
-print (num_rows, num_cols)
 
 time_points=data[0][2:num_cols-1]
 #print(time_points)

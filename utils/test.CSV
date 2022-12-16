@@ -1,6 +1,8 @@
-,,0,3,5
-input,sig1,,4,5
-,sig2,6,7,8
-,sig3,5,,
-output,sig4,1,2,4
-,sog5,6,7,8
+,,0,1,2,3,4,5
+input,i_rob_allocation_reqs(0),false.B,true.B,true.B,false.B,true.B,false.B
+,i_rob_allocation_reqs(1),false.B,true.B,true.B,false.B,false.B,false.B
+,i_ex_res_packs(0).valid,false.B,false.B,false.B,false.B,false.B,false.B
+,i_ex_res_packs(1).valid,false.B,false.B,false.B,false.B,false.B,false.B
+,i_branch_resolve_pack.valid,false.B,false.B,false.B,false.B,false.B,false.B
+output,dbg_commit_ptr,0.U,0.U,0.U,0.U,0.U,0.U
+,dbg_allocate_ptr,0.U,0.U,2.U,4.U,0.U,5.U

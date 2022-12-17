@@ -22,6 +22,9 @@ class Reorder_Buffer extends Module{
         //output to load/store
         val o_rob_head = Output(UInt(7.W))
 
+        val o_exception = Output(Bool())
+        val o_rolling_back = Output(Bool())
+
         //for debug
         val dbg_commit_ptr = Output(UInt(7.W))
         val dbg_allocate_ptr = Output(UInt(7.W))
@@ -31,23 +34,30 @@ class Reorder_Buffer extends Module{
     val commit_ptr = RegInit(0.U(7.W))//rob head
     val allocate_ptr = RegInit(0.U(7.W))//rob tail
 
-    commit_ptr:=0.U
-    allocate_ptr:=0.U
+    //commit_ptr:=0.U
+    //allocate_ptr:=0.U
 
     val s_reset :: s_normal :: s_rollback :: s_full :: Nil = Enum(4)//modify this FULL added make 1 slot available also full
     val rob_state = RegInit(s_normal)
+    val next_rob_state = Wire(UInt(2.W))
+    rob_state:=next_rob_state
+    next_rob_state := 1.U//initialize,but not good,rewrite with muxcase to change the state
 
     io.dbg_commit_ptr:=commit_ptr
     io.dbg_allocate_ptr:=allocate_ptr
-    printf("rob_state:%d\n",rob_state)
+
     //io.rob_state:=rob_state
 
     val num_to_roll_back = RegInit(0.U(7.W))
+    val next_num_to_roll_back = Wire(UInt(7.W))
+
     //!!!!!!改了branchresolvepakc的结果
-    num_to_roll_back := MuxCase(0.U,Seq(
-      (io.i_branch_resolve_pack.valid === true.B && commit_ptr-2.U > io.i_branch_resolve_pack.rob_idx) ->2.U,
-      (io.i_branch_resolve_pack.valid === true.B && commit_ptr-2.U === io.i_branch_resolve_pack.rob_idx) ->2.U,
-      (io.i_branch_resolve_pack.valid === true.B && commit_ptr-1.U === io.i_branch_resolve_pack.rob_idx) ->1.U
+    //判定要用下个周期的allocateptr而不是这个周期的
+    //robstate也应该要看robstatenext
+    next_num_to_roll_back := MuxCase(0.U,Seq(
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) > io.i_branch_resolve_pack.rob_idx) ->2.U,
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) === io.i_branch_resolve_pack.rob_idx)->2.U,
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -1.U) === io.i_branch_resolve_pack.rob_idx) ->1.U
     )) 
     io.o_rob_head := commit_ptr
 
@@ -55,28 +65,32 @@ class Reorder_Buffer extends Module{
     val rob_valid = RegInit(VecInit(Seq.fill(128){false.B}))
     val rob_uop = Reg(Vec(128, new uop()))
     val rob_exception = Reg(Vec(128, Bool()))
-    val rob_done = Reg(Vec(128, Bool())) // is this instr written back and ready to commit?
+    val rob_done = Reg(Vec(128, Bool())) // is this instr written back and ready to commit? is this necessary
 
-    val will_commit = Wire(Vec(2,Bool()))
-    val can_commit = Wire(Vec(2,Bool()))
+    val will_commit = Reg(Vec(2,Bool()))
+    val next_will_commit = Wire(Vec(2,Bool()))
+    will_commit := next_will_commit
+    val can_commit = Reg(Vec(2,Bool()))
+    val next_can_commit = Wire(Vec(2,Bool()))
+    can_commit := next_can_commit
 
-    can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
-    can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
+    next_can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
+    next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
-    will_commit(0) := can_commit(0) && (rob_state===s_normal || rob_state===s_full )
-    will_commit(1) := can_commit(0) && can_commit(1) && (rob_state===s_normal || rob_state===s_full)
+    next_will_commit(0) := next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
+    next_will_commit(1) := next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
-      io.o_commit_packs(0).valid := (will_commit(0))&& (rob_state===s_normal || rob_state===s_full )
-      io.o_commit_packs(1).valid := (will_commit(1))&&(will_commit(0))&& (rob_state===s_normal || rob_state===s_full )
+      io.o_commit_packs(0).valid := (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
+      io.o_commit_packs(1).valid := (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
       io.o_commit_packs(0).uop := (rob_uop(commit_ptr))
       io.o_commit_packs(1).uop := (rob_uop(commit_ptr+1.U))
 
-      io.o_rob_allocation_ress(0).valid := !(rob_state===s_rollback || rob_state===s_full ) && io.i_rob_allocation_reqs(0)
-      io.o_rob_allocation_ress(1).valid := !(rob_state===s_rollback || rob_state===s_full ) && io.i_rob_allocation_reqs(1) && io.i_rob_allocation_reqs(0) //dispatch 会req1 而不req0吗
+      io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0)
+      io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1) && io.i_rob_allocation_reqs(0) //dispatch 会req1 而不req0吗
       
-      io.o_roll_back_pack(0).valid := rob_state===s_rollback
-      io.o_roll_back_pack(1).valid := (num_to_roll_back === 2.U) && rob_state===s_rollback
+      io.o_roll_back_pack(0).valid := next_rob_state===s_rollback
+      io.o_roll_back_pack(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
       
       io.o_roll_back_pack(0).uop:=rob_uop(commit_ptr)
       io.o_roll_back_pack(1).uop:=rob_uop(commit_ptr-1.U)
@@ -84,14 +98,16 @@ class Reorder_Buffer extends Module{
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
 
-    when(rob_state === s_normal){
+    when(next_rob_state === s_normal){
       when(io.i_rob_allocation_reqs(0) && io.i_rob_allocation_reqs(1)){
+        //rob_uop(allocate_ptr) := io.i_allocate_uops(0) write when write back
         rob_valid(allocate_ptr) := true.B
         rob_done(allocate_ptr) := false.B
         rob_valid(allocate_ptr+1.U) := true.B
         rob_done(allocate_ptr+1.U) := false.B
         allocate_ptr := allocate_ptr + 2.U 
       }.elsewhen(io.i_rob_allocation_reqs(0) || io.i_rob_allocation_reqs(1)){
+        //rob_uop(allocate_ptr) := io.i_allocate_uops(1)
         rob_valid(allocate_ptr) := true.B
         allocate_ptr := allocate_ptr + 1.U
         rob_done(allocate_ptr) := false.B
@@ -111,17 +127,16 @@ class Reorder_Buffer extends Module{
       }
       //commit
 
-      when(will_commit(0) && will_commit(1)){
+      when(next_will_commit(0) && next_will_commit(1)){
         rob_valid(commit_ptr) := false.B
         rob_valid(commit_ptr+1.U) := false.B
         commit_ptr := commit_ptr + 2.U
-      }.elsewhen(will_commit(0)){
+      }.elsewhen(next_will_commit(0)){
         rob_valid(commit_ptr) := false.B
         commit_ptr := commit_ptr + 1.U
       }
     }
-    when(rob_state === s_full){
-
+    when(next_rob_state === s_full){
       //when full cannot allocate ,but can roll back,exe write and commit
       when(io.i_ex_res_packs(0).valid){
         rob_valid(io.i_ex_res_packs(0).uop.rob_idx) := true.B
@@ -136,52 +151,48 @@ class Reorder_Buffer extends Module{
         rob_done(io.i_ex_res_packs(1).uop.rob_idx) := true.B
       }
       //commit
-      when(will_commit(0) && will_commit(1)){
+      when(next_will_commit(0) && next_will_commit(1)){
         rob_valid(commit_ptr) := false.B
         rob_valid(commit_ptr+1.U) := false.B
         commit_ptr := commit_ptr + 2.U
-      }.elsewhen(will_commit(0)){
+      }.elsewhen(next_will_commit(0)){
         rob_valid(commit_ptr) := false.B
         commit_ptr := commit_ptr + 1.U
       }
     }
-    when(rob_state === s_rollback){
-      commit_ptr := commit_ptr - num_to_roll_back
+    when(next_rob_state === s_rollback){
+      //when rollback, no allocation,no exe write, no commit
+      allocate_ptr := allocate_ptr - next_num_to_roll_back
     }
 
 
-    (rob_exception(commit_ptr)===true.B && will_commit(0)===true.B || 
-          (rob_exception(commit_ptr+1.U)===true.B && will_commit(0)===true.B && will_commit(1)===true.B))
+    io.o_exception:=(rob_exception(commit_ptr)===true.B && next_will_commit(0)===true.B || 
+          (rob_exception(commit_ptr+1.U)===true.B && next_will_commit(0)===true.B && next_will_commit(1)===true.B))
 
     val is_full =Wire(Bool()) //consider dynamic action
     is_full := (allocate_ptr + 2.U) === commit_ptr || (allocate_ptr + 1.U) === commit_ptr
     io.o_empty :=  commit_ptr === allocate_ptr  
     io.o_full := is_full
+    
+    io.o_rolling_back := next_rob_state
 
-
-    switch (rob_state) {
-       is (s_reset) {//optimize this reset for exception
-         rob_state := s_normal
-       }
-       is (s_normal) {
-          when (io.i_branch_resolve_pack.mispred && !io.i_branch_resolve_pack.valid) {
-            rob_state := s_rollback
-          }.elsewhen (is_full) {
-            rob_state := s_full
-          }
-       }
-       is (s_rollback) {
-         when (io.i_branch_resolve_pack.rob_idx === commit_ptr) {//????
-           rob_state := s_normal
-         }
-       }
-       is(s_full) {
-          when(will_commit(0)){
-            rob_state:= s_normal
-          }
-       }
-
-     }
+    next_rob_state:=MuxCase(rob_state,Seq(
+      (rob_state === s_reset) -> s_normal,
+      (rob_state === s_normal && is_full) -> s_full,
+      ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) -> s_rollback,
+      (rob_state === s_rollback && (io.i_branch_resolve_pack.rob_idx === allocate_ptr)) -> s_normal,
+      (rob_state === s_full && will_commit(0)) -> s_normal
+    ))
+    printf("rob_state:%d\n",rob_state)
+    printf("allocate_ptr:%d\n",allocate_ptr)
+    printf("rob_state:%d\n",rob_state)
+    printf("num_to_roll_back:%d\n",num_to_roll_back)
+    printf("\n")
+    //printf("allocate_ptr:%d\n",allocate_ptr)
+    //printf("can_commit(0):%d\n",io.o_commit_packs(0).valid)
+    //printf("can_commit(1):%d\n",io.o_commit_packs(1).valid)
+    //printf("can_commit(0):%d\n",io.o_commit_packs(0).valid)
+    //printf("can_commit(1):%d\n",io.o_commit_packs(1).valid)
 }
 /*
 class Reorder_Buffer extends Module{

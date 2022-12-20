@@ -29,11 +29,13 @@ num_output_sig= num_rows-num_input_sig
 #generate tester script
 for i in range(2,num_cols):
     print("//clock="+str(data[0][i]))
-    if i!=2:
-        print('c.clock.step('+str(int(data[0][i])-int(data[0][i-1]))+')')
+
     for j in range(1,num_input_sig+1):
         if(str(data[j][i])!='nan'):
             print('c.io.'+str(data[j][1])+'.poke('+str(data[j][i])+')')
+
+    print('c.clock.step('+str(int(data[0][i])-int(data[0][i-1]))+')')
+
     for j in range(num_input_sig+1,num_rows):
         if(str(data[j][i])!='nan'):
             print('c.io.'+str(data[j][1])+'.expect('+str(data[j][i])+')')

@@ -5,7 +5,6 @@ import Chisel._
 class age_pack extends Bundle {
   val issue_valid = Vec(2,Bool())
   val max_age = UInt(8.W)
-  val allocated_idx = UInt(1.W) //if allocated two insts, is this slot the 1 or 2? 0 stands for 1st allocated,1 for second
   val issued_ages = Vec(2,UInt(8.W))//by default, age(1)>=age(0)!
 }
 
@@ -16,8 +15,10 @@ class Reservation_Station_Slot extends Module with consts{
         val o_valid = Output(Bool()) //is this slot occupied
         val o_ready_to_issue = Output(Bool())
 
+        val i_allocated_idx = UInt(1.W) //if allocated two insts, is this slot the 1 or 2? 0 stands for 1st allocated,1 for second
         val i_issue_granted = Input(Bool())//???
-        val i_flush = Input(Bool())
+        val i_branch_resolve_pack = Input(new i_branch_resolve_pack())
+        val i_exception = Input(Bool())
 
         val i_write_slot = Input(Bool())
         //val i_wakeup_ports =  Input(Vec(2,Valid(UInt(128.W)))).flip//number of pregs, TODO:make it paramed,this really need valid?
@@ -30,10 +31,14 @@ class Reservation_Station_Slot extends Module with consts{
     })
     val age = RegInit(0.U(8.W))
     io.o_age := age
-    when(io.i_flush){//or mux? when-wlse should be cascaded,so mux is better TODO:make this mux!!!!
+
+    val flush = Wire(Bool())
+    flush := io.i_exception || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)
+
+    when(flush){//or mux? when-wlse should be cascaded,so mux is better TODO:make this mux!!!!
         age := 255.U
     }.elsewhen(io.i_write_slot){
-        age := io.i_age_pack.max_age+io.i_age_pack.allocated_idx
+        age := io.i_age_pack.max_age+io.i_allocated_idx
     }.elsewhen(!io.i_write_slot && io.i_issue_granted){
         age := 255.U//invalid
     }.elsewhen(io.i_age_pack.issue_valid(0) && io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(0) && age<io.i_age_pack.issued_ages(1)){
@@ -77,7 +82,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     //rewrite using mux?
     //output logic
-    when(io.i_flush){
+    when(flush){
         uop.valid:=false.B 
     }.elsewhen(io.i_write_slot){
         uop:= io.i_uop
@@ -85,7 +90,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     //valid maintain logic,this is redundent for uop also got a valid, remove it ?
     //能写进来的都是uop.valid=true
-    when(io.i_flush ||(io.i_issue_granted && !io.i_write_slot) ){
+    when(flush ||(io.i_issue_granted && !io.i_write_slot) ){
         valid:=false.B
     }.elsewhen((io.i_write_slot)){
         valid:=true.B

@@ -119,7 +119,8 @@ class uop extends Bundle(){
     val valid=Bool()
     val pc=UInt(32.W)
     val inst=UInt(32.W)
-    val func_unit=UInt(3.W)//TODO: change to enum
+    //val func_unit=UInt(3.W)//TODO: change to enum
+    val func_code=UInt(7.W)//TODO: change to enum
 
     val branch_predict_pack=new branch_predict_pack
 

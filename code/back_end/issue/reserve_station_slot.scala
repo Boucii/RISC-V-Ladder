@@ -15,9 +15,9 @@ class Reservation_Station_Slot extends Module with consts{
         val o_valid = Output(Bool()) //is this slot occupied
         val o_ready_to_issue = Output(Bool())
 
-        val i_allocated_idx = UInt(1.W) //if allocated two insts, is this slot the 1 or 2? 0 stands for 1st allocated,1 for second
+        val i_allocated_idx = Input(UInt(1.W)) //if allocated two insts, is this slot the 1 or 2? 0 stands for 1st allocated,1 for second
         val i_issue_granted = Input(Bool())//???
-        val i_branch_resolve_pack = Input(new i_branch_resolve_pack())
+        val i_branch_resolve_pack = Input(new branch_resolve_pack())
         val i_exception = Input(Bool())
 
         val i_write_slot = Input(Bool())

@@ -48,3 +48,4 @@ for i in range(2,num_cols):
     else:
         print("c.clock.step(1)")
 
+print("c.clock.step(1)")

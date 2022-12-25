@@ -28,6 +28,8 @@ class Reservation_Station_Slot extends Module with consts{
 
         val i_age_pack = Input(new age_pack())
         val o_age = Output(UInt(8.W))
+
+        val cond = Output(Bool())
     })
     val age = RegInit(0.U(8.W))
     io.o_age := age
@@ -36,11 +38,11 @@ class Reservation_Station_Slot extends Module with consts{
     flush := io.i_exception || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)
 
     when(flush){//or mux? when-wlse should be cascaded,so mux is better TODO:make this mux!!!!
-        age := 255.U
-    }.elsewhen(io.i_write_slot){
+        age := 63.U
+    }.elsewhen(io.i_write_slot && io.i_uop.valid){//decouple this plz
         age := io.i_age_pack.max_age+io.i_allocated_idx
     }.elsewhen(!io.i_write_slot && io.i_issue_granted){
-        age := 255.U//invalid
+        age := 63.U//invalid
     }.elsewhen(io.i_age_pack.issue_valid(0) && io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(0) && age<io.i_age_pack.issued_ages(1)){
         age := age-1.U //issued 2 and age in between them
     }.elsewhen(io.i_age_pack.issue_valid(0) && io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(1)){
@@ -65,7 +67,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     when(io.i_write_slot){
         next_src1_ready:=(!(io.i_uop.op1_sel===SRC_RS))
-    }.elsewhen((io.i_wakeup_port(uop.arch_rs1)===1.U && uop.op1_sel===SRC_RS)){
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){
         next_src1_ready:=true.B
     }.otherwise{
         next_src1_ready:=src1_ready
@@ -73,7 +75,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     when(io.i_write_slot){
         next_src2_ready:=(!(io.i_uop.op1_sel===SRC_RS))
-    }.elsewhen((io.i_wakeup_port(uop.arch_rs2)===1.U && uop.op2_sel===SRC_RS)){
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
         next_src2_ready:=true.B
     }.otherwise{
         next_src2_ready:=src1_ready
@@ -89,12 +91,14 @@ class Reservation_Station_Slot extends Module with consts{
     }
 
     //valid maintain logic,this is redundent for uop also got a valid, remove it ?
-    //能写进来的都是uop.valid=true
+    //能写进来的都是uop.valid=true,并不,能写进来的未必valid
+    
     when(flush ||(io.i_issue_granted && !io.i_write_slot) ){
         valid:=false.B
-    }.elsewhen((io.i_write_slot)){
+    }.elsewhen((io.i_write_slot)&&(io.i_uop.valid)){
         valid:=true.B
     }
+    io.cond:=(flush ||(io.i_issue_granted && !io.i_write_slot))
 
     //request logic
     when( (valid===true.B) && (next_src1_ready===true.B) && (next_src2_ready===true.B) ){//do we need to consider valid? 

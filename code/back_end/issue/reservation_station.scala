@@ -14,20 +14,6 @@ class Reservation_Station extends Module{
      val i_exception = Input(Bool())
      val i_available_funcs = Input(Vec(7, UInt(2.W)))
 
-    //debug port
-     val r1valid =Output(Bool())
-     val issue_num = Output(UInt(2.W))
-     val reservation_station_valid = Output(UInt(64.W))
-     val gramted0 = Output(Bool())
-     val gramted1 = Output(Bool())
-     val wslot0 = Output(Bool())
-     val wslot1 = Output(Bool())
-     val valid0 =Output(Bool())
-     val valid1 =Output(Bool())
-     val cond1 =Output(Bool())
-     val iss1idx = Output(UInt(6.W))
-     val iss2idx = Output(UInt(6.W))
-     val r2i1= Output(Bool())
    }) 
      //val uops = Reg(Vec(2,new uop()))
      val uops = Wire(Vec(2,new uop()))
@@ -69,13 +55,6 @@ class Reservation_Station extends Module{
      val idx_age_group = indexes zip age_considering_issue //seq of tuple (idx,age)
      val issue1_idx = Wire(UInt(6.W))
      issue1_idx :=(idx_age_group.reduceLeft((a,b)=>{(Mux(a._2<b._2,a._1,b._1),Mux(a._2<b._2,a._2,b._2))}))._1 //find the smallest element
-
-     printf("oage0 = %x\n",reservation_station(1).io.o_age)
-     printf("available_funcs = %x\n",available_funcs)
-     printf("func_code = %x\n",reservation_station(1).io.o_uop.func_code)
-     printf("funcs = %x\n",~(Fill(8,(reservation_station(1).io.o_uop.func_code & available_funcs).orR)))
-     printf("age_considering_issue111 = %x\n",~Fill(8,reservation_station(1).io.o_ready_to_issue ))
-     printf(cf"age_considering_issue = $age_considering_issue\n")
 
      val available_funcs_with_mask = Wire(Vec(7, UInt(2.W)))
      available_funcs_with_mask:=io.i_available_funcs
@@ -137,40 +116,5 @@ class Reservation_Station extends Module{
      reservation_station(i).io.i_uop := Mux(i.U===write_idx1,uops(0),uops(1))//rewrite this with mux??
      }
 
-     io.r1valid := reservation_station(0).io.o_valid
-     io.issue_num := issue_num
-     io.reservation_station_valid := reservation_station_valid
-     io.gramted0 := reservation_station(0).io.i_issue_granted
-     io.gramted1 := reservation_station(1).io.i_issue_granted
-      io.wslot0 := reservation_station(0).io.i_write_slot
-      io.wslot1 := reservation_station(1).io.i_write_slot
-      io.valid0 := reservation_station(0).io.o_valid
-      io.valid1 := reservation_station(1).io.o_valid
-      io.cond1 := reservation_station(1).io.cond
-      io.iss1idx := issue1_idx
-      io.iss2idx := issue2_idx
-      io.r2i1 := reservation_station(1).io.o_ready_to_issue
-    printf("rs0rti=%d\n",reservation_station(0).io.o_ready_to_issue)
-    printf("rs1rti=%d\n",reservation_station(1).io.o_ready_to_issue)
-    printf("slot0rs1=%d\n",reservation_station(0).io.o_uop.phy_rs1)
-    printf("slot0valid=%d\n",reservation_station(0).io.o_valid)
-    printf("slot1valid=%d\n",reservation_station(0).io.o_valid)
-    printf("slot0write=%d\n",reservation_station(0).io.i_write_slot)
-    printf("slot0write=%d\n",reservation_station(0).io.i_write_slot&&reservation_station(0).io.i_uop.valid)
-    printf("write_idx1=%d\n",write_idx1)
-    printf("write_idx2=%d\n",write_idx2)
-    printf("wakeuport=%x\n",io.i_wakeup_port)
-    printf("issur1_idx=%x\n",issue1_idx)
-    printf("issur2_idx=%x\n",issue2_idx)
-    printf(cf"issur1_idx = $issue1_idx\n") // myUInt = 33x)
-    printf(cf"issuenum = $issue_num\n") // myUInt = 33x)
-    printf("issue0_valid = %d\n",(io.o_issue_packs(0).valid) )// myUInt = 33x)
-    printf("issue1_valid = %d\n",(io.o_issue_packs(1).valid) )// myUInt = 33x)
 
-    printf("issue0_rs1 = %d\n",(io.o_issue_packs(0).phy_rs1) )// myUInt = 33x)
-    printf("issue1_rs1 = %d\n",(io.o_issue_packs(1).phy_rs1) )// myUInt = 33x)
-    printf("allocidx = %d\n",(reservation_station(2).io.i_allocated_idx) )// myUInt = 33x)
-    printf("allocidx1 = %d\n",(reservation_station(3).io.i_allocated_idx) )// myUInt = 33x)
-    printf("maxage = %d\n",(reservation_station(2).io.i_age_pack.max_age) )// myUInt = 33x)
-    printf("---------------\n")
 }

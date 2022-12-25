@@ -29,7 +29,6 @@ class Reservation_Station_Slot extends Module with consts{
         val i_age_pack = Input(new age_pack())
         val o_age = Output(UInt(8.W))
 
-        val cond = Output(Bool())
     })
     val age = RegInit(0.U(8.W))
     io.o_age := age
@@ -98,7 +97,6 @@ class Reservation_Station_Slot extends Module with consts{
     }.elsewhen((io.i_write_slot)&&(io.i_uop.valid)){
         valid:=true.B
     }
-    io.cond:=(flush ||(io.i_issue_granted && !io.i_write_slot))
 
     //request logic
     when( (valid===true.B) && (next_src1_ready===true.B) && (next_src2_ready===true.B) ){//do we need to consider valid? 

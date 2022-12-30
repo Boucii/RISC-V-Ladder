@@ -34,7 +34,7 @@ class fetch_pack extends Bundle
 {
     val pc = UInt(32.W)
     val insts = Vec(2,UInt(32.W))
-    val branch_predict_pack
+    val branch_predict_pack = new branch_predict_pack()
 }
 
 class imem_fetch_req_interface extends Bundle
@@ -135,12 +135,12 @@ class uop extends Bundle(){
     val phy_rs1=UInt(7.W)
     val arch_rs1=UInt(5.W)
 
-    val src2_valid=Bool()
+    val src2_valid=Bool()//TODO:this seems not necessary, remove it
     val phy_rs2=UInt(7.W)
     val arch_rs2=UInt(5.W)
 
     val rob_idx = UInt(7.W)
-    val imm = UInt(64.W)
+    val imm = UInt(64.W)//TODO:signed?
 
     val dst_value = UInt(64.W)
     val src1_value = UInt(64.W)
@@ -148,7 +148,7 @@ class uop extends Bundle(){
 
     val exception = Bool()
 
-    val op1_sel = UInt(2.W)
+    val op1_sel = UInt(3.W)
     val op2_sel = UInt(3.W)//
     val alu_sel = UInt(3.W)//??select alu functions
 

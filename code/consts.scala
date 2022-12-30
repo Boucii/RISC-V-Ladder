@@ -19,19 +19,19 @@ trait consts{
     val FU_NUL = 64.U(7.W)
 
 //BRANCH_TYPE
-    val BR_N   = 0.U(3.W)//none
-    val BR_NE  = 1.U(3.W)
-    val BR_EQ  = 2.U(3.W)
-    val BR_GE  = 3.U(3.W)
-    val BR_GEU = 4.U(3.W)
-    val BR_LT  = 5.U(3.W)
-    val BR_LTU = 6.U(3.W)
-    val BR_J   = 7.U(3.W)
-    val BR_JR  = 8.U(3.W)
+    val BR_N   = 0.U(4.W)//none
+    val BR_NE  = 1.U(4.W)
+    val BR_EQ  = 2.U(4.W)
+    val BR_GE  = 3.U(4.W)
+    val BR_GEU = 4.U(4.W)
+    val BR_LT  = 5.U(4.W)
+    val BR_LTU = 6.U(4.W)
+    val BR_J   = 7.U(4.W)
+    val BR_JR  = 8.U(4.W)
 
 //Mem_Type
-    val MEM_READ    = 0.U(2.W)
-    val MEM_WRITE   = 1.U(2.W)
+    val MEM_R       = 0.U(2.W)
+    val MEM_W       = 1.U(2.W)
     val MEM_N       = 2.U(2.W)
 
 //INST_TYPE

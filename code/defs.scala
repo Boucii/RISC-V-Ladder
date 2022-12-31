@@ -126,7 +126,7 @@ class uop extends Bundle(){
 
     val phy_dst=UInt(7.W)
     val stale_dst=UInt(7.W)
-    val arch_dst=UInt(5.W)
+    val arch_dst=UInt(5.W)//if 0,then not write
 
     val inst_type = UInt(3.W)
     val regWen=Bool()

@@ -6,6 +6,7 @@ import chisel3._
 //archdst是0的话,不需要分配
 //写回时,协会的寄存器号没有测试
 //this is currently unbypassable,can this be bypassed?
+//在上层中需要加入,如果不写reg,就不req preg
 class Free_List extends Module{
     val io=IO(new Bundle{
         val i_free_list_reqs=Input(Vec(2, Bool()))
@@ -82,7 +83,8 @@ class Free_Queue extends Module{
         val o_phy_dst0=Output(UInt(7.W))
         val o_phy_dst1=Output(UInt(7.W))
     })
-    val queue=RegInit(VecInit.tabulate(128){i=>i.U(7.W)})
+    //val queue=RegInit(VecInit.tabulate(128){i=>i.U(7.W)})
+    val queue=RegInit(VecInit.tabulate(127){i=>i.U(7.W)+1.U})
     val head=RegInit(0.U(7.W))
     val tail=RegInit(0.U(7.W))
     val full=RegInit(false.B)
@@ -94,7 +96,7 @@ class Free_Queue extends Module{
 
     allocated_num := next_allocated_num
 
-    io.o_empty:=(next_allocated_num === 127.U || next_allocated_num === 128.U)
+    io.o_empty:=(next_allocated_num === 127.U || next_allocated_num === 126.U)
 
     //allocate
     io.o_phy_dst0:=queue(head)

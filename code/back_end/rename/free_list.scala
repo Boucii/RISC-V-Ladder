@@ -7,6 +7,15 @@ import chisel3._
 //写回时,协会的寄存器号没有测试
 //this is currently unbypassable,can this be bypassed?
 //在上层中需要加入,如果不写reg,就不req preg
+//TODO:when exception,free 2 pregs per cyc
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3._
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
+
 class Free_List extends Module{
     val io=IO(new Bundle{
         val i_free_list_reqs=Input(Vec(2, Bool()))
@@ -15,6 +24,8 @@ class Free_List extends Module{
 
         val i_commit_packs=Input(Vec(2,new commit_pack()))
         val i_rollback_packs=Input(Vec(2,new rollback_pack()))
+
+        val o_dbg_num = Output(UInt(7.W))
     })
     assert(!((io.i_commit_packs(0).valid || io.i_commit_packs(1).valid) && (io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid)),
         "rollback and commit cannot happen at the same time")
@@ -83,7 +94,6 @@ class Free_Queue extends Module{
         val o_phy_dst0=Output(UInt(7.W))
         val o_phy_dst1=Output(UInt(7.W))
     })
-    //val queue=RegInit(VecInit.tabulate(128){i=>i.U(7.W)})
     val queue=RegInit(VecInit.tabulate(127){i=>i.U(7.W)+1.U})
     val head=RegInit(0.U(7.W))
     val tail=RegInit(0.U(7.W))
@@ -97,10 +107,12 @@ class Free_Queue extends Module{
     allocated_num := next_allocated_num
 
     io.o_empty:=(next_allocated_num === 127.U || next_allocated_num === 126.U)
-
     //allocate
-    io.o_phy_dst0:=queue(head)
-    io.o_phy_dst1:=Mux(io.i_allocate_req0, queue(head+1.U), queue(head))
+    io.o_phy_dst0:=Mux(io.i_allocate_req0, queue(head) , 0.U)
+    io.o_phy_dst1:=MuxCase(0.U,Seq(//Mux(io.i_allocate_req0, queue(head+1.U), queue(head))
+        (io.i_allocate_req0     && io.i_allocate_req1) -> queue(head+1.U),
+        ((!io.i_allocate_req0)  && io.i_allocate_req1) -> queue(head)
+    ))
 
     when(io.i_allocate_req0 && io.i_allocate_req1){
         head:=head+2.U

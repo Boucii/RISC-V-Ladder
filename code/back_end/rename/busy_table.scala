@@ -7,7 +7,7 @@ import chisel3._
 import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
-
+//exception: mark every reg mapped but not writtenback unmapped, and reset writtenback of those bits
 //假设这三个input 都是需要写物理寄存器的,如果不写,valid为0
 //todo:0号preg恒为0,如果不写preg则置preg域为0
 //stall信号,不要重复分配

@@ -1,138 +1,241 @@
-abstract class Function_Unit extends Module{
-    val io=IO(new Bundle{
-        val i_uop=Input(new uop)
+package Ladder
+
+class DcacheIO extends Bundle{
+    val valid = Input(Bool())
+    val ready = Output(Bool())
+
+    val Mwout=Output((UInt(1.W)))
+    val Maddr=Output(UInt(64.W))
+    val Men=Output(Bool())
+    val Mlen=Output(UInt(32.W))
+    val MdataIn=Input(UInt(64.W))
+    val MdataOut=Output(UInt(64.W))
+}
+
+abstract class Function_Unit (
+    val is_bru :Boolean = false,
+    val is_lsu :Boolean = false
+)extends Module with consts{
+        val io=IO(new Bundle{
+        val o_branch_resolve_pack = if (is_bru)  Output(new branch_resolve_pack()) else null
+
+        val i_uop=Input(new uop())
         val i_select=Input(Bool())//select the function unit aka ready from input
         val i_select_to_commit=Input(Bool())//aka valid from output
 
         val o_func_idx=Output(UInt(5.W))
-        val o_ex_res_pack=Output(new ex_result_pack())//include a valid(ready bit) TODO:decouple this
-    })    
-    val uop = RegInit(new uop())//null uop
-        when(io.i_select){
-        uop:=io.i_uop
-    }
+        val o_ex_res_pack=Output(new valid_uop_pack())//include a valid(ready bit) TODO:decouple this
 
-    o_ex_res_pack.uop := uop
+        val o_available = Output(Bool())
+
+        val i_ROB_first_entry = if(is_lsu) Input(UInt(7.W)) else null
+        val dcache_io = if(is_lsu) new DcacheIO() else null
+    })
+
+
 }
-class ALU extends Function_Unit{
-    io.o_func_idx:=FU_ALU
+class ALU() extends Function_Unit(
+    is_bru = false,
+    is_lsu = false
+){
+    val uop = Reg(new uop())//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    uop:=next_uop
 
+    assert(uop.func_code ===FU_ALU || uop.func_code===0.U,"funccode is not alu")
+
+    io.o_func_idx:=FU_ALU
+    io.o_ex_res_pack.uop := uop
+    /*
     val opr1 = Muxcase(0.U,Seq(
         (io.i_uop.op1_sel === OP1_RS1) -> io.i_uop.src1_value,
         (io.i_uop.op1_sel === OP1_ZERO) -> 0.U,
-        (io.i_uop.op1_sel === OP1_IMZ) -> io.i_uop.imm,
+        (io.i_uop.op1_sel === OP1_IMM) -> io.i_uop.imm,
     ))
     val opr2 = Muxcase(0.U,Seq(
         (io.i_uop.op2_sel === OP2_RS2) -> io.i_uop.src2_value,
         (io.i_uop.op2_sel === OP2_IMM) -> io.i_uop.imm,
         (io.i_uop.op2_sel === OP2_ZERO) -> 0.U
-    ))
-    uop.dst_value :=Muxcase(0.U,Seq(
-        (io.i_uop.alu_sel === ALU_ADD) -> (opr1 + opr2),
-        (io.i_uop.alu_sel === ALU_SUB) -> (opr1 - opr2),
-        (io.i_uop.alu_sel === ALU_AND) -> (opr1 & opr2),
-        (io.i_uop.alu_sel === ALU_OR) -> (opr1 | opr2),
-        (io.i_uop.alu_sel === ALU_XOR) -> (opr1 ^ opr2),
-        (io.i_uop.alu_sel === ALU_SLL) -> (opr1 << opr2(4,0)),
-        (io.i_uop.alu_sel === ALU_SRL) -> (opr1 >> opr2(4,0)),
-        (io.i_uop.alu_sel === ALU_SRA) -> (opr1.asSInt >> opr2(4,0)).asUInt,
-        (io.i_uop.alu_sel === ALU_SLT) -> (opr1.asSInt < opr2.asSInt).asUInt,
-        (io.i_uop.alu_sel === ALU_SLTU) -> (opr1 < opr2).asUInt,
-        (io.i_uop.alu_sel === ALU_COPY1) -> opr1,
-        (io.i_uop.alu_sel === ALU_COPY2) -> opr2,
-        (io.i_uop.alu_sel === ALU_X) -> 0.U
-    )
-    )
-    when(io.i_select){
-        o_ex_res_pack.valid := true
-    }.otherwise{
-        o_ex_res_pack.valid := false
-    }
+    ))*/
+    val opr1 = Wire(UInt(64.W))
+    val opr2 = Wire(UInt(64.W))
+    opr1 := uop.src1_value
+    opr2 := uop.src2_value
 
+    io.o_ex_res_pack.uop.dst_value :=MuxCase(0.U,Seq(
+        (uop.alu_sel === ALU_ADD) -> (opr1 + opr2),
+        (uop.alu_sel === ALU_SUB) -> (opr1 - opr2),
+
+        (uop.alu_sel === ALU_AND) -> (opr1 & opr2),
+        (uop.alu_sel === ALU_OR) -> (opr1 | opr2),
+        (uop.alu_sel === ALU_XOR) -> (opr1 ^ opr2),
+
+        (uop.alu_sel === ALU_SL) -> (opr1 << opr2(4,0)),
+        (uop.alu_sel === ALU_SRL) -> (opr1 >> opr2(4,0)),
+        (uop.alu_sel === ALU_SRA) -> (opr1.asSInt >> opr2(4,0)).asUInt,
+
+        (uop.alu_sel === ALU_SLT) -> (opr1.asSInt < opr2.asSInt).asUInt,
+        (uop.alu_sel === ALU_SLTU) -> (opr1 < opr2).asUInt
+        //(uop.alu_sel === ALU_X) -> 0.U
+    )
+    )
+
+    val s_FREE :: s_BUSY ::  Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
+    next_state := MuxCase(state,Seq(
+        ((state === s_FREE) && (io.i_select && !io.i_select_to_commit)) -> s_BUSY,
+        ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_ex_res_pack.valid := uop.valid
+    printf("src1=%d\n",uop.src1_value)
+    printf("src2=%d\n",uop.src2_value)
+    printf("dstvalue=%d\n",io.o_ex_res_pack.uop.dst_value)
 }
 
-class BRU extends Function_Unit{
-    val io=IO(new Bundle{
-        val o_prediction_resolve_pack = Output(new prediction_resolve_pack())
-    })
+class BRU extends Function_Unit(
+    is_bru = true,
+    is_lsu = false
+){
+    io.o_func_idx := FU_BRU
+
+    val uop = Reg(new uop())//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    uop:=next_uop
+
+    io.o_ex_res_pack.uop := uop
     val branch_predict_pack = uop.branch_predict_pack
 
-    val rs1=io.i_uop.src1_value
-    val rs2=io.i_uop.src2_value
+    val rs1=uop.src1_value
+    val rs2=uop.src2_value
 
     val br_eq =(rs1 === rs2)
     val br_ltu = (rs1.asUInt < rs2.asUInt)
     val br_lt  = (~(rs1(63) ^ rs2(63)) & br_ltu |
                 rs1(63) & ~rs2(63)).asBool
 
-    val jalr_target_base = io.req.bits.rs1_data.asSInt
-    val target_offset = uop.imm(20,0).asSInt
+    //val jalr_target_base = io.req.bits.rs1_data.asSInt
+    //val target_offset = uop.imm(20,0).asSInt
     val jalr_target= Wire(UInt(64.W))
-    jalr_target := (jalr_target_base + target_offset).asUInt
+    jalr_target := (uop.src1_value.asSInt + uop.imm.asSInt).asUInt
 
-  val pc_sel = MuxLookup(uop.br_type, PC_PLUS4,
-                 Seq(   BR_N   -> PC_PLUS4,
-                        BR_NE  -> Mux(!br_eq,  PC_BRJMP, PC_PLUS4),
-                        BR_EQ  -> Mux( br_eq,  PC_BRJMP, PC_PLUS4),
-                        BR_GE  -> Mux(!br_lt,  PC_BRJMP, PC_PLUS4),
-                        BR_GEU -> Mux(!br_ltu, PC_BRJMP, PC_PLUS4),
-                        BR_LT  -> Mux( br_lt,  PC_BRJMP, PC_PLUS4),
-                        BR_LTU -> Mux( br_ltu, PC_BRJMP, PC_PLUS4),
-                        BR_J   -> PC_BRJMP,
-                        BR_JR  -> PC_JALR
+    val PC_PLUS4 = 0.U(2.W)
+    val PC_BRJMP = 1.U(2.W)
+    val PC_JALR  = 2.U(2.W)
+
+  val pc_sel = MuxCase(PC_PLUS4,
+                 Seq(  (uop.branch_type === BR_N  )   -> PC_PLUS4,
+                       (uop.branch_type === BR_NE )   -> Mux(!br_eq,  PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type === BR_EQ )   -> Mux( br_eq,  PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type ===  BR_GE)   -> Mux(!br_lt,  PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type === BR_GEU)   -> Mux(!br_ltu, PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type === BR_LT )   -> Mux( br_lt,  PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type === BR_LTU)   -> Mux( br_ltu, PC_BRJMP, PC_PLUS4),
+                       (uop.branch_type === BR_J  )   -> PC_BRJMP,
+                       (uop.branch_type === BR_JR )   -> PC_JALR
                         ))
 
-  val is_taken = (pc_sel =/= PC_PLUS4)
-  val mispredict = WireInit(false.B)
-
-  val target_address = Muxcase(pc_plus4, Seq(
-    (pc_sel === PC_BRJ) -> uop.imm.asSInt+uop.pc.asSInt,
-    (pc_sel === PC_JALR)  -> uop.src1_value,//????
-    (pc_sel === PC_PLUS4)  -> uop.pc+4.U
+  val is_taken = Wire(Bool())
+  is_taken := (pc_sel =/= PC_PLUS4)
+  val target_address = Wire(UInt(32.W))
+  target_address := MuxCase(uop.pc+4.U, Seq(
+    (pc_sel === PC_BRJMP)     -> (uop.imm.asSInt+uop.pc.asSInt).asUInt,
+    (pc_sel === PC_JALR)    -> (uop.src1_value.asSInt + uop.src2_value.asSInt).asUInt,
+    (pc_sel === PC_PLUS4)   -> (uop.pc+4.U(32.W))
   ))
-  mispredict := !(is_taken^uop.branch_predict_pack.taken) || (target_address =!= uop.branch_predict_pack.target)
 
-  val branch_resolve_pack = new branch_resolve_pack
+  val mispredict = Wire(Bool())
+  mispredict := !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)
+
+  val branch_resolve_pack = Wire(new branch_resolve_pack())
+  branch_resolve_pack.valid:=Mux(io.i_select===true.B,true.B,false.B)
+  branch_resolve_pack.valid             := io.i_select
+  branch_resolve_pack.mispred           := mispredict
+  branch_resolve_pack.taken             := is_taken
+  branch_resolve_pack.target            := target_address
   io.o_branch_resolve_pack := branch_resolve_pack
 
-  branch_resolve_pack.is_branch      := io.select
-  branch_resolve_pack.mispredict     := mispredict
-  branch_resolve_pack.taken          := is_taken
-  branch_resolve_pack.target         := target_address
+
+    val s_FREE :: s_BUSY :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
+    next_state := MuxCase(state,Seq(
+        ((state === s_FREE) && (io.i_select && !io.i_select_to_commit)) -> s_BUSY,
+        ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_ex_res_pack.valid := uop.valid
 }
 //lsu that only has one load/store in flight
-class LSU extends Function_Unit{
-    val io=IO(new Bundle{
-        val i_ROB_first_entry = UInt(7.W)
-    })
-    o_ex_res_pack.valid := dcache.io.valid
-    uop.dst_value := dcache.io.data
-    
-    dcache.io.req.ready:= (io.i_select && io.uop.type=!=1.U) || (io.uop.type && io.i_ROB_first_entry === uop.rob_idx)
-    dcache.io.rea.addr:= uop.src1_value//??
-    dcache.io.write := uop.mem_type
-    dcache.io.res.valid := io.i_select_to_commit
+
+class LSU extends Function_Unit(
+    is_bru = false,
+    is_lsu = true
+){
+
+    io.o_func_idx:=FU_MEM
+    val uop = Reg(new uop())//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    uop:=next_uop
+
+    val len = Wire(UInt(32.W))
+    len := MuxCase(0.U, Seq(
+        (uop.inst(13,12) === "b00".U) -> 1.U,
+        (uop.inst(13,12) === "b01".U) -> 2.U,
+        (uop.inst(13,12) === "b10".U) -> 4.U,
+        (uop.inst(13,12) === "b00".U) -> 8.U,
+    ))
+    val loadu = Wire(Bool())
+    loadu := (uop.inst(14)=== "b1".U)
+
+    val addr = Wire(UInt(64.W))
+    addr := Mux(uop.mem_type === MEM_R,uop.src1_value+uop.src2_value,uop.src1_value+uop.imm)
+
+    //dcache io
+    io.o_ex_res_pack.uop.dst_value := MuxCase(io.dcache_io.MdataIn,Seq(
+        (!loadu && len===1.U) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
+        (!loadu && len===2.U) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
+        (!loadu && len===4.U) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
+        (!loadu && len===8.U) -> io.dcache_io.MdataIn
+    ))
+    io.dcache_io.ready:= (io.i_select && uop.mem_type===MEM_R) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx)
+    io.dcache_io.Maddr:= addr
+    io.dcache_io.Mwout := uop.mem_type === MEM_W
+    io.dcache_io.Men := !(uop.mem_type === MEM_N)
+    io.dcache_io.Mlen := len
+    io.dcache_io.MdataOut := uop.src2_value
+    //----------------------------------
     io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.uop.dst_value := io.dcache_io.MdataIn
 
-    when(io.i_select_to_commit){
-        o_func_idx:= NULL
-    }
-    val s_Free :: s_BUSY ::  :: Nil = Enum(3)
-    val state = RegInit(FREE)
+    val s_FREE :: s_BUSY  :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
 
-    switch(state){
-        is(s_FREE){
-            when(io.i_select){
-                state := s_BUSY
-            }
-        }
-        is(s_BUSY){
-            when(io.i_select_to_commit){
-                state := s_FREE
-            }
-        }
-    }
-    io.o_func_idx := Mux(state === s_BUSY, NULL , MEM)
+    next_state := MuxCase(state,Seq(
+        ((state === s_FREE) && (io.i_select )) -> s_BUSY,
+        ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
 
+
+    val ready_to_commit = Reg(Bool())
+    val next_ready_to_commit = Wire(Bool())
+    ready_to_commit:=next_ready_to_commit
+
+    next_ready_to_commit:=Mux((state===s_BUSY && io.dcache_io.valid),true.B,ready_to_commit)
+    io.o_ex_res_pack.valid := next_ready_to_commit
+
+
+    io.o_ex_res_pack.valid := uop.valid
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
 }
-

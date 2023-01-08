@@ -73,10 +73,12 @@ class Decoder extends Module with consts{
      ))
      io.o_decode_packs(i).arch_rs1:= insts(i)(19,15)
      io.o_decode_packs(i).arch_rs2:= insts(i)(24,20)
+     io.o_decode_packs(i).arch_dst:= insts(i)(11,7)
+     /*
      io.o_decode_packs(i).arch_dst:= MuxCase(insts(i)(11,7),Seq(
         (io.o_decode_packs(i).inst_type === S_TYPE) ->immS(i),
         (io.o_decode_packs(i).inst_type === B_TYPE) ->immB(i),
-     ))
+     ))*/
      io.o_decode_packs(i).src1_valid:=MuxCase(false.B,Seq(
        (io.o_decode_packs(i).op1_sel === SRC_RS )-> false.B,
        (io.o_decode_packs(i).op1_sel === SRC_IMM) ->true.B,

@@ -42,4 +42,19 @@ trait consts{
     val U_TYPE = 4.U(7.W)
     val J_TYPE = 5.U(7.W)
     val N_TYPE = 6.U(7.W)
+
+//ALU_SEL
+    val ALU_ADD    = 0.U(4.W)
+    val ALU_SUB    = 1.U(4.W)
+    
+    val ALU_AND    = 2.U(4.W)
+    val ALU_OR     = 3.U(4.W)
+    val ALU_XOR    = 4.U(4.W)
+    
+    val ALU_SL     = 5.U(4.W)
+    val ALU_SRL    = 6.U(4.W)
+    val ALU_SRA    = 7.U(4.W)
+    
+    val ALU_SLT    = 8.U(4.W)
+    val ALU_SLTU   = 9.U(4.W)
 }

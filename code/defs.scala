@@ -72,49 +72,7 @@ class rob_allocation_pack extends Bundle()
 {
    val valids     = Vec(2, Bool())
    val uops       = Vec(2, new MicroOp())
-}/*
-class uop extends Bundle(){
-    val valid=Bool()
-    val pc=UInt(32.W)
-    val inst=UInt(32.W)
-    val func_unit=UInt(3.W)//TODO: change to enum
-
-    val branch_predict_pack=new branch_predict_pack
-
-    //val dst_valid=Bool()
-    val phy_dst=UInt(7.W)
-    val stale_dst=UInt(7.W)
-    val arch_dst=UInt(5.W)
-
-    val inst_type = UInt(3.W)
-    val regWen=Bool()
-
-    val rs1_valid=Bool()//is this operatee written back
-    val phy_rs1=UInt(7.W)
-    val arch_rs1=UInt(5.W)
-
-    val rs2_valid=Bool()
-    val phy_rs2=UInt(7.W)
-    val arch_rs2=UInt(5.W)
-
-    val rob_idx = UInt(7.W)
-    val imm = UInt(64.W)
-    val imm_sel = Bool()
-
-    val dst_value = UInt(64.W)
-    val rs1_value = UInt(64.W)
-    val rs2_value = UInt(64.W)
-
-    val exception = Bool()
-
-    val op1_sel = UInt(2.W)
-    val op2_sel = UInt(3.W)//
-    val imm_sel = UInt(3.W)//??select kind of imm
-    val alu_sel = UInt(3.W)//??select alu functions
-
-    val branch_type = UInt(3.W)
-    val mem_type = UInt(1.W)
-}*/
+}
 class uop extends Bundle(){
     val valid=Bool()
     val pc=UInt(32.W)

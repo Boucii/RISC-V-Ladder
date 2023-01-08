@@ -111,7 +111,7 @@ class uop extends Bundle(){
     val alu_sel = UInt(3.W)//??select alu functions
 
     val branch_type = UInt(3.W)
-    val mem_type = UInt(1.W)
+    val mem_type = UInt(2.W)
 }
 /*
   // RS1 Operand Select Signal

@@ -31,7 +31,19 @@ abstract class Function_Unit (
         val i_ROB_first_entry = if(is_lsu) Input(UInt(7.W)) else null
         val dcache_io = if(is_lsu) new DcacheIO() else null
     })
+    /*
+    val io=IO(new Bundle{
+        val i_uop=Input(new uop())
+        val i_select=Input(Bool())//select the function unit aka ready from input
+        val i_select_to_commit=Input(Bool())//aka valid from output
 
+        val o_func_idx=Output(UInt(5.W))
+        val o_ex_res_pack=Output(new valid_uop_pack())//include a valid(ready bit) TODO:decouple this
+    })    
+    val uop = RegInit(new uop())//null uop
+        when(io.i_select){
+        uop:=io.i_uop
+    }*/
 
 }
 class ALU() extends Function_Unit(
@@ -42,6 +54,9 @@ class ALU() extends Function_Unit(
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
+    when(io.i_select_to_commit && !io.i_select){
+        uop.valid:=false.B
+    }
 
     assert(uop.func_code ===FU_ALU || uop.func_code===0.U,"funccode is not alu")
 
@@ -108,6 +123,9 @@ class BRU extends Function_Unit(
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
+    when(io.i_select_to_commit && !io.i_select){
+        uop.valid:=false.B
+    }
 
     io.o_ex_res_pack.uop := uop
     val branch_predict_pack = uop.branch_predict_pack
@@ -154,8 +172,10 @@ class BRU extends Function_Unit(
   mispredict := !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
-  branch_resolve_pack.valid:=Mux(io.i_select===true.B,true.B,false.B)
-  branch_resolve_pack.valid             := io.i_select
+  val next_valid = Reg(Bool())
+  next_valid := io.i_select
+
+  branch_resolve_pack.valid             := next_valid
   branch_resolve_pack.mispred           := mispredict
   branch_resolve_pack.taken             := is_taken
   branch_resolve_pack.target            := target_address
@@ -228,14 +248,18 @@ class LSU extends Function_Unit(
     ))
 
 
-    val ready_to_commit = Reg(Bool())
+    val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
     ready_to_commit:=next_ready_to_commit
 
     next_ready_to_commit:=Mux((state===s_BUSY && io.dcache_io.valid),true.B,ready_to_commit)
+    next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
+        (state===s_BUSY && io.dcache_io.valid)->true.B,
+        (state===s_FREE) ->false.B 
+    ))
     io.o_ex_res_pack.valid := next_ready_to_commit
-
-
-    io.o_ex_res_pack.valid := uop.valid
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
+
+   printf("nextstate=%d\n",next_ready_to_commit)
+   printf("nextstate=%d\n",state)
 }

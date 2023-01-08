@@ -116,42 +116,4 @@ class Execute extends Module with consts{
     io.o_ex_res_packs(0).valid := MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid ))
     io.o_ex_res_packs(1).valid := MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2)
 
-    printf("exu1valid=%d\n",exu1.io.o_ex_res_pack.valid)
-    printf("exu2valid=%d\n",exu2.io.o_ex_res_pack.valid)
-    printf("bruvalid=%d\n",bru.io.o_ex_res_pack.valid)
-
-    printf("exu1 uop.dst_value=%d\n",exu1.io.o_ex_res_pack.uop.dst_value)
-
-    printf("exu1iselect=%d\n",exu1.io.i_select)
-    printf("exu2iselect=%d\n",exu2.io.i_select)
-    printf("exu1iselecttocommit=%d\n",exu1.io.i_select_to_commit)
-
-   printf("issueidx1=%d\n",issue_idx1) 
-   printf("issueidx2=%d\n\n",issue_idx2) 
 }
-/*
-    for(i <= 0 until func_units.length){// use switch case to connect specialized function unit
-        func_units(i).io.i_uop := io.i_issue_res_packs(i).uop
-        func_units(i).io.i_select := io.i_issue_res_packs(i).valid//???
-
-        io.o_ex_res_packs(i) := func_units(i).io.o_ex_res_pack//??
-        if(func_units(i).isInstanceOf[BRU]){
-            io.o_branch_resolve_pack := func_units(i).io.o_branch_resolve_pack
-        }
-        */
-        /*
-        if(func_units(i).isInstanceOf[LSU]){
-            func_units(i).io.i_ROB_first_entry:=io.i_ROB_first_entry
-        }
-    }
-    //select which function to input logic
-    //select the ouput unit
-    //those two pass 4 now
-
-    io.o_func_code :=0.U
-    io.o_func_mask :=0.U
-
-    io.o_ex_res_packs(0) := exu1.io.o_ex_res_pack
-    io.o_ex_res_packs(1) := exu2.io.o_ex_res_pack
-}
-*/

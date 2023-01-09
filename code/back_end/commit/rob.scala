@@ -13,7 +13,7 @@ class Reorder_Buffer extends Module{
         val o_rob_allocation_ress = Output(Vec(2,new allocation_res_pack()))
 
         //to rename stage 
-        val o_roll_back_pack = Output(Vec(2,new valid_uop_pack()))
+        val o_roll_back_packs = Output(Vec(2,new valid_uop_pack()))
         //from exe stage
         val i_ex_res_packs = Input(Vec(2,new valid_uop_pack()))
         val i_branch_resolve_pack = Input(new branch_resolve_pack())
@@ -89,11 +89,11 @@ class Reorder_Buffer extends Module{
       io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0)
       io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1) && io.i_rob_allocation_reqs(0) //dispatch 会req1 而不req0吗
       
-      io.o_roll_back_pack(0).valid := next_rob_state===s_rollback
-      io.o_roll_back_pack(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
+      io.o_roll_back_packs(0).valid := next_rob_state===s_rollback
+      io.o_roll_back_packs(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
       
-      io.o_roll_back_pack(0).uop:=rob_uop(commit_ptr)
-      io.o_roll_back_pack(1).uop:=rob_uop(commit_ptr-1.U)
+      io.o_roll_back_packs(0).uop:=rob_uop(commit_ptr)
+      io.o_roll_back_packs(1).uop:=rob_uop(commit_ptr-1.U)
 
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
@@ -205,7 +205,7 @@ class Reorder_Buffer extends Module{
         val i_rob_allocation_reqs = Input(Vec(2,Bool()))
         val o_rob_allocation_ress = Output(Vec(2,new allocation_res_pack()))
         //to rename stage 
-        val o_roll_back_pack = Output(Vec(2,new roll_back_pack()))
+        val o_roll_back_packs = Output(Vec(2,new roll_back_pack()))
         //from exe stage
         val i_ex_result_packs = Input(Valid(Vec(2,new ex_result_pack())))
         val i_branch_resolve_pack = Input(new branch_resolve_pack())
@@ -342,11 +342,11 @@ class Reorder_Buffer extends Module{
       io.o_commit_pack.valid(0) := false.B
       io.o_commit_pack.valid(1) := false.B
 
-      io.o_roll_back_pack.valid(0) := true.B
-      io.o_roll_back_pack.valid(1) := (num_to_roll_back === 2.U)
+      io.o_roll_back_packs.valid(0) := true.B
+      io.o_roll_back_packs.valid(1) := (num_to_roll_back === 2.U)
 
-      io.o_roll_back_pack(0).uop:=rob_uop(rollback_ptr)
-      io.o_roll_back_pack(1).uop:=rob_uop(rollback_ptr-1)
+      io.o_roll_back_packs(0).uop:=rob_uop(rollback_ptr)
+      io.o_roll_back_packs(1).uop:=rob_uop(rollback_ptr-1)
 
       io.o_commit_pack(0).valid := false.B
       io.o_commit_pack(1).valid := false.B

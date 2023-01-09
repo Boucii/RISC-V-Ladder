@@ -4,8 +4,14 @@ import Chisel._
 class Front_End extends Module
 {
     val io = IO(new Bundle{
-        val i_branch_resolve_pack = ?
+        //connect icache
 
+        //from back_end
+        val i_branch_resolve_pack = Input(new branch_resolve_pack())
+        val i_stall = Input(new Bool())
+
+        //to back_end
+        val o_decode_packs = Output(Vec(2,new uop()))
     })
     val pc_gen = new PC_Gen()
     val bpu = new BPU()
@@ -71,5 +77,9 @@ class Front_End extends Module
  
     /*stage 4 : decode from fetch queue*/
     decoder.io.i_fetch_pack := fetch_queue.io.out
+
+    /*connect to back_end*/
+    //:= io.i_branch_resolve_pack
+    //....
 }
 

@@ -27,6 +27,7 @@ class Back_End extends Module{
     rename.io.i_decode_packs := io.i_decode_packs
     rename.io.i_commit_packs := rob.io.o_commit_packs
     rename.io.i_rollback_packs := rob.io.o_rollback_packs
+    rename.io.i_exception := rob.io.o_exception
 
     //connect dispatch input
     dispatch.io.i_rename_packs := rename.io.o_rename_packs

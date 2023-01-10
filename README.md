@@ -1,7 +1,7 @@
 # RISC-V-Ladder
 An out-of-order, dual issueed RISC-V core and SOC, a working project.
 
-**$\color{red}{NOT A FINISHED PROJECT!}$**
+**$\color{red}{NOT\ \ A\ \ FINISHED\ \ PROJECT!}$**
 
 Implemented using chisel.
 

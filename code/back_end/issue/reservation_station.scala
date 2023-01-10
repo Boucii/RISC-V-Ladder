@@ -16,7 +16,7 @@ class Reservation_Station extends Module{
 
    }) 
      //val uops = Reg(Vec(2,new uop()))
-     val uops = Wire(Vec(2,new uop()))
+     val uops = Reg(Vec(2,new uop()))
      uops:=io.i_dispatch_packs
 
      val reservation_station = Seq.fill(64)(Module(new Reservation_Station_Slot()))

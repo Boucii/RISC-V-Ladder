@@ -33,6 +33,8 @@ class Execute extends Module with consts{
 
         //when mispred,clear insts later than the mispred inst
         //when exception , clear all 
+         
+        val i_exception = Input(Bool())
     })
 
     //lets do this for now. imrove this by adding a virtual exunit class 
@@ -86,6 +88,11 @@ class Execute extends Module with consts{
 
     bru.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_BRU,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     lsu.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_MEM,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
+
+    exu1.io.i_exceptions    := io.i_exception
+    exu2.io.i_exceptions    := io.i_exception
+    bru.io.i_exceptions     := io.i_exception
+    lsu.io.i_exceptions     := io.i_exception
 /*????????
     when((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)){
         bru.io.i_select := true.B
@@ -100,6 +107,8 @@ class Execute extends Module with consts{
     }
     */
     io.o_branch_resolve_pack := bru.io.o_branch_resolve_pack
+    io.o_branch_resolve_pack.valid := Mux(io.i_exception, false.B ,bru.io.o_branch_resolve_pack.valid)
+
     val issue_idx1 = Wire(UInt(2.W))
     val issue_idx2 = Wire(UInt(2.W))
 
@@ -113,7 +122,7 @@ class Execute extends Module with consts{
     io.o_ex_res_packs(0).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.uop ))
     io.o_ex_res_packs(1).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.uop ))
 
-    io.o_ex_res_packs(0).valid := MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid ))
-    io.o_ex_res_packs(1).valid := MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2)
+    io.o_ex_res_packs(0).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid )))
+    io.o_ex_res_packs(1).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2))
 
 }

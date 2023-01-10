@@ -25,6 +25,7 @@ class Rename extends Module{
         val o_written_back_table=Output(UInt(128.W))
 
         val i_exception = Input(Bool())
+        val i_stall = Input(Bool())
     })
     val rename_table=Module(new Rename_Table()) 
     //val free_list=Module(new Free_List())
@@ -32,8 +33,8 @@ class Rename extends Module{
 
     //exchange 0,1 if invalid , valid
     val uops = Reg(Vec(2,new uop()))
-    uops(0) := Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(1), io.i_decode_packs(0))
-    uops(1) := Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(0), io.i_decode_packs(1))
+    uops(0) := Mux(io.i_stall, uops(0), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(1), io.i_decode_packs(0)))
+    uops(1) := Mux(io.i_stall, uops(1), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(0), io.i_decode_packs(1)))
 
     //rename table -------------------
     for(i <- 0 until 2){
@@ -45,7 +46,7 @@ class Rename extends Module{
     rename_table.io.i_rollback_packs := io.i_rollback_packs
     rename_table.io.i_allocation_pack:=io.o_rename_packs
 
-    rename_table.io.i_exception:=false.B
+    rename_table.io.i_exception:= io.i_exception
     /*
     //free list-----------------------
     free_list.io.i_free_list_reqs(0):= uops(0).valid && (uops(0).arch_dst =/= 0.U)
@@ -56,6 +57,8 @@ class Rename extends Module{
     */
 
     io.o_rename_packs := uops
+    io.rename_packs(0).valid := Mux((io.i_exception || io.rollback_packa(0).valid || io.rollback_packs(1).valid) ,false.B,uops(0).valid)
+    io.rename_packs(1).valid := Mux((io.i_exception || io.rollback_packa(0).valid || io.rollback_packs(1).valid) ,false.B,uops(1).valid)
     io.o_free_list_empty := busy_table.io.o_empty
 
     io.o_rename_packs(0).phy_rs1 := rename_table.io.o_rename_res_packs(0).phy_rs1

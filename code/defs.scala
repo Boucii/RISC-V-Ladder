@@ -4,6 +4,10 @@ import Chisel._
 //control signals of bundles are all decoupled
 //aka. ready-valid to exchange signals are not in the bundles
 //the valid signal is in the bundle stands for the validity of the data 
+class rob_allocation_req_pack extends Bundle{
+    val valid = Bool()
+    val uop = new uop()
+}
 class branch_predict_pack extends Bundle
 {
     //TODO: valid and is_branch?,valid?

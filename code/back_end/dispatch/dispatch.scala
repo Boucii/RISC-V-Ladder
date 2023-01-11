@@ -12,7 +12,7 @@ class Dispatch extends Module{
         //from exection unit
         val i_branch_resolve_pack=Input(new branch_resolve_pack())
         //to rob
-        val o_rob_allocate_reqs=Output(Vec(2,Bool()))
+        val o_rob_allocation_reqs=Output(Vec(2,new rob_allocation_req_pack()))
         //val i_rob_full=Input(new Bool()) //this seems to be redundent since when rob full,allocation req = invalid
         val o_dispatch_packs=Output(Vec(2,new uop()))
 
@@ -30,8 +30,11 @@ class Dispatch extends Module{
         uops(1).valid:=false.B
     }
     //we dont have to check if theres a branch mispred,cause when that happens, rob wont allocate for insts, but we add it anyway(latancy increse)
-    io.o_rob_allocate_reqs(0):=Mux(io.i_reservation_station_full || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred) ,false.B,uops(0).valid)
-    io.o_rob_allocate_reqs(1):=Mux(io.i_reservation_station_full || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred) ,false.B,uops(1).valid)
+    io.o_rob_allocation_reqs(0).valid:=Mux(io.i_reservation_station_full || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred) ,false.B,uops(0).valid)
+    io.o_rob_allocation_reqs(1).valid:=Mux(io.i_reservation_station_full || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred) ,false.B,uops(1).valid)
+
+    io.o_rob_allocation_reqs(0).uop := uops(0) 
+    io.o_rob_allocation_reqs(1).uop := uops(1) 
 
     io.o_dispatch_packs(0) := uops(0)
     io.o_dispatch_packs(1) := uops(1)

@@ -9,7 +9,7 @@ class Reorder_Buffer extends Module{
         val o_full =Output(Bool())
 
         //from and to decode stage
-        val i_rob_allocation_reqs = Input(Vec(2,Bool()))
+        val i_rob_allocation_reqs = Input(Vec(2, new rob_allocation_req_pack()))
         val o_rob_allocation_ress = Output(Vec(2,new allocation_res_pack()))
 
         //to rename stage 
@@ -86,8 +86,8 @@ class Reorder_Buffer extends Module{
       io.o_commit_packs(0).uop := (rob_uop(commit_ptr))
       io.o_commit_packs(1).uop := (rob_uop(commit_ptr+1.U))
 
-      io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0)
-      io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1) && io.i_rob_allocation_reqs(0) //dispatch 会req1 而不req0吗
+      io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0).valid
+      io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1).valid && io.i_rob_allocation_reqs(0).valid //dispatch 会req1 而不req0吗
       
       io.o_roll_back_packs(0).valid := next_rob_state===s_rollback
       io.o_roll_back_packs(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
@@ -99,14 +99,17 @@ class Reorder_Buffer extends Module{
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
 
     when(next_rob_state === s_normal){
-      when(io.i_rob_allocation_reqs(0) && io.i_rob_allocation_reqs(1)){
+      when(io.i_rob_allocation_reqs(0).valid && io.i_rob_allocation_reqs(1).valid){
         //rob_uop(allocate_ptr) := io.i_allocate_uops(0) write when write back
+        rob_uop(allocate_ptr) := io.i_rob_allocation_reqs(0).uop
         rob_valid(allocate_ptr) := true.B
         rob_done(allocate_ptr) := false.B
+        rob_uop(allocate_ptr+1.U) := io.i_rob_allocation_reqs(1).uop
         rob_valid(allocate_ptr+1.U) := true.B
         rob_done(allocate_ptr+1.U) := false.B
         allocate_ptr := allocate_ptr + 2.U 
-      }.elsewhen(io.i_rob_allocation_reqs(0) || io.i_rob_allocation_reqs(1)){
+      }.elsewhen(io.i_rob_allocation_reqs(0).valid || io.i_rob_allocation_reqs(1).valid){
+        rob_uop(allocate_ptr) := Mux(io.i_rob_allocation_reqs(0).valid, io.i_rob_allocation_reqs(0).uop, io.i_rob_allocation_reqs(1).uop)
         //rob_uop(allocate_ptr) := io.i_allocate_uops(1)
         rob_valid(allocate_ptr) := true.B
         allocate_ptr := allocate_ptr + 1.U
@@ -115,7 +118,7 @@ class Reorder_Buffer extends Module{
 
       when(io.i_ex_res_packs(0).valid){
         rob_valid(io.i_ex_res_packs(0).uop.rob_idx) := true.B
-        rob_uop(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop
+        rob_uop(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop //modified for just dst value and other necessary info
         rob_exception(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop.exception
         rob_done(io.i_ex_res_packs(0).uop.rob_idx) := true.B
       }

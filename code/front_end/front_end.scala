@@ -1,5 +1,10 @@
-package ladder
-import Chisel._
+package Ladder
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 class Front_End extends Module
 {
@@ -79,7 +84,6 @@ class Front_End extends Module
     decoder.io.i_fetch_pack := fetch_queue.io.out
 
     /*connect to back_end*/
-    //:= io.i_branch_resolve_pack
-    //....
+    io.o_decode_packs := decoder.io.o_decode_packs
 }
 

@@ -1,6 +1,15 @@
+package Ladder
+
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 //import scala.util.control.Breaks._
 //assuming unified reservation station and depth of 64
 //这个需要单另的reg来存uop吗,目测是需要的
+
 class Reservation_Station extends Module{
    val io = IO(new Bundle{
      val i_dispatch_packs = Input(Vec(2,new uop()))

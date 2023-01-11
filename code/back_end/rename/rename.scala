@@ -7,13 +7,6 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
-import chisel3._
-import chiseltest._
-import org.scalatest.freespec.AnyFreeSpec
-import chisel3.util._
-import chisel3.util.experimental.decode._
-import chisel3.experimental.BundleLiterals._
-
 class Rename extends Module{
     val io=IO(new Bundle{
         val i_decode_packs=Input(Vec(2,new uop()))
@@ -81,5 +74,5 @@ class Rename extends Module{
 
     io.o_written_back_table := busy_table.io.o_written_back
 
-    printf("phydst0=%d ,phy_dst1=%d\n",io.o_rename_packs(0).phy_dst,io.o_rename_packs(1).phy_dst)
+    //printf("phydst0=%d ,phy_dst1=%d\n",io.o_rename_packs(0).phy_dst,io.o_rename_packs(1).phy_dst)
 }

@@ -3,6 +3,10 @@ package Ladder
 import chisel3._
 import chisel3.util._
 import Instructions._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 object decode_table extends consts{
   val table: Array[(BitPat, List[BitPat])] = Array(

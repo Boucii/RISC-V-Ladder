@@ -96,8 +96,6 @@ class Busy_Table extends Module{
     io.o_allocated_pregs(0) := Mux(io.i_free_list_reqs(0),available0,0.U)
     io.o_allocated_pregs(1) := Mux(io.i_free_list_reqs(1),available1,0.U)
 
-
-
-    printf("writtenback=%x \n",next_written_back)
-    printf("available1=%d\n\n",available1)
+    //printf("writtenback=%x \n",next_written_back)
+    //printf("available1=%d\n\n",available1)
 }

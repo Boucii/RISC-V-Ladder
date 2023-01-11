@@ -1,5 +1,11 @@
-package ladder
-import Chisel._
+package Ladder
+
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 //control signals of bundles are all decoupled
 //aka. ready-valid to exchange signals are not in the bundles
@@ -8,6 +14,24 @@ class rob_allocation_req_pack extends Bundle{
     val valid = Bool()
     val uop = new uop()
 }
+class IcacheIO extends Bundle{
+    val o_addr_valid = Output(Bool())
+    val i_inst_ready = Input(Bool())
+    val o_addr = Output(UInt(64.W))
+    val i_insts = Input(Vec(2,new UInt(64.W)))
+}
+class DcacheIO extends Bundle{
+    val valid = Input(Bool())
+    val ready = Output(Bool())
+
+    val Mwout=Output((UInt(1.W)))
+    val Maddr=Output(UInt(64.W))
+    val Men=Output(Bool())
+    val Mlen=Output(UInt(32.W))
+    val MdataIn=Input(UInt(64.W))
+    val MdataOut=Output(UInt(64.W))
+}
+
 class branch_predict_pack extends Bundle
 {
     //TODO: valid and is_branch?,valid?

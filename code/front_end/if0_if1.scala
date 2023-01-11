@@ -1,5 +1,10 @@
-package ladder
-import chisel._
+package Ladder
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 class if1_if2 extends Module
 {

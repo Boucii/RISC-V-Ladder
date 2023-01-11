@@ -1,6 +1,13 @@
-package ladder
-import Chisel._
+package Ladder
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
+class icache_io extends Bundle{
 
+}
 //TODO: implement using C++ verilator
 class icache extends Module
 {

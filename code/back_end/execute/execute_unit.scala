@@ -1,17 +1,5 @@
 package Ladder
 
-class DcacheIO extends Bundle{
-    val valid = Input(Bool())
-    val ready = Output(Bool())
-
-    val Mwout=Output((UInt(1.W)))
-    val Maddr=Output(UInt(64.W))
-    val Men=Output(Bool())
-    val Mlen=Output(UInt(32.W))
-    val MdataIn=Input(UInt(64.W))
-    val MdataOut=Output(UInt(64.W))
-}
-
 abstract class Function_Unit (
     val is_bru :Boolean = false,
     val is_lsu :Boolean = false
@@ -118,9 +106,9 @@ class ALU() extends Function_Unit(
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
     io.o_ex_res_pack.valid := uop.valid
 
-    printf("src1=%d\n",uop.src1_value)
-    printf("src2=%d\n",uop.src2_value)
-    printf("dstvalue=%d\n",io.o_ex_res_pack.uop.dst_value)
+    //printf("src1=%d\n",uop.src1_value)
+    //printf("src2=%d\n",uop.src2_value)
+    //printf("dstvalue=%d\n",io.o_ex_res_pack.uop.dst_value)
 }
 
 class BRU extends Function_Unit(

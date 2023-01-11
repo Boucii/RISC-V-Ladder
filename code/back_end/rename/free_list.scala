@@ -1,6 +1,11 @@
 package Ladder
 
 import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 //考虑指令uop里的valid
 //archdst是0的话,不需要分配

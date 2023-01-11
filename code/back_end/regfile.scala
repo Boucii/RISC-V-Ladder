@@ -1,6 +1,11 @@
 package Ladder
 
-import Chisel3._
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 //64bit regfile with 4 read ports, 2 write ports,with write to read bypass
 class RegFile extends Module {

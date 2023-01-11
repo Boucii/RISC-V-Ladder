@@ -28,7 +28,7 @@ class Decoder extends Module with consts{
             io.o_decode_packs(1).mem_type
       )
     )
-    val default_table = List(N,BitPat.dontCare(7),N,BitPat.dontCare(7),BitPat.dontCare(3),BitPat.dontCare(3),BitPat.dontCare(3),BitPat.dontCare(4),BitPat.dontCare(2))
+    val default_table = List(N,BitPat.dontCare(7),N,BitPat.dontCare(7),BitPat.dontCare(3),BitPat.dontCare(3),BitPat.dontCare(5),BitPat.dontCare(4),BitPat.dontCare(2))
 
     io.i_fetch_pack.ready:=true.B
     val table=decode_table.table 

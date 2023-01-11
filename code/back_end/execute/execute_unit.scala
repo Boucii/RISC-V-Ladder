@@ -33,21 +33,8 @@ abstract class Function_Unit (
 
         val i_exception = Input(Bool())
     })
-    /*
-    val io=IO(new Bundle{
-        val i_uop=Input(new uop())
-        val i_select=Input(Bool())//select the function unit aka ready from input
-        val i_select_to_commit=Input(Bool())//aka valid from output
 
-        val o_func_idx=Output(UInt(5.W))
-        val o_ex_res_pack=Output(new valid_uop_pack())//include a valid(ready bit) TODO:decouple this
-    })    
-    val uop = RegInit(new uop())//null uop
-        when(io.i_select){
-        uop:=io.i_uop
-    }*/
-
-}
+//alu can be changed into decode the imm inside it, saves wire
 class ALU() extends Function_Unit(
     is_bru = false,
     is_lsu = false
@@ -80,21 +67,40 @@ class ALU() extends Function_Unit(
     opr1 := uop.src1_value
     opr2 := uop.src2_value
 
+    val intermediate = Wire(UInt(64.W))
+    intermediate := 0.U
+
     io.o_ex_res_pack.uop.dst_value :=MuxCase(0.U,Seq(
-        (uop.alu_sel === ALU_ADD) -> (opr1 + opr2),
-        (uop.alu_sel === ALU_SUB) -> (opr1 - opr2),
-
-        (uop.alu_sel === ALU_AND) -> (opr1 & opr2),
-        (uop.alu_sel === ALU_OR) -> (opr1 | opr2),
-        (uop.alu_sel === ALU_XOR) -> (opr1 ^ opr2),
-
-        (uop.alu_sel === ALU_SL) -> (opr1 << opr2(4,0)),
-        (uop.alu_sel === ALU_SRL) -> (opr1 >> opr2(4,0)),
-        (uop.alu_sel === ALU_SRA) -> (opr1.asSInt >> opr2(4,0)).asUInt,
-
-        (uop.alu_sel === ALU_SLT) -> (opr1.asSInt < opr2.asSInt).asUInt,
-        (uop.alu_sel === ALU_SLTU) -> (opr1 < opr2).asUInt
-        //(uop.alu_sel === ALU_X) -> 0.U
+        (uop.alu_sel === ALU_NONE   )-> 0.U  ,
+        (uop.alu_sel === ALU_AUIPC  )-> opr1 + opr2    ,
+        (uop.alu_sel === ALU_ADDI   )-> opr1 + opr2    ,
+        (uop.alu_sel === ALU_SLTI   )-> (Mux(opr1.asSInt>=opr2.asSInt,0.U,1.U)).asUInt    ,
+        (uop.alu_sel === ALU_SLTIU  )-> Mux(opr1>=opr2,0.U,1.U)    ,
+        (uop.alu_sel === ALU_XORI   )-> opr1^opr2    ,
+        (uop.alu_sel === ALU_ORI    )-> opr1|opr2    ,
+        (uop.alu_sel === ALU_ANDI   )-> opr1&opr2    ,
+        (uop.alu_sel === ALU_ADDIW  )-> {intermediate:=(src1+src2)(31,0) ; Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))  }  ,
+        (uop.alu_sel === ALU_SLLI   )-> (opr1(63,0)<<opr2(4,0))   ,
+        (uop.alu_sel === ALU_SRLI   )-> (opr1(63,0).asUInt>>opr2(4,0)).asUInt    ,
+        (uop.alu_sel === ALU_SRAI   )-> (opr1(63,0).asSInt>>opr2(4,0)).asUInt    ,
+        (uop.alu_sel === ALU_SLLIW  )-> (opr1(31,0).asUInt<<opr2(4,0)).asUInt    ,
+        (uop.alu_sel === ALU_SRLIW  )-> {intermediate:=(src1(31,0).asUInt>>src2(4,0)).asUInt; Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0)) }  ,
+        (uop.alu_sel === ALU_SRAIW  )-> {intermediate:=(src1(31,0).asSInt>>src2(4,0)).asUInt; Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0)) }  ,
+        (uop.alu_sel === ALU_ADD    )-> opr1+opr2    ,
+        (uop.alu_sel === ALU_SUB    )-> opr1-opr2    ,
+        (uop.alu_sel === ALU_SLL    )-> (opr1(63,0)<<opr2(4,0))    ,
+        (uop.alu_sel === ALU_SLT    )-> (Mux(opr1.asSInt>=opr2.asSInt,0.U,1.U)).asUInt    ,
+        (uop.alu_sel === ALU_SLTU   )-> Mux(opr1.asUInt>=opr2.asUInt,0.U,1.U)     ,
+        (uop.alu_sel === ALU_XOR    )-> opr1^opr2    ,
+        (uop.alu_sel === ALU_SRL    )-> opr1.asUInt>>opr2(4,0).asUInt,
+        (uop.alu_sel === ALU_SRA    )-> (opr1.asSInt>>opr2(4,0).asUInt).asUInt    ,
+        (uop.alu_sel === ALU_OR     )-> opr1|opr2    ,
+        (uop.alu_sel === ALU_AND    )-> opr1&opr2    ,
+        (uop.alu_sel === ALU_ADDW   )-> Mux((opr1+opr2)(31)=/=1.U,(opr1+opr2)(31,0),Cat(0xffffffffL.U,(opr1+opr2)(31,0)))    ,
+        (uop.alu_sel === ALU_SUBW   )-> Mux((opr1-opr2)(31)=/=1.U,(opr1-opr2)(31,0),Cat(0xffffffffL.U,(opr1-opr2)(31,0)))    ,
+        (uop.alu_sel === ALU_SLLW   )-> {intermediate:=(src1(63,0)<<src2(4,0))(31,0); Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0))) }   ,
+        (uop.alu_sel === ALU_SRLW   )-> {intermediate:=(src1(31,0).asUInt>>src2(4,0)).asUInt; Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0))) }   ,
+        (uop.alu_sel === ALU_SRAW   )-> (opr1.asSInt>>opr2(4,0)).asUInt    
     )
     )
 

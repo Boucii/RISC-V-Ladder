@@ -108,7 +108,7 @@ class uop extends Bundle(){
 
     val op1_sel = UInt(3.W)
     val op2_sel = UInt(3.W)//
-    val alu_sel = UInt(3.W)//??select alu functions
+    val alu_sel = UInt(5.W)//??select alu functions
 
     val branch_type = UInt(3.W)
     val mem_type = UInt(2.W)

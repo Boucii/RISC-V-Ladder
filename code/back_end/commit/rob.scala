@@ -22,7 +22,7 @@ class Reorder_Buffer extends Module{
         val o_rob_allocation_ress = Output(Vec(2,new allocation_res_pack()))
 
         //to rename stage 
-        val o_roll_back_packs = Output(Vec(2,new valid_uop_pack()))
+        val o_rollback_packs = Output(Vec(2,new valid_uop_pack()))
         //from exe stage
         val i_ex_res_packs = Input(Vec(2,new valid_uop_pack()))
         val i_branch_resolve_pack = Input(new branch_resolve_pack())
@@ -64,9 +64,9 @@ class Reorder_Buffer extends Module{
     //判定要用下个周期的allocateptr而不是这个周期的
     //robstate也应该要看robstatenext
     next_num_to_roll_back := MuxCase(0.U,Seq(
-      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) > io.i_branch_resolve_pack.rob_idx) ->2.U,
-      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) === io.i_branch_resolve_pack.rob_idx)->2.U,
-      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -1.U) === io.i_branch_resolve_pack.rob_idx) ->1.U
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) > io.i_branch_resolve_pack.uop.rob_idx) ->2.U,
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -2.U) === io.i_branch_resolve_pack.uop.rob_idx)->2.U,
+      (next_rob_state === s_rollback && (allocate_ptr - num_to_roll_back -1.U) === io.i_branch_resolve_pack.uop.rob_idx) ->1.U
     )) 
     io.o_rob_head := commit_ptr
 
@@ -98,11 +98,11 @@ class Reorder_Buffer extends Module{
       io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0).valid
       io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1).valid && io.i_rob_allocation_reqs(0).valid //dispatch 会req1 而不req0吗
       
-      io.o_roll_back_packs(0).valid := next_rob_state===s_rollback
-      io.o_roll_back_packs(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
+      io.o_rollback_packs(0).valid := next_rob_state===s_rollback
+      io.o_rollback_packs(1).valid := (num_to_roll_back === 2.U) && next_rob_state===s_rollback
       
-      io.o_roll_back_packs(0).uop:=rob_uop(commit_ptr)
-      io.o_roll_back_packs(1).uop:=rob_uop(commit_ptr-1.U)
+      io.o_rollback_packs(0).uop:=rob_uop(commit_ptr)
+      io.o_rollback_packs(1).uop:=rob_uop(commit_ptr-1.U)
 
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
@@ -192,7 +192,7 @@ class Reorder_Buffer extends Module{
       (rob_state === s_reset) -> s_normal,
       (rob_state === s_normal && is_full) -> s_full,
       ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) -> s_rollback,
-      (rob_state === s_rollback && (io.i_branch_resolve_pack.rob_idx === allocate_ptr)) -> s_normal,
+      (rob_state === s_rollback && (io.i_branch_resolve_pack.uop.rob_idx === allocate_ptr)) -> s_normal,
       (rob_state === s_full && will_commit(0)) -> s_normal
     ))
     //printf("rob_state:%d\n",rob_state)

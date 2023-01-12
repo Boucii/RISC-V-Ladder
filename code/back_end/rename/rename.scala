@@ -11,7 +11,7 @@ class Rename extends Module{
     val io=IO(new Bundle{
         val i_decode_packs=Input(Vec(2,new uop()))
         val i_commit_packs=Input(Vec(2,new commit_pack()))
-        val i_rollback_packs=Input(Vec(2,new rollback_pack))
+        val i_rollback_packs=Input(Vec(2,new rollback_pack()))
 
         val o_free_list_empty = Output(Bool())
         val o_rename_packs=Output(Vec(2,new uop()))
@@ -50,8 +50,8 @@ class Rename extends Module{
     */
 
     io.o_rename_packs := uops
-    io.rename_packs(0).valid := Mux((io.i_exception || io.rollback_packa(0).valid || io.rollback_packs(1).valid) ,false.B,uops(0).valid)
-    io.rename_packs(1).valid := Mux((io.i_exception || io.rollback_packa(0).valid || io.rollback_packs(1).valid) ,false.B,uops(1).valid)
+    io.o_rename_packs(0).valid := Mux((io.i_exception || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid) ,false.B,uops(0).valid)
+    io.o_rename_packs(1).valid := Mux((io.i_exception || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid) ,false.B,uops(1).valid)
     io.o_free_list_empty := busy_table.io.o_empty
 
     io.o_rename_packs(0).phy_rs1 := rename_table.io.o_rename_res_packs(0).phy_rs1

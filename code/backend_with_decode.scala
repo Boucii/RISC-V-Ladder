@@ -14,7 +14,7 @@ import chisel3.experimental.BundleLiterals._
 4.regfile写
 5.dcacheio重新放一下
 */
-class Back_End_With_Decode extends Module{
+class Back_End_With_Decode extends Module with consts{
     val io = IO(new Bundle{
         val i_fetch_pack = Flipped(Decoupled(new fetch_pack()))
 
@@ -24,21 +24,21 @@ class Back_End_With_Decode extends Module{
         val o_stall = Output(Bool())
         val o_exception = Output(Bool())
 
-        val Dcache_io = new DcacheIO()
+        val dcache_io = new DcacheIO()
 
     }) 
-    val decode = Module(new Decode())
+    val decode = Module(new Decoder())
     val rename  = Module(new Rename())
     val dispatch = Module(new Dispatch())
     val reservation_station = Module(new Reservation_Station())
-    val phy_reg = Module(new RegFile())
+    val regfile = Module(new RegFile())
     val execute =Module(new Execute())
     val rob = Module(new Reorder_Buffer())
     //connect decode input
-    decode.io.i_fetch_pack := io.i_fetch_pack
+    decode.io.i_fetch_pack <>  io.i_fetch_pack
 
     //connect rename input
-    rename.io.i_decode_packs    := decode.o_decode_packs
+    rename.io.i_decode_packs    := decode.io.o_decode_packs
     rename.io.i_commit_packs    := rob.io.o_commit_packs
     rename.io.i_rollback_packs  := rob.io.o_rollback_packs
     rename.io.i_exception       := rob.io.o_exception
@@ -61,8 +61,8 @@ class Back_End_With_Decode extends Module{
 
     //connect execute input //??regfileread
     //this increses the critical path, i suppose
-    exceute.io.i_exception := rob.io.o_exception
-    execute.io.i_issue_res_packs := reservation_station.io.o_issue_res_packs
+    execute.io.i_exception := rob.io.o_exception
+    execute.io.i_issue_res_packs := reservation_station.io.o_issue_packs
     execute.io.i_ROB_first_entry := rob.io.o_rob_head
     when(execute.io.i_issue_res_packs(0).op1_sel === SRC_RS){
         execute.io.i_issue_res_packs(0).src1_value := regfile.io.o_rdata1 

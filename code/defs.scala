@@ -10,6 +10,10 @@ import chisel3.experimental.BundleLiterals._
 //control signals of bundles are all decoupled
 //aka. ready-valid to exchange signals are not in the bundles
 //the valid signal is in the bundle stands for the validity of the data 
+class valid_uop_pack extends Bundle{
+    val valid = Bool()
+    val uop = new uop()    
+}
 class rob_allocation_req_pack extends Bundle{
     val valid = Bool()
     val uop = new uop()
@@ -18,7 +22,7 @@ class IcacheIO extends Bundle{
     val o_addr_valid = Output(Bool())
     val i_inst_ready = Input(Bool())
     val o_addr = Output(UInt(64.W))
-    val i_insts = Input(Vec(2,new UInt(64.W)))
+    val i_insts = Input(Vec(2,UInt(64.W)))
 }
 class DcacheIO extends Bundle{
     val valid = Input(Bool())
@@ -51,11 +55,12 @@ class branch_presolve_pack extends Bundle
 //?
 class branch_resolve_pack extends Bundle
 {
-    val is_branch = Bool()//aka valid
+    val valid = Bool()//aka valid
     val mispred = Bool()
     val taken = Bool()
-    val pc = UInt(32.W)
+    //val pc = UInt(32.W)
     val target = UInt(32.W)
+    val uop = new uop()
 }
 
 class fetch_pack extends Bundle
@@ -79,27 +84,34 @@ class imem_fetch_res_interface extends Bundle
     val data = UInt(64.W)
 
 }
+class commit_pack extends Bundle{
+    val valid = Bool()
+    val uop = new uop()
+}
+/*
 class commit_pack extends Bundle()
 {
    val valids     = Vec(2, Bool())
    val uops       = Vec(2, new MicroOp())
 }
-
-class ex_res_pack extends BoomBundle()(p)
+*/
+class rollback_pack extends Bundle()
 {
-   val uop = new MicroOp()
+   val valid     = Bool()
+   val uop       = new uop()
 }
-
+/*
 class rollback_pack extends Bundle()
 {
    val valids     = Vec(2, Bool())//roll back on this one?
-   val uops       = Vec(2, new MicroOp())
+   val uops       = Vec(2, new uop())
 }
+*/
 
 class rob_allocation_pack extends Bundle()
 {
    val valids     = Vec(2, Bool())
-   val uops       = Vec(2, new MicroOp())
+   val uops       = Vec(2, new uop())
 }
 class uop extends Bundle(){
     val valid=Bool()
@@ -187,9 +199,10 @@ object Mem_Type{
     val MEM_WRITE   = 1.U(2.W)
     val MEM_N       = 2.U(2.W)
 }
-*/
 object PC_Selector extends ChiselEnum {
   val PC_PLUS4   = Value  // Next
   val PC_BRJMP = Value  // Branch/Jump Target
   val PC_JALR= Value  // Jump and Link Register
 }
+
+*/

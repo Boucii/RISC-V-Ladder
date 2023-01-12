@@ -88,10 +88,10 @@ class Execute extends Module with consts{
     bru.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_BRU,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     lsu.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_MEM,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
 
-    exu1.io.i_exceptions    := io.i_exception
-    exu2.io.i_exceptions    := io.i_exception
-    bru.io.i_exceptions     := io.i_exception
-    lsu.io.i_exceptions     := io.i_exception
+    exu1.io.i_exception    := io.i_exception
+    exu2.io.i_exception    := io.i_exception
+    bru.io.i_exception     := io.i_exception
+    lsu.io.i_exception     := io.i_exception
 /*????????
     when((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)){
         bru.io.i_select := true.B
@@ -106,7 +106,8 @@ class Execute extends Module with consts{
     }
     */
     io.o_branch_resolve_pack := bru.io.o_branch_resolve_pack
-    io.o_branch_resolve_pack.valid := Mux(io.i_exception, false.B ,bru.io.o_branch_resolve_pack.valid)
+    //io.o_branch_resolve_pack.valid := Mux(io.i_exception, false.B ,bru.io.o_branch_resolve_pack.valid)
+    io.o_branch_resolve_pack.valid := bru.io.o_branch_resolve_pack.valid
 
     val issue_idx1 = Wire(UInt(2.W))
     val issue_idx2 = Wire(UInt(2.W))

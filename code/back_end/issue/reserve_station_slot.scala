@@ -31,6 +31,12 @@ class Reservation_Station_Slot extends Module with consts{
         val i_uop = Input(new uop())
         val o_uop = Output(new uop())
 
+        val i_exe_dst1 = Input(UInt(7.W))
+        val i_exe_dst2 = Input(UInt(7.W))
+
+        val i_exe_value1 = Input(UInt(64.W))
+        val i_exe_value2 = Input(UInt(64.W))
+
         val i_age_pack = Input(new age_pack())
         val o_age = Output(UInt(8.W))
 
@@ -44,7 +50,9 @@ class Reservation_Station_Slot extends Module with consts{
 
     val uop = Reg(new uop())
     io.o_uop := uop
-    val valid = Reg(Bool())
+
+
+    val valid = RegInit(false.B)
     io.o_valid := valid
 
     when(flush ){//or mux? when-wlse should be cascaded,so mux is better TODO:make this mux!!!!
@@ -63,31 +71,12 @@ class Reservation_Station_Slot extends Module with consts{
         age := age//preserve
     }
 
-
-
-    val src1_ready = Reg(Bool())
+    val src1_ready = RegInit(false.B)
     val next_src1_ready =Wire(Bool())
     src1_ready:=next_src1_ready
-    val src2_ready = Reg(Bool())
+    val src2_ready = RegInit(false.B)
     val next_src2_ready = Wire(Bool())
-    src1_ready:=next_src1_ready
-
-    when(io.i_write_slot){
-        next_src1_ready:=(!(io.i_uop.op1_sel===SRC_RS))
-    }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){
-        next_src1_ready:=true.B
-    }.otherwise{
-        next_src1_ready:=src1_ready
-    }
-
-    when(io.i_write_slot){
-        next_src2_ready:=(!(io.i_uop.op1_sel===SRC_RS))
-    }.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
-        next_src2_ready:=true.B
-    }.otherwise{
-        next_src2_ready:=src1_ready
-    }
-
+    src2_ready:=next_src2_ready
 
     //rewrite using mux?
     //output logic
@@ -96,6 +85,76 @@ class Reservation_Station_Slot extends Module with consts{
     }.elsewhen(io.i_write_slot){
         uop:= io.i_uop
     }
+
+    //change uop src_valid to uop src_acquired
+    val next_src1_acquired = Wire(Bool())
+    uop.src1_valid := next_src1_acquired 
+    val next_src2_acquired = Wire(Bool())
+    uop.src2_valid := next_src2_acquired
+    val next_src1_value = Wire(UInt(64.W))
+    uop.src1_value := next_src1_value
+    val next_src2_value = Wire(UInt(64.W))
+    uop.src2_value := next_src2_value
+
+    io.o_uop.src1_valid := next_src1_acquired
+    io.o_uop.src2_valid := next_src2_acquired
+    io.o_uop.src1_value := next_src1_value
+    io.o_uop.src2_value := next_src2_value
+
+
+    assert(((!io.i_uop.op1_sel===SRC_RS)===io.i_uop.src1_valid),"src valid wrong")
+    assert(((!io.i_uop.op2_sel===SRC_RS)===io.i_uop.src2_valid),"src valid wrong")
+
+    when(io.i_write_slot){
+        next_src1_acquired:=(!(io.i_uop.op1_sel===SRC_RS)) || ((io.i_uop.op1_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs1) || (io.i_exe_dst2===io.i_uop.phy_rs1)))
+        next_src1_value := MuxCase(io.i_uop.src1_value,Seq(
+            ((io.i_exe_dst1===io.i_uop.phy_rs1) && (io.i_uop.op1_sel===SRC_RS))->io.i_exe_value1,
+            ((io.i_exe_dst2===io.i_uop.phy_rs1) && (io.i_uop.op1_sel===SRC_RS))->io.i_exe_value2
+    ))
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){ //bypass from ex_out or writtenback
+        next_src1_acquired := uop.src1_valid ||(Mux((io.i_exe_dst1===uop.phy_rs1 || io.i_exe_dst2 === uop.phy_rs1),true.B,false.B) )
+        next_src1_value :=MuxCase(uop.src1_value,Seq(
+            (io.i_exe_dst1===uop.phy_rs1)->io.i_exe_value1,
+            (io.i_exe_dst2===uop.phy_rs1)->io.i_exe_value2
+        ))
+    }.otherwise{
+        next_src1_acquired := uop.src1_valid
+        next_src1_value := uop.src1_value
+    }
+    when(io.i_write_slot){
+        next_src2_acquired:=(!(io.i_uop.op2_sel===SRC_RS)) || ((io.i_uop.op2_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs2) || (io.i_exe_dst2===io.i_uop.phy_rs2)))
+        next_src2_value :=MuxCase(io.i_uop.src2_value,Seq(
+            ((io.i_exe_dst1===io.i_uop.phy_rs2) && (io.i_uop.op2_sel===SRC_RS))->io.i_exe_value1,
+            ((io.i_exe_dst2===io.i_uop.phy_rs2) && (io.i_uop.op2_sel===SRC_RS))->io.i_exe_value2
+    ))}.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
+        next_src2_acquired := uop.src2_valid || (Mux((io.i_exe_dst1===uop.phy_rs2 || io.i_exe_dst2 === uop.phy_rs2),true.B,false.B) )
+        next_src2_value := MuxCase(uop.src2_value,Seq(
+            (io.i_exe_dst1===uop.phy_rs2)->io.i_exe_value1,
+            (io.i_exe_dst2===uop.phy_rs2)->io.i_exe_value2
+        ))
+    }.otherwise{
+        next_src2_acquired := uop.src2_valid
+        next_src2_value := uop.src2_value
+    }
+
+    when(io.i_write_slot){
+        next_src1_ready:=(!(io.i_uop.op1_sel===SRC_RS)) || ((io.i_uop.op1_sel===SRC_RS) && io.i_wakeup_port(io.i_uop.phy_rs1)===1.U )
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){
+        next_src1_ready:=true.B
+    }.otherwise{
+        next_src1_ready:=src1_ready
+    }
+
+    when(io.i_write_slot){
+        next_src2_ready:=(!(io.i_uop.op2_sel===SRC_RS)) || ((io.i_uop.op2_sel===SRC_RS) && io.i_wakeup_port(io.i_uop.phy_rs2)===1.U )
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
+        next_src2_ready:=true.B
+    }.otherwise{
+        next_src2_ready:=src2_ready
+    }
+
+
+
 
     //valid maintain logic,this is redundent for uop also got a valid, remove it ?
     //能写进来的都是uop.valid=true,并不,能写进来的未必valid

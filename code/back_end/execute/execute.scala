@@ -63,9 +63,15 @@ class Execute extends Module with consts{
         io.o_available_funcs(i):=0.U
     }
 
-    io.o_available_funcs(0):=Mux(exu1.io.o_available,1.U,0.U)+Mux(exu2.io.o_available,1.U,0.U)
+    //io.o_available_funcs(0):=(Mux(exu1.io.o_available,1.U,0.U) + Mux(exu2.io.o_available,1.U,0.U) )
+    io.o_available_funcs(0):=MuxCase(0.U,Seq(
+        ((exu1.io.o_available)&&(!exu2.io.o_available)) -> 1.U,
+        (!(exu1.io.o_available)&&(exu2.io.o_available)) -> 1.U,
+        ((exu1.io.o_available)&&(exu2.io.o_available)) -> 2.U
+    ))
     io.o_available_funcs(1):=Mux(bru.io.o_available,1.U,0.U)
     io.o_available_funcs(2):=Mux(lsu.io.o_available,1.U,0.U)
+
 
     //when exu1 available, and at least 1 alu inst
     exu1.io.i_select := Mux(((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU)||
@@ -124,5 +130,12 @@ class Execute extends Module with consts{
 
     io.o_ex_res_packs(0).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid )))
     io.o_ex_res_packs(1).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2))
+
+    //this can be improved by merge the two valid
+    assert(((io.o_ex_res_packs(0).valid && io.o_ex_res_packs(0).uop.valid)||(!io.o_ex_res_packs(0).valid)),"exu pack valid, but uop not valid")
+    assert(((io.o_ex_res_packs(1).valid && io.o_ex_res_packs(1).uop.valid)||(!io.o_ex_res_packs(1).valid)),"exu pack valid, but uop not valid")
+
+
+
 
 }

@@ -10,12 +10,14 @@ import chisel3.experimental.BundleLiterals._
 //assuming unified reservation station and depth of 64
 //这个需要单另的reg来存uop吗,目测是需要的
 
-class Reservation_Station extends Module{
+class Reservation_Station extends Module with consts{
    val io = IO(new Bundle{
      val i_dispatch_packs = Input(Vec(2,new uop()))
      
      val o_issue_packs=Output(Vec(2,new uop())) 
      val i_wakeup_port=Input(UInt(128.W))
+
+     val i_ex_res_packs=Input(Vec(2,new valid_uop_pack()))
 
      val i_branch_resolve_pack=Input(new branch_resolve_pack())
 
@@ -65,10 +67,29 @@ class Reservation_Station extends Module{
      val issue1_idx = Wire(UInt(6.W))
      issue1_idx :=(idx_age_group.reduceLeft((a,b)=>{(Mux(a._2<b._2,a._1,b._1),Mux(a._2<b._2,a._2,b._2))}))._1 //find the smallest element
 
-      val dbg_ages = VecInit.tabulate(64){ i=> (reservation_station(i).io.o_age)}
+     val issue1_func_code = Wire(UInt(7.W)) 
+     issue1_func_code := MuxCase(FU_NUL, Seq.tabulate(64)(i=>i).map(i => ((i.U === issue1_idx) -> reservation_station(i).io.o_uop.func_code)))
+     val dbg_ages = VecInit.tabulate(64){ i=> (reservation_station(i).io.o_age)}
      val available_funcs_with_mask = Wire(Vec(7, UInt(2.W)))
      available_funcs_with_mask:=io.i_available_funcs
-     available_funcs_with_mask(issue1_idx):=available_funcs(issue1_idx)-1.U
+     /*
+     when(issue1_func_code === FU_ALU) {
+      printf(":aAAAA")
+       available_funcs_with_mask(0) := Mux(io.i_available_funcs(0)===0.U,io.i_available_funcs(0), (available_funcs(0)-1.U))
+     }.elsewhen(issue1_func_code === FU_BRU) {
+       available_funcs_with_mask(1) := Mux(io.i_available_funcs(1)===0.U,available_funcs(1), (available_funcs(1)-1.U))
+     }.elsewhen(issue1_func_code === FU_MEM) {
+       available_funcs_with_mask(2) := Mux(io.i_available_funcs(2)===0.U,available_funcs(2), (available_funcs(2)-1.U))
+     }.elsewhen(issue1_func_code === FU_MUL) {
+       available_funcs_with_mask(3) := Mux(io.i_available_funcs(3)===0.U,available_funcs(3), (available_funcs(3)-1.U))
+     }.elsewhen(issue1_func_code === FU_DIV) {
+       available_funcs_with_mask(4) := Mux(io.i_available_funcs(4)===0.U,available_funcs(4), (available_funcs(4)-1.U))
+     }.elsewhen(issue1_func_code === FU_CSR) {
+       available_funcs_with_mask(5) := Mux(io.i_available_funcs(5)===0.U,available_funcs(5), (available_funcs(5)-1.U))
+     }.elsewhen(issue1_func_code === FU_NUL) {
+       available_funcs_with_mask(6) := Mux(io.i_available_funcs(6)===0.U,available_funcs(6), (available_funcs(6)-1.U))
+     }*/
+     available_funcs_with_mask(OHToUInt(issue1_func_code)):=io.i_available_funcs(issue1_idx)-1.U //optimize this OHToUInt
 
      val temp3=Wire(Vec(7,Bool()))
      for (i <- 0 until 7) {
@@ -130,6 +151,17 @@ class Reservation_Station extends Module{
      reservation_station(i).io.i_write_slot := Mux((i.U===write_idx1||i.U===write_idx2)&&(!io.o_full),true.B,false.B)//and we have things to write_idx1,改一改这个的逻辑,尽量让他和uopvalid解耦
      //通过加一点num_write之类的
      reservation_station(i).io.i_uop := Mux(i.U===write_idx1,uops(0),uops(1))//rewrite this with mux??
-     }
 
+     reservation_station(i).io.i_exe_dst1 := Mux(io.i_ex_res_packs(0).valid  ,io.i_ex_res_packs(0).uop.phy_dst,0.U)
+     reservation_station(i).io.i_exe_dst2 := Mux(io.i_ex_res_packs(1).valid  ,io.i_ex_res_packs(1).uop.phy_dst,0.U)
+     
+     reservation_station(i).io.i_exe_value1 := io.i_ex_res_packs(0).uop.dst_value
+     reservation_station(i).io.i_exe_value2 := io.i_ex_res_packs(1).uop.dst_value
+
+     }
+     printf("iuopsrc1value=%d\n",uops(0).src1_value)
+     printf("iuopsrc2value=%d\n",uops(0).src2_value)
+     printf("iuopsrc1value1=%d\n",uops(1).src1_value)
+     printf("iuopsrc2value1=%d\n",uops(1).src2_value)
+     printf("----\n")
 }

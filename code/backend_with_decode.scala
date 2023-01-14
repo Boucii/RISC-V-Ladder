@@ -13,6 +13,8 @@ import chisel3.experimental.BundleLiterals._
 3.regfile读塞进去
 4.regfile写
 5.dcacheio重新放一下
+6.merge uop.valid and pack.valid
+7.remove src valid in uop
 */
 class Back_End_With_Decode extends Module with consts{
     val io = IO(new Bundle{
@@ -53,29 +55,62 @@ class Back_End_With_Decode extends Module with consts{
     dispatch.io.i_exception                 := rob.io.o_exception
 
     //connect reservation station input
+    val written_back_table_with_bypass = Wire(UInt(128.W))
+    written_back_table_with_bypass := rename.io.o_written_back_table | 
+            UIntToOH((execute.io.o_ex_res_packs(0).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(0).valid).asUInt()))) |
+            UIntToOH((execute.io.o_ex_res_packs(1).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(1).valid).asUInt())))
     reservation_station.io.i_dispatch_packs := dispatch.io.o_dispatch_packs
-    reservation_station.io.i_wakeup_port := rename.io.o_written_back_table
+    reservation_station.io.i_wakeup_port := written_back_table_with_bypass
     reservation_station.io.i_branch_resolve_pack := execute.io.o_branch_resolve_pack
     reservation_station.io.i_exception := rob.io.o_exception//???
     reservation_station.io.i_available_funcs := execute.io.o_available_funcs//???
+    reservation_station.io.i_ex_res_packs := execute.io.o_ex_res_packs
 
     //connect execute input //??regfileread
     //this increses the critical path, i suppose
     execute.io.i_exception := rob.io.o_exception
     execute.io.i_issue_res_packs := reservation_station.io.o_issue_packs
     execute.io.i_ROB_first_entry := rob.io.o_rob_head
-    when(execute.io.i_issue_res_packs(0).op1_sel === SRC_RS){
-        execute.io.i_issue_res_packs(0).src1_value := regfile.io.o_rdata1 
+
+
+    when(execute.io.i_issue_res_packs(0).op1_sel === SRC_RS && (!execute.io.i_issue_res_packs(0).src1_valid)){
+        execute.io.i_issue_res_packs(0).src1_value := regfile.io.o_rdata1
     }
-    when(execute.io.i_issue_res_packs(0).op2_sel === SRC_RS){
+    when(execute.io.i_issue_res_packs(0).op2_sel === SRC_RS && (!execute.io.i_issue_res_packs(0).src2_valid)){
         execute.io.i_issue_res_packs(0).src2_value := regfile.io.o_rdata2
     }
-    when(execute.io.i_issue_res_packs(1).op1_sel === SRC_RS){
-        execute.io.i_issue_res_packs(1).src1_value := regfile.io.o_rdata3 
+    when(execute.io.i_issue_res_packs(1).op1_sel === SRC_RS && (!execute.io.i_issue_res_packs(1).src1_valid)){
+        execute.io.i_issue_res_packs(1).src1_value := regfile.io.o_rdata3
     }
-    when(execute.io.i_issue_res_packs(1).op2_sel === SRC_RS){
-        execute.io.i_issue_res_packs(1).src2_value := regfile.io.o_rdata4 
+    when(execute.io.i_issue_res_packs(1).op2_sel === SRC_RS && (!execute.io.i_issue_res_packs(1).src2_valid)){
+        execute.io.i_issue_res_packs(1).src2_value := regfile.io.o_rdata4
     }
+
+    /*
+    when(execute.io.i_issue_res_packs(0).op1_sel === SRC_RS && (!execute.io.i_issue_res_packs(0).rs1_valid)){
+        execute.io.i_issue_res_packs(0).src1_value := MuxCase(regfile.io.o_rdata1,Seq(
+            ((execute.io.o_ex_res_packs(0).valid) && (execute.io.o_ex_res_packs(0).uop.regWen) && execute.io.o_ex_res_packs(0).uop.phy_dst === execute.io.i_issue_res_packs(0).phy_rs1) -> execute.io.o_ex_res_packs(0).uop.dst_value,
+            ((execute.io.o_ex_res_packs(1).valid) && (execute.io.o_ex_res_packs(1).uop.regWen) && execute.io.o_ex_res_packs(1).uop.phy_dst === execute.io.i_issue_res_packs(0).phy_rs1) -> execute.io.o_ex_res_packs(1).uop.dst_value
+        ))
+    }
+    when(execute.io.i_issue_res_packs(0).op2_sel === SRC_RS && (!execute.io.i_issue_res_packs(0).rs2_valid)){
+        execute.io.i_issue_res_packs(0).src2_value := MuxCase(regfile.io.o_rdata2,Seq(
+            ((execute.io.o_ex_res_packs(0).valid) && (execute.io.o_ex_res_packs(0).uop.regWen) && execute.io.o_ex_res_packs(0).uop.phy_dst === execute.io.i_issue_res_packs(0).phy_rs2) -> execute.io.o_ex_res_packs(0).uop.dst_value,
+            ((execute.io.o_ex_res_packs(1).valid) && (execute.io.o_ex_res_packs(1).uop.regWen) && execute.io.o_ex_res_packs(1).uop.phy_dst === execute.io.i_issue_res_packs(0).phy_rs2) -> execute.io.o_ex_res_packs(1).uop.dst_value
+        ))
+    }
+    when(execute.io.i_issue_res_packs(1).op1_sel === SRC_RS && (!execute.io.i_issue_res_packs(1).rs1_valid)){
+        execute.io.i_issue_res_packs(1).src1_value := MuxCase(regfile.io.o_rdata3,Seq(
+            ((execute.io.o_ex_res_packs(0).valid) && (execute.io.o_ex_res_packs(0).uop.regWen) && execute.io.o_ex_res_packs(0).uop.phy_dst === execute.io.i_issue_res_packs(1).phy_rs1) -> execute.io.o_ex_res_packs(0).uop.dst_value,
+            ((execute.io.o_ex_res_packs(1).valid) && (execute.io.o_ex_res_packs(1).uop.regWen) && execute.io.o_ex_res_packs(1).uop.phy_dst === execute.io.i_issue_res_packs(1).phy_rs1) -> execute.io.o_ex_res_packs(1).uop.dst_value
+        ))
+    }
+    when(execute.io.i_issue_res_packs(1).op2_sel === SRC_RS && (!execute.io.i_issue_res_packs(1).rs2_valid)){
+        execute.io.i_issue_res_packs(1).src2_value := MuxCase(regfile.io.o_rdata4,Seq(
+            ((execute.io.o_ex_res_packs(0).valid) && (execute.io.o_ex_res_packs(0).uop.regWen) && execute.io.o_ex_res_packs(0).uop.phy_dst === execute.io.i_issue_res_packs(1).phy_rs2) -> execute.io.o_ex_res_packs(0).uop.dst_value,
+            ((execute.io.o_ex_res_packs(1).valid) && (execute.io.o_ex_res_packs(1).uop.regWen) && execute.io.o_ex_res_packs(1).uop.phy_dst === execute.io.i_issue_res_packs(1).phy_rs2) -> execute.io.o_ex_res_packs(1).uop.dst_value
+        ))
+    }*/
 
     //dcache
     execute.io.dcache_io.valid      := io.dcache_io.valid  

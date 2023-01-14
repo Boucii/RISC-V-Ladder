@@ -53,7 +53,7 @@ class Rename_Table extends Module{
         rename_table(io.i_allocation_pack(0).arch_dst):=io.i_allocation_pack(0).phy_dst
     }
     when(io.i_allocation_pack(1).valid && io.i_allocation_pack(1).arch_dst =/= 0.U){
-        rename_table(io.i_allocation_pack(1).arch_dst):=io.i_allocation_pack(0).phy_dst
+        rename_table(io.i_allocation_pack(1).arch_dst):=io.i_allocation_pack(1).phy_dst
     }                                                                                
 
     //read logic

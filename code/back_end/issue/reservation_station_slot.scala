@@ -139,7 +139,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     when(io.i_write_slot){
         next_src1_ready:=(!(io.i_uop.op1_sel===SRC_RS)) || ((io.i_uop.op1_sel===SRC_RS) && io.i_wakeup_port(io.i_uop.phy_rs1)===1.U )
-    }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){
+    }.elsewhen(uop.valid && (io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){
         next_src1_ready:=true.B
     }.otherwise{
         next_src1_ready:=src1_ready
@@ -147,7 +147,7 @@ class Reservation_Station_Slot extends Module with consts{
 
     when(io.i_write_slot){
         next_src2_ready:=(!(io.i_uop.op2_sel===SRC_RS)) || ((io.i_uop.op2_sel===SRC_RS) && io.i_wakeup_port(io.i_uop.phy_rs2)===1.U )
-    }.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
+    }.elsewhen(uop.valid && (io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
         next_src2_ready:=true.B
     }.otherwise{
         next_src2_ready:=src2_ready

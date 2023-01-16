@@ -30,7 +30,10 @@ class RegFile extends Module {
     val i_wenable2 = Input(Bool())
   })
 
-  val regfile = RegInit(VecInit(0.U(128.W), 0.U(64.W)))
+  val regfile = RegInit(VecInit(Seq.fill(128)(0.U(64.W))))
+  val debug_regs = Wire(Vec(128,UInt(64.W)))
+  debug_regs := regfile
+  dontTouch(debug_regs)
 
   when(io.i_wenable1) {
     regfile(io.i_waddr1) := io.i_wdata1

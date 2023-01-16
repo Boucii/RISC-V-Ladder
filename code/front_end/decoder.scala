@@ -6,13 +6,15 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
+//add stall and exception and rbk
 class Decoder extends Module with consts{
     val io = IO(new Bundle {
         val i_fetch_pack = Flipped(Decoupled(new fetch_pack()))
         val o_decode_packs = Output(Vec(2,new uop()))
     })
+    val inst_valid = Wire(Vec(2,Bool()))
     val wires = List(
-      List( io.o_decode_packs(0).valid      , 
+      List( inst_valid(0), 
             io.o_decode_packs(0).func_code  , 
             io.o_decode_packs(0).regWen     , 
             io.o_decode_packs(0).inst_type  , 
@@ -22,7 +24,7 @@ class Decoder extends Module with consts{
             io.o_decode_packs(0).branch_type, 
             io.o_decode_packs(0).mem_type
       ),
-      List( io.o_decode_packs(1).valid      , 
+      List( inst_valid(1),
             io.o_decode_packs(1).func_code  , 
             io.o_decode_packs(1).regWen     , 
             io.o_decode_packs(1).inst_type  , 
@@ -40,11 +42,21 @@ class Decoder extends Module with consts{
     val uops = Reg(Vec(2,new uop()))//aka uop
     val insts = Wire(Vec(2,UInt(64.W)))
 
+  when(io.i_fetch_pack.valid){
     for(i <- 0 until 2){
+       uops(i).valid := true.B
        uops(i).pc:=io.i_fetch_pack.bits.pc+Mux(i.U===0.U,0.U,4.U)
        uops(i).inst:=io.i_fetch_pack.bits.insts(i)
        uops(i).branch_predict_pack := io.i_fetch_pack.bits.branch_predict_pack
     }
+  }.otherwise{
+    for(i <- 0 until 2){
+       uops(i).valid := false.B
+       uops(i).pc:=0.U
+       uops(i).inst:=0.U
+       uops(i).branch_predict_pack := DontCare
+    }
+  }
     io.o_decode_packs:=uops
 
     insts(0) := uops(0).inst
@@ -68,6 +80,8 @@ class Decoder extends Module with consts{
     //IOs
 
    for(i <- 0 until 2){
+     //io.o_decode_packs(i).valid := io.i_fetch_pack.valid && inst_valid(i)//to be modified//wrong!
+     io.o_decode_packs(i).valid := inst_valid(i) && uops(i).valid
      io.o_decode_packs(i).imm := MuxCase(0.U,Seq(
          (io.o_decode_packs(i).inst_type === I_TYPE)->immI(i),
          (io.o_decode_packs(i).inst_type === U_TYPE)->immU(i),

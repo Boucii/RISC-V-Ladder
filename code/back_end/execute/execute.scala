@@ -81,6 +81,10 @@ class Execute extends Module with consts{
         ((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_ALU)&&(io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU))||
         ((((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_ALU))||((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU)))
         &&(!(exu1.io.o_available)))),true.B,false.B)
+    
+    when(io.i_issue_res_packs(0).valid && io.i_issue_res_packs(1).valid){
+    assert((exu1.io.i_select&&exu2.io.i_select && io.i_issue_res_packs(0).valid && io.i_issue_res_packs(1).valid),"aaa")
+    }
         
     bru.io.i_select := Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_BRU)) || 
                             ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)),true.B,false.B)
@@ -122,7 +126,7 @@ class Execute extends Module with consts{
     issue_idx2 := (func_units.length).U-1.U-PriorityEncoder(Seq(exu1.io.o_ex_res_pack.valid,exu2.io.o_ex_res_pack.valid ,bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid).reverse)
 
     for(i <- 0 until func_units.length){// use switch case to connect specialized function unit
-        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2)
+        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid
     }
 
     io.o_ex_res_packs(0).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.uop ))

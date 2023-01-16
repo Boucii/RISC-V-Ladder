@@ -148,7 +148,11 @@ class Reservation_Station extends Module with consts{
      reservation_station(i).io.i_wakeup_port := io.i_wakeup_port
      reservation_station(i).io.i_age_pack:= issued_age_pack
      reservation_station(i).io.i_allocated_idx := Mux(write_idx2===i.U,1.U,0.U)
-     reservation_station(i).io.i_write_slot := Mux((i.U===write_idx1||i.U===write_idx2)&&(!io.o_full),true.B,false.B)//and we have things to write_idx1,改一改这个的逻辑,尽量让他和uopvalid解耦
+     reservation_station(i).io.i_write_slot := MuxCase(false.B,Seq(
+        (i.U===write_idx1) -> uops(0).valid,
+        (i.U===write_idx2) -> uops(1).valid
+      )
+     )//Mux((i.U===write_idx1||i.U===write_idx2)&&(!io.o_full),true.B,false.B)//and we have things to write_idx1,改一改这个的逻辑,尽量让他和uopvalid解耦
      //通过加一点num_write之类的
      reservation_station(i).io.i_uop := Mux(i.U===write_idx1,uops(0),uops(1))//rewrite this with mux??
 

@@ -37,15 +37,16 @@ class ALU() extends Function_Unit(
     val uop = Reg(new uop())//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    uop:=next_uop
     when(io.i_select_to_commit && !io.i_select){
-        uop.valid:=false.B
+        next_uop.valid:=false.B
     }
+    uop:=next_uop
 
     assert(uop.func_code ===FU_ALU || uop.func_code===0.U,"funccode is not alu")
 
     io.o_func_idx:=FU_ALU
     io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.valid := uop.valid
     /*
     val opr1 = Muxcase(0.U,Seq(
         (io.i_uop.op1_sel === OP1_RS1) -> io.i_uop.src1_value,
@@ -106,12 +107,11 @@ class ALU() extends Function_Unit(
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (!(io.i_exception) && (state === s_FREE) && (io.i_select && !io.i_select_to_commit)) -> s_BUSY,
+        (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
-    io.o_ex_res_pack.valid := uop.valid
 
     //printf("src1=%d\n",uop.src1_value)
     //printf("src2=%d\n",uop.src2_value)

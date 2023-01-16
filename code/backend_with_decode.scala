@@ -145,4 +145,12 @@ class Back_End_With_Decode extends Module with consts{
     io.o_branch_resolve_pack := execute.io.o_branch_resolve_pack
     io.o_stall := rob.io.o_full || reservation_station.io.o_full 
     io.o_exception := rob.io.o_exception
+
+    //for decode and dpi-c arch regs
+    val arch_regs = Module(new Arch_RegFile)
+    val arch_regs_output = Wire(Vec(32,UInt(64.W)))
+    arch_regs.io.i_pregs := regfile.io.o_pregs
+    arch_regs.io.i_rename_table := rename.io.o_commit_rename_table
+    arch_regs_output := arch_regs.io.o_arch_regs
+    dontTouch(arch_regs_output)
 }

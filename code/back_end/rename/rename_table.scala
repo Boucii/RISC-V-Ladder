@@ -32,9 +32,13 @@ class Rename_Table extends Module{
 
         val i_exception=Input(Bool())
         //val i_branch_backuptables //well....what to do with this one..
+        
+        //for decode and dpi-c arch regs
+        val o_commit_rename_table = Output(Vec(32,UInt(7.W)))
     })
     val rename_table = RegInit(VecInit(Seq.fill(32)(0.U(7.W))))
     val commit_rename_table = RegInit(VecInit(Seq.fill(32)(0.U(7.W))))
+    io.o_commit_rename_table:=commit_rename_table
 
     //write logic
     when(io.i_commit_packs(0).valid){

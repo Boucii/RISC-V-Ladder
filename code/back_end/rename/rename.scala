@@ -19,10 +19,15 @@ class Rename extends Module{
 
         val i_exception = Input(Bool())
         val i_stall = Input(Bool())
+
+        //for decode and dpi-c arch regs
+        val o_commit_rename_table = Output(Vec(32,UInt(7.W)))
     })
     val rename_table=Module(new Rename_Table()) 
     //val free_list=Module(new Free_List())
     val busy_table=Module(new Busy_Table())
+
+    io.o_commit_rename_table := rename_table.io.o_commit_rename_table
 
     //exchange 0,1 if invalid , valid
     val uops = Reg(Vec(2,new uop()))

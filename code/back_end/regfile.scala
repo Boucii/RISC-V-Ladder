@@ -28,12 +28,17 @@ class RegFile extends Module {
 
     val i_wenable1 = Input(Bool())
     val i_wenable2 = Input(Bool())
+
+    //for debug and dpi-c
+    val o_pregs = Output(Vec(128,UInt(64.W)))
   })
 
   val regfile = RegInit(VecInit(Seq.fill(128)(0.U(64.W))))
   val debug_regs = Wire(Vec(128,UInt(64.W)))
+  
   debug_regs := regfile
   dontTouch(debug_regs)
+  io.o_pregs := regfile
 
   when(io.i_wenable1) {
     regfile(io.i_waddr1) := io.i_wdata1

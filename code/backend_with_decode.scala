@@ -38,6 +38,9 @@ class Back_End_With_Decode extends Module with consts{
     val rob = Module(new Reorder_Buffer())
     //connect decode input
     decode.io.i_fetch_pack <>  io.i_fetch_pack
+    decode.io.i_exception := io.o_exception
+    decode.io.i_branch_resolve_pack := io.o_branch_resolve_pack
+    decode.io.i_stall := io.o_stall
 
     //connect rename input
     rename.io.i_decode_packs    := decode.io.o_decode_packs
@@ -143,7 +146,7 @@ class Back_End_With_Decode extends Module with consts{
     
     //connect back_end output
     io.o_branch_resolve_pack := execute.io.o_branch_resolve_pack
-    io.o_stall := rob.io.o_full || reservation_station.io.o_full 
+    io.o_stall := rob.io.o_full || reservation_station.io.o_full || rename.io.o_free_list_empty
     io.o_exception := rob.io.o_exception
 
     //for decode and dpi-c arch regs

@@ -11,6 +11,10 @@ class Decoder extends Module with consts{
     val io = IO(new Bundle {
         val i_fetch_pack = Flipped(Decoupled(new fetch_pack()))
         val o_decode_packs = Output(Vec(2,new uop()))
+
+        val i_exception = Input(Bool())
+        val i_branch_resolve_pack = Input(new branch_resolve_pack())
+        val i_stall = Input(Bool())
     })
     val inst_valid = Wire(Vec(2,Bool()))
     val wires = List(
@@ -42,14 +46,18 @@ class Decoder extends Module with consts{
     val uops = Reg(Vec(2,new uop()))//aka uop
     val insts = Wire(Vec(2,UInt(64.W)))
 
-  when(io.i_fetch_pack.valid){
+  when(io.i_fetch_pack.valid && (!io.i_stall) && (!(io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)) && (!io.i_exception)){
     for(i <- 0 until 2){
        uops(i).valid := true.B
        uops(i).pc:=io.i_fetch_pack.bits.pc+Mux(i.U===0.U,0.U,4.U)
        uops(i).inst:=io.i_fetch_pack.bits.insts(i)
        uops(i).branch_predict_pack := io.i_fetch_pack.bits.branch_predict_pack
     }
-  }.otherwise{
+  }.elsewhen(io.i_stall && (!io.i_exception)){
+    for(i <- 0 until 2){
+       uops(i) := uops(i)
+    }
+  }otherwise{
     for(i <- 0 until 2){
        uops(i).valid := false.B
        uops(i).pc:=0.U

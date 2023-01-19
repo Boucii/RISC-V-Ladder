@@ -27,6 +27,9 @@ abstract class Function_Unit (
         val dcache_io = if(is_lsu) new DcacheIO() else null
 
         val i_exception = Input(Bool())
+
+        val i_rollback_valid = Input(Bool())
+        val i_rollback_rob_idx = Input(UInt(7.W)) //the rob idx of the mispred inst
     })
 }
 //alu can be changed into decode the imm inside it, saves wire
@@ -107,6 +110,8 @@ class ALU() extends Function_Unit(
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
+            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -173,14 +178,17 @@ class BRU extends Function_Unit(
     (pc_sel === PC_PLUS4)   -> (uop.pc+4.U(32.W))
   ))
 
+  val s_FREE :: s_BUSY :: Nil = Enum(2)
+  val state = RegInit(s_FREE)
+  val next_state = Wire(UInt(2.W))
+  state := next_state
+
   val mispredict = Wire(Bool())
   mispredict := !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
-  val next_valid = Reg(Bool())
-  next_valid := io.i_select
 
-  branch_resolve_pack.valid             := next_valid
+  branch_resolve_pack.valid             := state === s_BUSY
   branch_resolve_pack.mispred           := mispredict
   branch_resolve_pack.taken             := is_taken
   branch_resolve_pack.target            := target_address
@@ -188,10 +196,6 @@ class BRU extends Function_Unit(
   io.o_branch_resolve_pack := branch_resolve_pack
 
 
-    val s_FREE :: s_BUSY :: Nil = Enum(2)
-    val state = RegInit(s_FREE)
-    val next_state = Wire(UInt(2.W))
-    state := next_state
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
@@ -249,23 +253,33 @@ class LSU extends Function_Unit(
     val next_state = Wire(UInt(2.W))
     state := next_state
 
-    next_state := MuxCase(state,Seq(
-        (io.i_exception) -> s_FREE,
-        (!(io.i_exception) && ((state === s_FREE) && (io.i_select ))) -> s_BUSY,
-        (!(io.i_exception) && ((state === s_BUSY) && (io.i_select_to_commit))) -> s_FREE
-    ))
-
-
     val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
     ready_to_commit:=next_ready_to_commit
+
+    val rollback_occured = RegInit(false.B)
+    val next_rollback_occured = Wire(Bool())
+    rollback_occured := next_rollback_occured
+
+    next_rollback_occured := MuxCase(rollback_occured,Seq(
+        (next_state === s_FREE) -> false.B,
+        ((io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
+            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U)))) -> true.B
+    ))
+
+    next_state := MuxCase(state,Seq(
+        (io.i_exception) -> s_FREE,
+        (!(io.i_exception) && ((state === s_FREE) && (io.i_select ))) -> s_BUSY,
+        (!(io.i_exception) && ((state === s_BUSY) && (io.i_select_to_commit))) -> s_FREE,
+        (!(io.i_exception) && ((state === s_BUSY) && (next_ready_to_commit)) && rollback_occured) -> s_FREE
+    ))
 
     next_ready_to_commit:=Mux((state===s_BUSY && io.dcache_io.valid),true.B,ready_to_commit)
     next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
         (state===s_BUSY && io.dcache_io.valid)->true.B,
         (state===s_FREE) ->false.B 
     ))
-    io.o_ex_res_pack.valid := next_ready_to_commit
+    io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
 
    //printf("nextstate=%d\n",next_ready_to_commit)

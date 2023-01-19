@@ -67,7 +67,7 @@ class fetch_pack extends Bundle
 {
     val pc = UInt(32.W)
     val insts = Vec(2,UInt(32.W))
-    val branch_predict_pack = new branch_predict_pack()
+    val branch_predict_packs = Vec(2, new branch_predict_pack())
 }
 
 class imem_fetch_req_interface extends Bundle

@@ -74,6 +74,7 @@ class Back_End_With_Decode extends Module with consts{
     execute.io.i_exception := rob.io.o_exception
     execute.io.i_issue_res_packs := reservation_station.io.o_issue_packs
     execute.io.i_ROB_first_entry := rob.io.o_rob_head
+    execute.io.i_rollback_valid := rob.io.o_rollback_packs(0).valid || rob.io.o_rollback_packs(1).valid
 
 
     when(execute.io.i_issue_res_packs(0).op1_sel === SRC_RS && (!execute.io.i_issue_res_packs(0).src1_valid)){

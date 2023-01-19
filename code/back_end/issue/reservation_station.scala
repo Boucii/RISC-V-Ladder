@@ -163,9 +163,9 @@ class Reservation_Station extends Module with consts{
      reservation_station(i).io.i_exe_value2 := io.i_ex_res_packs(1).uop.dst_value
 
      }
-     printf("iuopsrc1value=%d\n",uops(0).src1_value)
-     printf("iuopsrc2value=%d\n",uops(0).src2_value)
-     printf("iuopsrc1value1=%d\n",uops(1).src1_value)
-     printf("iuopsrc2value1=%d\n",uops(1).src2_value)
-     printf("----\n")
+     //printf("iuopsrc1value=%d\n",uops(0).src1_value)
+     //printf("iuopsrc2value=%d\n",uops(0).src2_value)
+     //printf("iuopsrc1value1=%d\n",uops(1).src1_value)
+     //printf("iuopsrc2value1=%d\n",uops(1).src2_value)
+     //printf("----\n")
 }

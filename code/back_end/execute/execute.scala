@@ -8,6 +8,7 @@ import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 import scala.collection.mutable.{ArrayBuffer}
 
+//memu 没有做rollback
 //what happens if two consecutive branch
 class Execute extends Module with consts{
     val io=IO(new Bundle{
@@ -34,6 +35,7 @@ class Execute extends Module with consts{
         //when exception , clear all 
          
         val i_exception = Input(Bool())
+        val i_rollback_valid = Input(Bool()) // ROB is still rolling back, this is duplicated with o_resolvepack.valid && mispred
     })
 
     //lets do this for now. imrove this by adding a virtual exunit class 
@@ -74,21 +76,19 @@ class Execute extends Module with consts{
 
 
     //when exu1 available, and at least 1 alu inst
-    exu1.io.i_select := Mux(((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU)||
+    exu1.io.i_select := !io.i_rollback_valid &&  Mux(((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU)||
                     ((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_ALU)))&&(exu1.io.o_available),true.B,false.B)  
     //when exu2 available, and 2 alu insts ,or 1 alu inst and exu1 unavailable
-    exu2.io.i_select := Mux((exu2.io.o_available)&&(
+    exu2.io.i_select := !io.i_rollback_valid &&  Mux((exu2.io.o_available)&&(
         ((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_ALU)&&(io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU))||
         ((((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_ALU))||((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU)))
         &&(!(exu1.io.o_available)))),true.B,false.B)
     
-    when(io.i_issue_res_packs(0).valid && io.i_issue_res_packs(1).valid){
-    assert((exu1.io.i_select&&exu2.io.i_select && io.i_issue_res_packs(0).valid && io.i_issue_res_packs(1).valid),"aaa")
-    }
+
         
-    bru.io.i_select := Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_BRU)) || 
+    bru.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_BRU)) || 
                             ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)),true.B,false.B)
-    lsu.io.i_select := Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_MEM)) || 
+    lsu.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_MEM)) || 
                             ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_MEM)),true.B,false.B)
 
     exu1.io.i_uop:= Mux((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU),io.i_issue_res_packs(0),io.i_issue_res_packs(1))
@@ -102,6 +102,17 @@ class Execute extends Module with consts{
     exu2.io.i_exception    := io.i_exception
     bru.io.i_exception     := io.i_exception
     lsu.io.i_exception     := io.i_exception
+
+    exu1.io.i_rollback_valid := io.i_rollback_valid
+    exu2.io.i_rollback_valid := io.i_rollback_valid
+    bru.io.i_rollback_valid  := io.i_rollback_valid
+    lsu.io.i_rollback_valid  := io.i_rollback_valid
+
+
+    exu1.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
+    exu2.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
+    bru.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx//not needed
+    lsu.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx//not implemented
 /*????????
     when((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)){
         bru.io.i_select := true.B
@@ -126,7 +137,7 @@ class Execute extends Module with consts{
     issue_idx2 := (func_units.length).U-1.U-PriorityEncoder(Seq(exu1.io.o_ex_res_pack.valid,exu2.io.o_ex_res_pack.valid ,bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid).reverse)
 
     for(i <- 0 until func_units.length){// use switch case to connect specialized function unit
-        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid
+        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid && (!io.i_rollback_valid)
     }
 
     io.o_ex_res_packs(0).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.uop ))

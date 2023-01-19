@@ -51,7 +51,7 @@ class Decoder extends Module with consts{
        uops(i).valid := true.B
        uops(i).pc:=io.i_fetch_pack.bits.pc+Mux(i.U===0.U,0.U,4.U)
        uops(i).inst:=io.i_fetch_pack.bits.insts(i)
-       uops(i).branch_predict_pack := io.i_fetch_pack.bits.branch_predict_pack
+       uops(i).branch_predict_pack := io.i_fetch_pack.bits.branch_predict_packs(i)
     }
   }.elsewhen(io.i_stall && (!io.i_exception)){
     for(i <- 0 until 2){

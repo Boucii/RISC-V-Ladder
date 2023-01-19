@@ -41,7 +41,7 @@ class Decoder extends Module with consts{
     )
     val default_table = List(N,BitPat.dontCare(7),N,BitPat.dontCare(7),BitPat.dontCare(3),BitPat.dontCare(3),BitPat.dontCare(5),BitPat.dontCare(4),BitPat.dontCare(2))
 
-    io.i_fetch_pack.ready:=true.B
+    io.i_fetch_pack.ready:=(!io.i_stall && !io.i_exception)
     val table = decode_table.table 
     val uops = Reg(Vec(2,new uop()))//aka uop
     val insts = Wire(Vec(2,UInt(64.W)))

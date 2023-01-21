@@ -92,8 +92,8 @@ class Reorder_Buffer extends Module{
     next_will_commit(1) := next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
-      io.o_commit_packs(0).valid := (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
-      io.o_commit_packs(1).valid := (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
+      io.o_commit_packs(0).valid := !io.o_exception && (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
+      io.o_commit_packs(1).valid := !io.o_exception && (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
       io.o_commit_packs(0).uop := (rob_uop(commit_ptr))
       io.o_commit_packs(1).uop := (rob_uop(commit_ptr+1.U))
 

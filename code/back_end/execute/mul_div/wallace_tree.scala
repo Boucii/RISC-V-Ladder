@@ -1,5 +1,13 @@
-package Ladder
+package gcd
 
+import chisel3._
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.BitPat
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
 
 class Full_Adder extends Module{
     val io = IO(new Bundle{
@@ -17,7 +25,7 @@ class Full_Adder extends Module{
 class Wallace_Tree_Cell extends Module{
     val io = IO(new Bundle{
         val i_inter_c = Input(UInt(19.W))
-        val i_s = Input(Vec(22,UInt(1.W)))
+        val i_s = Input(UInt(22.W))
 
         val o_inter_c = Output(UInt(19.W))
         val o_c = Output(UInt(1.W))
@@ -31,20 +39,22 @@ class Wallace_Tree_Cell extends Module{
     val adder_level5 = Seq.fill(1)(Module(new Full_Adder()))
 
     //assign cout
+    val inter_c = Wire(Vec(19,UInt(1.W)))
+    io.o_inter_c := inter_c.asUInt
     for(i<- 0 until 7){
-        io.o_inter_c(i) := adder_level0(i).io.o_cout
+        inter_c(i) := (adder_level0(i).io.o_cout)
     }    
     for(i<- 0 until 4){
-        io.o_inter_c(i+7) := adder_level1(i).io.o_cout
+        inter_c(i+7) := adder_level1(i).io.o_cout
     }
     for(i<- 0 until 3){
-        io.o_inter_c(i+11) := adder_level2(i).io.o_cout
+        inter_c(i+11) := adder_level2(i).io.o_cout
     }    
     for(i<- 0 until 3){
-        io.o_inter_c(i+14) := adder_level3(i).io.o_cout
+        inter_c(i+14) := adder_level3(i).io.o_cout
     }
     for(i<- 0 until 2){
-        io.o_inter_c(i+17) := adder_level3(i).io.o_cout
+        inter_c(i+17) := adder_level4(i).io.o_cout
     }
     io.o_c := adder_level5(0).io.o_cout
 
@@ -123,7 +133,7 @@ class Wallace_Tree extends Module{
         val o_c = Output(UInt(131.W))
     })
     val wallace_tree_cells = Seq.fill(131)(Module(new Wallace_Tree_Cell()))
-    val inversed_pp = Vec(131,UInt(22))
+    val inversed_pp = Wire(Vec(131,Vec(22,UInt(1.W))))
 
     for(i <- 0 until 22){
         for(j <- 0 until 131){
@@ -132,15 +142,20 @@ class Wallace_Tree extends Module{
     }
 
     for(i <- 0 until 131){
-        wallace_tree_cells(i).io.i_s := inversed_pp(i)
+        wallace_tree_cells(i).io.i_s := inversed_pp(i).asUInt
     }
     //inter_c
     wallace_tree_cells(0).io.i_inter_c := 0.U
     for(i <- 1 until 131){
         wallace_tree_cells(i).io.i_inter_c := wallace_tree_cells(i-1).io.o_inter_c
     }
+    val s = Wire(Vec(131,UInt(1.W)))
+    val c = Wire(Vec(131,UInt(1.W)))
+    io.o_s := s.asUInt
+    io.o_c := c.asUInt
+
     for(i<- 0 until 131){
-        io.o_s(i) := wallace_tree_cells(i).io.o_s
-        io.o_c(i) := wallace_tree_cells(i).io.o_c
+        s(i) := wallace_tree_cells(i).io.o_s
+        c(i) := wallace_tree_cells(i).io.o_c
     }
 }

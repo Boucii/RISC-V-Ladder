@@ -285,3 +285,105 @@ class LSU extends Function_Unit(
    //printf("nextstate=%d\n",next_ready_to_commit)
    //printf("nextstate=%d\n",state)
 }
+
+class MUL extends Function_Unit(){
+    val s_FREE :: s_BUSY :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+    next_state := MuxCase(state,Seq(
+        (io.i_exception) -> s_FREE,
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
+            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (!(io.i_exception) && (state === s_FREE) && (io.i_select)) -> s_BUSY,
+        (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+
+    val uop = Reg(new uop())//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    uop:=next_uop
+    when(io.i_select_to_commit && !io.i_select){
+        uop.valid:=false.B
+    }
+    val multiplier = Module(new Multiplier())
+    multiplier.io.i_mul_valid := (next_state===s_BUSY)
+    multiplier.io.i_flush := next_state === s_FREE
+    multiplier.io.i_mulw := (next_uop.inst(6,0)==="b0111011".U)
+    multiplier.io.i_mul_signed := MuxCase("b11".U,Seq(
+        (next_uop.inst(14,12) === "b000".U) -> "b11".U,
+        (next_uop.inst(14,12) === "b001".U) -> "b11".U,
+        (next_uop.inst(14,12) === "b010".U) -> "b10".U,
+        (next_uop.inst(14,12) === "b011".U) -> "b00".U
+    )
+    )
+    io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.dst_value := MuxCase(Seq(
+        (next_uop.inst(14,12) === "b000".U) -> multiplier.io.o_result_lo,
+        (next_uop.inst(14,12) === "b001".U) -> multiplier.io.o_result_hi,
+        (next_uop.inst(14,12) === "b010".U) -> multiplier.io.o_result_hi,
+        (next_uop.inst(14,12) === "b011".U) -> multiplier.io.o_result_hi
+    ))
+    
+    val mul_finished=RegInit(false.B)
+
+    when(multiplier.io.o_out_valid){
+        mul_finished:=true.B
+    }
+    when(io.i_select_to_commit){
+        mul_finished:=false.B
+    }
+    
+    io.o_ex_res_pack.valid := mul_finished 
+
+    multiplier.io.multiplicand := next_uop.src1_value
+    multiplier.io.multiplier := next_uop.src2_value
+
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+}
+class DIV extends Function_Unit(){
+    val s_FREE :: s_BUSY :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+    next_state := MuxCase(state,Seq(
+        (io.i_exception) -> s_FREE,
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
+            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
+        (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+
+    val uop = Reg(new uop())//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    uop:=next_uop
+    when(io.i_select_to_commit && !io.i_select){
+        uop.valid:=false.B
+    }
+
+    val divider = Module(new Divider())
+    divider.io.i_dividend := next_uop.src1_value
+    divider.io.i_divisor := next_uop.src2_value
+
+    divider.io.i_div_valid := (next_state===s_BUSY)
+    divider.io.i_flush := next_state === s_FREE
+    divider.io.i_divw := (uop.inst(6,0)==="b0111011".U)
+
+    divider.io.i_div_signed := next_uop.inst(14,12)=/="b101".U
+
+    io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.dst_value := (next_uop.inst(14,12)= "b110" || next_uop.inst(14,12)= "b111", divider.io.o_remainder, divider.io.o_quotient)
+
+    val div_finished=Reg(Bool())
+    div_finished := false.B
+    when(divider.io.o_out_valid){
+        div_finished:=true.B
+    }
+    when(io.i_select_to_commit){
+        div_finished:=false.B
+    }
+
+    io.o_ex_res_pack.valid := divider.io.o_out_valid 
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+}

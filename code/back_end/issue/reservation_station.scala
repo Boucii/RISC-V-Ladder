@@ -27,7 +27,7 @@ class Reservation_Station extends Module with consts{
 
    }) 
      //val uops = Reg(Vec(2,new uop()))
-     val uops = Reg(Vec(2,new uop()))
+     val uops = RegInit(0.U.asTypeOf(Vec(2,new uop())))
      uops:=io.i_dispatch_packs
 
      val reservation_station = Seq.fill(64)(Module(new Reservation_Station_Slot()))
@@ -111,7 +111,7 @@ class Reservation_Station extends Module with consts{
          (issue1_idx=/=63.U && issue2_idx=/=63.U )->2.U
      ))
      //age update logic -exterior
-     val issued_age_pack = Reg(new age_pack())
+     val issued_age_pack = RegInit(0.U.asTypeOf(new age_pack()))
      val next_max_age = Wire(UInt(8.W))
      val issue0_valid =Wire(Bool())
      val issue1_valid = Wire(Bool())

@@ -28,7 +28,7 @@ class Dispatch extends Module{
     //TODO:this stall was decoupled, consider it further
     val stall = io.i_reservation_station_full 
 
-    val uops=Reg(Vec(2, new uop()))
+    val uops=RegInit(0.U.asTypeOf(Vec(2, new uop())))
     uops:=Mux(stall,uops,io.i_rename_packs)//this seems not really necessary, since stall also works for formal stage
     when(io.i_exception){
         uops(0).valid:=false.B

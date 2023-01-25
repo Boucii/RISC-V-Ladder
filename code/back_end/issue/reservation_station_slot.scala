@@ -48,7 +48,7 @@ class Reservation_Station_Slot extends Module with consts{
     val flush = Wire(Bool())
     flush := io.i_exception || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)
 
-    val uop = Reg(new uop())
+    val uop = RegInit(0.U.asTypeOf(new uop()))
     io.o_uop := uop
 
 

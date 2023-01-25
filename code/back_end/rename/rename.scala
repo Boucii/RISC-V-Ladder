@@ -30,15 +30,8 @@ class Rename extends Module{
     io.o_commit_rename_table := rename_table.io.o_commit_rename_table
 
     //exchange 0,1 if invalid , valid
-    val uops = Reg(Vec(2,new uop()))
+    val uops = RegInit(0.U.asTypeOf(Vec(2,new uop())))
     uops(0) := Mux(io.i_stall, uops(0), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(1), io.i_decode_packs(0)))
-    
-    val test = Reg(Bool())
-    val testw = Wire(Bool())
-    test := io.i_decode_packs(0).valid
-    testw := test
-    dontTouch(testw)
-
     uops(1) := Mux(io.i_stall, uops(1), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(0), io.i_decode_packs(1)))
 
     //rename table -------------------

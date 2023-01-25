@@ -37,7 +37,7 @@ class ALU() extends Function_Unit(
     is_bru = false,
     is_lsu = false
 ){
-    val uop = Reg(new uop())//null uop
+    val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     when(io.i_select_to_commit && !io.i_select){
@@ -129,7 +129,7 @@ class BRU extends Function_Unit(
 ){
     io.o_func_idx := FU_BRU
 
-    val uop = Reg(new uop())//null uop
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
@@ -213,7 +213,7 @@ class LSU extends Function_Unit(
 ){
 
     io.o_func_idx:=FU_MEM
-    val uop = Reg(new uop())//null uop
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
@@ -299,7 +299,7 @@ class MUL extends Function_Unit(){
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    val uop = Reg(new uop())//null uop
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
@@ -357,7 +357,7 @@ class DIV extends Function_Unit(){
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    val uop = Reg(new uop())//null uop
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop

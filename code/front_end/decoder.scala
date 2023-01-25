@@ -43,7 +43,7 @@ class Decoder extends Module with consts{
 
     io.i_fetch_pack.ready:=(!io.i_stall && !io.i_exception)
     val table = decode_table.table 
-    val uops = Reg(Vec(2,new uop()))//aka uop
+    val uops = RegInit(0.U.asTypeOf(Vec(2,new uop())))//aka uop
     val insts = Wire(Vec(2,UInt(64.W)))
 
   when(io.i_fetch_pack.valid && (!io.i_stall) && (!(io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)) && (!io.i_exception)){

@@ -74,14 +74,14 @@ class Reorder_Buffer extends Module{
 
     //rob entries: should we wrap this in module or bundle?
     val rob_valid = RegInit(VecInit(Seq.fill(64){false.B}))
-    val rob_uop = Reg(Vec(64, new uop()))
-    val rob_exception = Reg(Vec(64, Bool()))
-    val rob_done = Reg(Vec(64, Bool())) // is this instr written back and ready to commit? is this necessary
+    val rob_uop = RegInit(0.U.asTypeOf(Vec(64, new uop())))
+    val rob_exception = RegInit(0.U.asTypeOf(Vec(64, Bool())))
+    val rob_done = RegInit(0.U.asTypeOf(Vec(64, Bool()))) // is this instr written back and ready to commit? is this necessary
 
-    val will_commit = Reg(Vec(2,Bool()))
+    val will_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
     val next_will_commit = Wire(Vec(2,Bool()))
     will_commit := next_will_commit
-    val can_commit = Reg(Vec(2,Bool()))
+    val can_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
     val next_can_commit = Wire(Vec(2,Bool()))
     can_commit := next_can_commit
 

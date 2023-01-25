@@ -123,8 +123,7 @@ class Execute extends Module with consts{
     bru.io.i_rollback_valid  := io.i_rollback_valid
     lsu.io.i_rollback_valid  := io.i_rollback_valid
     mul.io.i_rollback_valid  := io.i_rollback_valid
-    div.io.i_rollvack_valid  := io.i_rollvack_valid
-
+    div.io.i_rollback_valid  := io.i_rollback_valid
 
     alu1.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
     alu2.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
@@ -150,11 +149,11 @@ class Execute extends Module with consts{
     //io.o_branch_resolve_pack.valid := Mux(io.i_exception, false.B ,bru.io.o_branch_resolve_pack.valid)
     io.o_branch_resolve_pack.valid := bru.io.o_branch_resolve_pack.valid
 
-    val issue_idx1 = Wire(UInt(2.W))
-    val issue_idx2 = Wire(UInt(2.W))
+    val issue_idx1 = Wire(UInt(log2Ceil(func_units.length).W))
+    val issue_idx2 = Wire(UInt(log2Ceil(func_units.length).W))
 
-    issue_idx1 := PriorityEncoder(Seq(alu1.io.o_ex_res_pack.valid,alu2.io.o_ex_res_pack.valid ,
-            bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid,mul.io.o_ex_res_pack.valid,
+    issue_idx1 := PriorityEncoder(Seq(alu1.io.o_ex_res_pack.valid,alu2.io.o_ex_res_pack.valid,
+            bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid, mul.io.o_ex_res_pack.valid,
             div.io.o_ex_res_pack.valid))
     issue_idx2 := (func_units.length).U-1.U-PriorityEncoder(Seq(alu1.io.o_ex_res_pack.valid,alu2.io.o_ex_res_pack.valid ,
             bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid, mul.io.o_ex_res_pack.valid,

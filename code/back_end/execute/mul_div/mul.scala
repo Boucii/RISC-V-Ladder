@@ -1,4 +1,4 @@
-package gcd
+package Ladder
 
 import chisel3._
 import chisel3._
@@ -25,8 +25,8 @@ class Multiplier extends Module{
     })
     val state = RegInit(0.U(3.W))
     val next_state = Wire(UInt(3.W))
-    state := Fill(3,io.i_flush) | next_state
-    next_state := state + 1.U
+    state := next_state
+    next_state := Mux(io.i_flush, 0.U, state + 1.U)
 
     io.o_out_valid := Mux(state===7.U, true.B, false.B)
     io.o_mul_ready := Mux(state===0.U, true.B, false.B)

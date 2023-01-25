@@ -366,10 +366,18 @@ class DIV extends Function_Unit(){
     }
 
     val divider = Module(new Divider())
+    val div_finished=RegInit(Bool(),false.B)
+    when(divider.io.o_out_valid){
+        div_finished:=true.B
+    }
+    when(io.i_select_to_commit){
+        div_finished:=false.B
+    }
+
     divider.io.i_dividend := next_uop.src1_value
     divider.io.i_divisor := next_uop.src2_value
 
-    divider.io.i_div_valid := (next_state===s_BUSY)
+    divider.io.i_div_valid := (next_state===s_BUSY) && (!div_finished)
     divider.io.i_flush := next_state === s_FREE
     divider.io.i_divw := (uop.inst(6,0)==="b0111011".U)
 
@@ -377,15 +385,6 @@ class DIV extends Function_Unit(){
 
     io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.uop.dst_value := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
-
-    val div_finished=Reg(Bool())
-    div_finished := false.B
-    when(divider.io.o_out_valid){
-        div_finished:=true.B
-    }
-    when(io.i_select_to_commit){
-        div_finished:=false.B
-    }
 
     io.o_ex_res_pack.valid := divider.io.o_out_valid 
     io.o_available := Mux(state === s_BUSY, false.B,true.B)

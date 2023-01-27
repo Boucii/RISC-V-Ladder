@@ -109,6 +109,7 @@ class Back_End_With_Decode extends Module with consts{
     rob.io.i_rob_allocation_reqs := dispatch.io.o_rob_allocation_reqs
     rob.io.i_ex_res_packs := execute.io.o_ex_res_packs
     rob.io.i_branch_resolve_pack := execute.io.o_branch_resolve_pack
+    rob.io.i_interrupt := io.i_interrupt
 
     //connect csr input
     csr.io.i_exception := rob.io.o_exception

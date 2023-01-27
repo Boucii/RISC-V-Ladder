@@ -136,10 +136,7 @@ class BRU extends Function_Unit(
     when(io.i_select_to_commit && !io.i_select){
         uop.valid:=false.B
     }
-
     io.o_ex_res_pack.uop := uop
-    val branch_predict_pack = uop.branch_predict_pack
-
     val rs1=uop.src1_value
     val rs2=uop.src2_value
 
@@ -194,8 +191,6 @@ class BRU extends Function_Unit(
   branch_resolve_pack.target            := target_address
   branch_resolve_pack.uop               := uop
   io.o_branch_resolve_pack := branch_resolve_pack
-
-
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
@@ -287,6 +282,7 @@ class LSU extends Function_Unit(
 }
 
 class MUL extends Function_Unit(){
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val s_FREE :: s_BUSY :: Nil = Enum(2)
     val state = RegInit(s_FREE)
     val next_state = Wire(UInt(2.W))
@@ -299,7 +295,6 @@ class MUL extends Function_Unit(){
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
@@ -345,6 +340,7 @@ class MUL extends Function_Unit(){
     io.o_func_idx:=FU_MUL //useless
 }
 class DIV extends Function_Unit(){
+    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val s_FREE :: s_BUSY :: Nil = Enum(2)
     val state = RegInit(s_FREE)
     val next_state = Wire(UInt(2.W))
@@ -357,7 +353,6 @@ class DIV extends Function_Unit(){
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop

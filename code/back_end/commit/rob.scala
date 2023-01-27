@@ -88,12 +88,13 @@ class Reorder_Buffer extends Module{
     next_can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
     next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
-    next_will_commit(0) := next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
-    next_will_commit(1) := next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
+    next_will_commit(0) := rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
+    next_will_commit(1) := rob_exception(commit_ptr)=/=0.U && rob_exception(commit_ptr+1.U)=/=0.U && next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
-      io.o_commit_packs(0).valid := !io.o_exception && (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
-      io.o_commit_packs(1).valid := !io.o_exception && (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
+    //exception on first one, both commit not valid, exception on the second one, only commit the first one(to be optimized)
+      io.o_commit_packs(0).valid :=  (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
+      io.o_commit_packs(1).valid :=  (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
       io.o_commit_packs(0).uop := (rob_uop(commit_ptr))
       io.o_commit_packs(1).uop := (rob_uop(commit_ptr+1.U))
 
@@ -179,9 +180,11 @@ class Reorder_Buffer extends Module{
       allocate_ptr := allocate_ptr - this_num_to_roll_back
     }
 
-
+/*
     io.o_exception:=(rob_exception(commit_ptr)===true.B && next_will_commit(0)===true.B || 
           (rob_exception(commit_ptr+1.U)===true.B && next_will_commit(0)===true.B && next_will_commit(1)===true.B))
+*/
+    io.o_exception:= rob_exception(commit_ptr)===true.B 
 
     val is_full =Wire(Bool()) //consider dynamic action
     is_full := (allocate_ptr + 2.U) === commit_ptr || (allocate_ptr + 1.U) === commit_ptr

@@ -46,6 +46,7 @@ class Execute extends Module with consts{
     val lsu = Module(new LSU())
     val mul = Module(new MUL())
     val div = Module(new DIV())
+    val csr_bf = Module(new CSR_BF())
 
     func_units += alu1
     func_units += alu2
@@ -53,6 +54,7 @@ class Execute extends Module with consts{
     func_units += lsu
     func_units += mul
     func_units += div
+    func_units += csr_bf
 
     lsu.io.i_ROB_first_entry :=io.i_ROB_first_entry
     lsu.io.dcache_io.valid      := io.dcache_io.valid  
@@ -70,6 +72,7 @@ class Execute extends Module with consts{
     }
 
     //io.o_available_funcs(0):=(Mux(alu1.io.o_available,1.U,0.U) + Mux(alu2.io.o_available,1.U,0.U) )
+    //TODO: index available_funcs with FU_xxx
     io.o_available_funcs(0):=MuxCase(0.U,Seq(
         ((alu1.io.o_available)&&(!alu2.io.o_available)) -> 1.U,
         (!(alu1.io.o_available)&&(alu2.io.o_available)) -> 1.U,
@@ -79,6 +82,7 @@ class Execute extends Module with consts{
     io.o_available_funcs(2):=Mux(lsu.io.o_available,1.U,0.U)
     io.o_available_funcs(3):=Mux(mul.io.o_available,1.U,0.U)
     io.o_available_funcs(4):=Mux(div.io.o_available,1.U,0.U)
+    io.o_available_funcs(5):=Mux(csr_bf.io.o_available,1.U,0.U)
 
 
     //when alu1 available, and at least 1 alu inst
@@ -102,14 +106,17 @@ class Execute extends Module with consts{
     div.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_DIV)) || 
                             ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_DIV)),true.B,false.B)
 
+    csr_bf.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_CSR)) || 
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_CSR)),true.B,false.B)
+
     alu1.io.i_uop:= Mux((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU),io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     //when alu1 is busy and inst 0 is alu
     alu2.io.i_uop:= Mux(!alu1.io.o_available && (io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU),io.i_issue_res_packs(0),io.i_issue_res_packs(1))
-
     bru.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_BRU,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     lsu.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_MEM,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     mul.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_MUL,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     div.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_DIV,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
+    csr_bf.io.i_uop := Mux(io.i_issue_res_packs(0).func_code === FU_CSR,io.i_issue_res_packs(0),io.i_issue_res_packs(1))
 
     alu1.io.i_exception    := io.i_exception
     alu2.io.i_exception    := io.i_exception
@@ -117,6 +124,7 @@ class Execute extends Module with consts{
     lsu.io.i_exception     := io.i_exception
     mul.io.i_exception     := io.i_exception
     div.io.i_exception     := io.i_exception
+    csr_bf.io.i_exception     := io.i_exception
 
     alu1.io.i_rollback_valid := io.i_rollback_valid
     alu2.io.i_rollback_valid := io.i_rollback_valid
@@ -124,6 +132,7 @@ class Execute extends Module with consts{
     lsu.io.i_rollback_valid  := io.i_rollback_valid
     mul.io.i_rollback_valid  := io.i_rollback_valid
     div.io.i_rollback_valid  := io.i_rollback_valid
+    csr_bf.io.i_rollback_valid  := io.i_rollback_valid
 
     alu1.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
     alu2.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
@@ -131,6 +140,7 @@ class Execute extends Module with consts{
     lsu.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx//not implemented
     mul.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
     div.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
+    csr_bf.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
 
 /*????????
     when((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)){
@@ -149,15 +159,15 @@ class Execute extends Module with consts{
     //io.o_branch_resolve_pack.valid := Mux(io.i_exception, false.B ,bru.io.o_branch_resolve_pack.valid)
     io.o_branch_resolve_pack.valid := bru.io.o_branch_resolve_pack.valid
 
-    val issue_idx1 = Wire(UInt(log2Ceil(func_units.length).W))
-    val issue_idx2 = Wire(UInt(log2Ceil(func_units.length).W))
+    val issue_idx1 = Wire(UInt(log2Ceil(func_units.length).W))//the idxes of fu that are selected to exit the exu (to rob)
+    val issue_idx2 = Wire(UInt(log2Ceil(func_units.length).W))//TODO:rename this to anything else, could be confusing 
 
     issue_idx1 := PriorityEncoder(Seq(alu1.io.o_ex_res_pack.valid,alu2.io.o_ex_res_pack.valid,
             bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid, mul.io.o_ex_res_pack.valid,
-            div.io.o_ex_res_pack.valid))
+            div.io.o_ex_res_pack.valid,csr_bf.io.o_ex_res_pack.valid))
     issue_idx2 := (func_units.length).U-1.U-PriorityEncoder(Seq(alu1.io.o_ex_res_pack.valid,alu2.io.o_ex_res_pack.valid ,
             bru.io.o_ex_res_pack.valid,lsu.io.o_ex_res_pack.valid, mul.io.o_ex_res_pack.valid,
-            div.io.o_ex_res_pack.valid).reverse)
+            div.io.o_ex_res_pack.valid,csr_bf.io.o_ex_res_pack.valid).reverse)
 
     for(i <- 0 until func_units.length){// use switch case to connect specialized function unit
         func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid && (!io.i_rollback_valid)

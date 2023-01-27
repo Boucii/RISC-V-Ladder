@@ -88,8 +88,8 @@ class Reorder_Buffer extends Module{
     next_can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
     next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
-    next_will_commit(0) := rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
-    next_will_commit(1) := rob_exception(commit_ptr)=/=0.U && rob_exception(commit_ptr+1.U)=/=0.U && next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
+    next_will_commit(0) := 没有interrupt && rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
+    next_will_commit(1) := 没有interrupt && 第一条不是ecallmretebreak&& rob_exception(commit_ptr)=/=0.U && rob_exception(commit_ptr+1.U)=/=0.U && next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
       io.o_commit_packs(0).valid :=  (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )

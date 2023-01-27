@@ -52,6 +52,16 @@ trait consts{
     val J_TYPE = 5.U(7.W)
     val N_TYPE = 6.U(7.W)
 
+    //CSR_SEL
+    //this is multiplexed with ALU_SEL
+    //TODO:rename this field to operate_code ,not alu_sel
+    val CSR_NON     = 0.U(5.W)
+    val CSR_CSRRC   = 1.U(5.W)
+    val CSR_CSRRW   = 2.U(5.W) 
+    val CSR_CSRRS   = 3.U(5.W) 
+    val CSR_ECALL   = 4.U(5.W) 
+    val CSR_MRET    = 5.U(5.W) 
+    val CSR_EBREAK  = 6.U(5.W) 
 //ALU_SEL
     /*
     val ALU_NONE   = 0.U(4.W)

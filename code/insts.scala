@@ -14,7 +14,6 @@ object decode_table extends consts{
     //            valid, funcunit idx,  regwen,               type,           OP1_sel,          OP2_sel2,            alu_sel,         branch_type,              memoty_type(1 for write)
     AUIPC  -> List(Y,    BitPat(FU_ALU),       Y,        BitPat(U_TYPE),   BitPat(SRC_IMM),    BitPat(SRC_PC),   BitPat(ALU_AUIPC),     BitPat(BR_N),             BitPat(MEM_N)), 
     ADDI   -> List(Y,    BitPat(FU_ALU),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_ADDI),     BitPat(BR_N),             BitPat(MEM_N)), 
-//  EBREAK, -> List(Y,   BitPat(FU_MEM),       Y,        BitPat(N_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
     JAL    -> List(Y,    BitPat(FU_BRU),       Y,        BitPat(J_TYPE),   BitPat(SRC_IMM),    BitPat(SRC_N),    BitPat(ALU_NONE),    BitPat(BR_J),             BitPat(MEM_N)), 
     JALR   -> List(Y,    BitPat(FU_BRU),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_JR),            BitPat(MEM_N)), 
     SLTI   -> List(Y,    BitPat(FU_ALU),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_SLTI),     BitPat(BR_N),             BitPat(MEM_N)), 
@@ -81,7 +80,13 @@ object decode_table extends consts{
     BGE    -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_GE),            BitPat(MEM_N)), 
     BLTU   -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_LTU),           BitPat(MEM_N)), 
     BGEU   -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_GEU),           BitPat(MEM_N)) 
-//  ECALL  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(N,    )    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
+
+    EBREAK -> List(Y,    BitPat(FU_CSR),       N,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_EBREAK),  BitPat(BR_N),             BitPat(MEM_N)), 
+    MRET   -> List(Y,    BitPat(FU_CSR),       N,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_MRET),    BitPat(BR_N),             BitPat(MEM_N)), 
+    ECALL  -> List(Y,    BitPat(FU_CSR),       N,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_ECALL),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRC  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRC),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRW  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRW),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRS  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRS),   BitPat(BR_N),             BitPat(MEM_N)), 
 //  CSRRW  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
 //  CSRRS  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
 //  CSRRC  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 

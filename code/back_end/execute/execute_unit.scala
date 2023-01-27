@@ -385,3 +385,35 @@ class DIV extends Function_Unit(){
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
     io.o_func_idx:=FU_DIV //useless
 }
+//a buffer for csr insts, actually does nothing but buffering, and wil not be bypassed to reservation station
+class CSR_BF() extends Function_Unit(
+    is_bru = false,
+    is_lsu = false
+){
+    val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
+    val next_uop = Wire(new uop())
+    next_uop := Mux(io.i_select,io.i_uop,uop)
+    when(io.i_select_to_commit && !io.i_select){
+        next_uop.valid:=false.B
+    }
+    uop:=next_uop
+
+    io.o_func_idx:=FU_CSR
+    io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.valid := uop.valid
+
+    val s_FREE :: s_BUSY ::  Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
+    next_state := MuxCase(state,Seq(
+        (io.i_exception) -> s_FREE,
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
+            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
+        (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+
+    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+}

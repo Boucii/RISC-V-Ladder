@@ -17,9 +17,9 @@ class Fetch_Res extends Module{
 
         val o_fetch_pack = Decoupled(new fetch_pack())
     })
-    io.o_fetch_pack.valid := !io.i_stall && io.o_fetch_pack.bits.valids(0) && io.o_fetch_pack.bits.valids(1)   
-    io.o_fetch_pack.bits.valids(0) := !io.i_pc(2) && !io.i_flush
-    io.o_fetch_pack.bits.valids(1) := !io.i_flush
+    io.o_fetch_pack.valid := (io.o_fetch_pack.bits.valids(0) || io.o_fetch_pack.bits.valids(1))   
+    io.o_fetch_pack.bits.valids(0) := !io.i_stall && !io.i_pc(2) && !io.i_flush
+    io.o_fetch_pack.bits.valids(1) := !io.i_stall && !io.i_flush
     io.o_fetch_pack.bits.pc := Cat(io.i_pc(63,3),0.U(3.W))
     io.o_fetch_pack.bits.insts(0) := io.i_fetch_res(31,0)
     io.o_fetch_pack.bits.insts(1) := io.i_fetch_res(63,32)

@@ -18,11 +18,14 @@ class rob_allocation_req_pack extends Bundle{
     val valid = Bool()
     val uop = new uop()
 }
+
 class IcacheIO extends Bundle{
-    val o_addr_valid = Output(Bool())
-    val i_inst_ready = Input(Bool())
+    val o_wen = Output(Bool())
     val o_addr = Output(UInt(64.W))
-    val i_insts = Input(Vec(2,UInt(64.W)))
+    val i_data = Input(UInt(64.W))
+    val i_addr_ready = Input(Bool())
+    val o_addr_valid = Output(Bool())
+    val i_data_valid = Input(Bool())
 }
 class DcacheIO extends Bundle{
     val valid = Input(Bool())
@@ -38,36 +41,49 @@ class DcacheIO extends Bundle{
 
 class branch_predict_pack extends Bundle
 {
+    /*
     //TODO: valid and is_branch?,valid?
     val valid = Bool() //validity of the branch
     val is_branch = Bool()
     val taken = Bool()
-    val target = UInt(32.W)
-    //val type = vec(2,Bool())    //type of branch
+    val target = UInt(64.W)
+    */
+    //btb prediction
+    val valid = Bool()
+    val target = UInt(64.W)
+    val branch_type = UInt(4.W)
+    val select = UInt(1.W)
+
+    val taken = Bool()
 }
 
 class branch_presolve_pack extends Bundle
 {
-    val mispred = Bool()
-    val pc = UInt(32.W)
-    //val target = UInt(32.W) //TODO: really needed?correct target
+    val valid = Bool() //valid is mispred
+    val taken = Bool() //if a non-br is predicted as br and tk, redirect pc to pc+4
+    val pc = UInt(64.W)//pc of the mispred inst
 }
-//?
 class branch_resolve_pack extends Bundle
 {
     val valid = Bool()//aka valid
     val mispred = Bool()
     val taken = Bool()
-    //val pc = UInt(32.W)
-    val target = UInt(32.W)
-    val uop = new uop()
+    val pc = UInt(64.W)
+    val target = UInt(64.W)
+    //val uop = new uop()
+    val rob_idx = UInt(8.W)
+    val prediction_valid = Bool()
+    val branch_type = UInt(3.W)
+    //val branch_predict_pack = new branch_predict_pack()
 }
 
 class fetch_pack extends Bundle
 {
-    val pc = UInt(32.W)
+    val valids = Vec(2,Bool()) //if the insts are valid
+    val pc = UInt(64.W)
     val insts = Vec(2,UInt(32.W))
-    val branch_predict_packs = Vec(2, new branch_predict_pack())
+    val branch_predict_pack = new branch_predict_pack()
+    //val branch_predict_packs = Vec(2, new branch_predict_pack())
 }
 
 class imem_fetch_req_interface extends Bundle

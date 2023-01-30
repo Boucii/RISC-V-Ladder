@@ -11,7 +11,7 @@ class allocation_res_pack extends Bundle{
     val rob_idx = UInt(7.W)
     val valid = Bool()
 }
-class Reorder_Buffer extends Module{
+class Reorder_Buffer extends Module with consts{
     val io =IO(new Bundle{
         //val i_flush = Input(Bool())
         val o_empty = Output(Bool())
@@ -67,9 +67,9 @@ class Reorder_Buffer extends Module{
     //判定要用下个周期的allocateptr而不是这个周期的
     //robstate也应该要看robstatenext
     this_num_to_roll_back := MuxCase(0.U,Seq(
-      (next_rob_state === s_rollback && (allocate_ptr -2.U) > io.i_branch_resolve_pack.uop.rob_idx) ->2.U,
-      (next_rob_state === s_rollback && (allocate_ptr -2.U) === io.i_branch_resolve_pack.uop.rob_idx)->1.U,
-      (next_rob_state === s_rollback && (allocate_ptr -1.U) === io.i_branch_resolve_pack.uop.rob_idx) ->0.U
+      (next_rob_state === s_rollback && (allocate_ptr -2.U) > io.i_branch_resolve_pack.rob_idx) ->2.U,
+      (next_rob_state === s_rollback && (allocate_ptr -2.U) === io.i_branch_resolve_pack.rob_idx)->1.U,
+      (next_rob_state === s_rollback && (allocate_ptr -1.U) === io.i_branch_resolve_pack.rob_idx) ->0.U
     )) 
     io.o_rob_head := commit_ptr
 
@@ -79,19 +79,21 @@ class Reorder_Buffer extends Module{
     val rob_exception = RegInit(0.U.asTypeOf(Vec(64, Bool())))
     val rob_done = RegInit(0.U.asTypeOf(Vec(64, Bool()))) // is this instr written back and ready to commit? is this necessary
 
-    //val will_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
+    val will_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
     val next_will_commit = Wire(Vec(2,Bool()))
-    //will_commit := next_will_commit
-    //val can_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
+    will_commit := next_will_commit
+    val can_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
     val next_can_commit = Wire(Vec(2,Bool()))
-    //can_commit := next_can_commit
+    can_commit := next_can_commit
 
     next_can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
     next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
-    next_will_commit(0) := !rob_exception(commit_ptr) && !io.i_interrupt && rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
-    next_will_commit(1) := !rob_exception(commit_ptr) && !io.i_interrupt && !rob_exception(commit_ptr+1.U) && 
-          rob_uop(commit_ptr).func_code =/= FU_CSR && next_can_commit(0) && next_can_commit(1) && (next_rob_state===s_normal || next_rob_state===s_full)
+    next_will_commit(0) := !io.i_interrupt && rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
+    next_will_commit(1) := !io.i_interrupt && !(rob_uop(commit_ptr).func_code === FU_CSR && 
+        ((rob_uop(commit_ptr).alu_sel === CSR_ECALL) || (rob_uop(commit_ptr).alu_sel === CSR_EBREAK) || (rob_uop(commit_ptr).alu_sel === CSR_MRET))) &&
+        rob_exception(commit_ptr)=/=0.U && rob_exception(commit_ptr+1.U)=/=0.U && next_can_commit(0) && next_can_commit(1) &&
+        (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
       io.o_commit_packs(0).valid :=  (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
@@ -180,14 +182,6 @@ class Reorder_Buffer extends Module{
       //when rollback, no allocation,no exe write, no commit
       allocate_ptr := allocate_ptr - this_num_to_roll_back
     }
-    when(next_rob_state === s_reset){
-      allocate_ptr := 0.U
-      commit_ptr := 0.U
-      rob_valid := 0.U.asTypeOf(Vec(64, Bool()))
-      rob_done := 0.U.asTypeOf(Vec(64, Bool()))
-      rob_exception := 0.U.asTypeOf(Vec(64, Bool()))
-      rob_uop := 0.U.asTypeOf(Vec(64, new uop()))
-    }
 
 /*
     io.o_exception:=(rob_exception(commit_ptr)===true.B && next_will_commit(0)===true.B || 
@@ -202,14 +196,14 @@ class Reorder_Buffer extends Module{
     
     io.o_rolling_back := next_rob_state
 
-    next_rob_state:=Mux(io.o_exception || io.i_interrupt, s_reset, MuxCase(rob_state,Seq(
+    next_rob_state:=MuxCase(rob_state,Seq(
       (rob_state === s_reset) -> s_normal,
       (rob_state === s_normal && is_full) -> s_full,
       ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) -> s_rollback,
-      (rob_state === s_rollback && ((io.i_branch_resolve_pack.uop.rob_idx === allocate_ptr-1.U) ||
-                   (io.i_branch_resolve_pack.uop.rob_idx === allocate_ptr-2.U) )) -> s_normal,
-      (rob_state === s_full && next_will_commit(0)) -> s_normal
-    )))
+      (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||
+                   (io.i_branch_resolve_pack.rob_idx === allocate_ptr-2.U) )) -> s_normal,
+      (rob_state === s_full && will_commit(0)) -> s_normal
+    ))
     //printf("rob_state:%d\n",rob_state)
     //printf("allocate_ptr:%d\n",allocate_ptr)
     //printf("rob_state:%d\n",rob_state)

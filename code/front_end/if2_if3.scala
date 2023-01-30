@@ -6,11 +6,12 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
-class IF1_IF2 extends Module
+class IF2_IF3 extends Module
 {
     val io=IO(new Bundle{
         val i_stall = Input(Bool())
-        val i_flush = Input(Bool())
+        val i_flush = Input(Bool())        
+        val i_fetch_valid = Input(Bool())
         val o_fetch_valid = Output(Bool())
 
         val i_pc = Input(UInt(64.W))
@@ -18,7 +19,6 @@ class IF1_IF2 extends Module
 
         val i_branch_predict_pack = Input(new branch_predict_pack())
         val o_branch_predict_pack = Output(new branch_predict_pack())
-
     })
 
     val pc = RegInit(0.U(64.W));
@@ -32,6 +32,6 @@ class IF1_IF2 extends Module
     io.o_branch_predict_pack :=branch_predict_pack
 
     val fetch_valid = RegInit(false.B)
-    fetch_valid := !io.i_flush && !io.i_stall 
+    fetch_valid := !io.i_flush && !io.i_stall && io.i_fetch_valid
     io.o_fetch_valid := fetch_valid
 }

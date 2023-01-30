@@ -181,7 +181,7 @@ class BRU extends Function_Unit(
   state := next_state
 
   val mispredict = Wire(Bool())
-  mispredict := !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)
+  mispredict := ((uop.branch_predict_pack.valid) && !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)) || (!uop.branch_predict_pack.valid && is_taken)
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
 
@@ -189,7 +189,9 @@ class BRU extends Function_Unit(
   branch_resolve_pack.mispred           := mispredict
   branch_resolve_pack.taken             := is_taken
   branch_resolve_pack.target            := target_address
-  branch_resolve_pack.uop               := uop
+  branch_resolve_pack.rob_idx           := uop.rob_idx
+  branch_resolve_pack.branch_type       := uop.branch_type
+  branch_resolve_pack.prediction_valid  := uop.branch_predict_pack.valid
   io.o_branch_resolve_pack := branch_resolve_pack
 
     next_state := MuxCase(state,Seq(

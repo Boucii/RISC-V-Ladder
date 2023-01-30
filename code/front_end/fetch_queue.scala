@@ -1,12 +1,23 @@
+package Ladder
+
+import chisel3._
+import chiseltest._
+import org.scalatest.freespec.AnyFreeSpec
+import chisel3.util._
+import chisel3.util.experimental.decode._
+import chisel3.experimental.BundleLiterals._
+
 class Fetch_Queue extends Module
 {
   val io = IO(new Bundle {
-    val in = Flipped(Decoupled(new fetchpack))
-    val out = Decoupled(new fetchpack)
+    val in = Flipped(Decoupled(new fetch_pack()))
+    val out = Decoupled(new fetch_pack())
     val full = Output(Bool())
     val empty = Output(Bool())
+    val i_flush = Input(Bool())
   })
-  val queue = Module(new Queue(new fetchpack(), entries=64))
+  val queue = Module(new Queue(new fetch_pack(), entries=64))
+  queue.reset := reset.asBool()||io.i_flush
   queue.io.enq <> io.in
   io.out <> queue.io.deq
   io.full := !queue.io.enq.ready

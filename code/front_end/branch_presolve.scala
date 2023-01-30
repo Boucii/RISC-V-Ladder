@@ -8,7 +8,7 @@ import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 //TODO: debug branchpresolvepack, add taken,remove target 
 //no its actually specify the case that its not a branch but predicted as a branch and taken, and modify pcgen accordingly
-class branch_presolve extends Module{
+class Branch_Presolve extends Module{
     val io=IO(new Bundle{
         val i_fetch_pack = Input(new fetch_pack())
         val i_branch_predict_pack = Input(new branch_predict_pack())
@@ -26,7 +26,7 @@ class branch_presolve extends Module{
             BitPat("b?????????????????111?????1100011") -> BitPat("b0100"),//BGEU
             BitPat("b?????????????????000?????1100111") -> BitPat("b1000"),//JALR
             BitPat("b?????????????????????????1101111") -> BitPat("b1000"),//JAL
-            BitPat("b00110000001000000000000000000000") -> BitPat("b0010"),//MRET
+            //BitPat("b00110000001000000000000000000000") -> BitPat("b0010"),//MRET
     ), BitPat("b0000")))
     
     val branch_decoder1 = decoder(QMCMinimizer , io.i_fetch_pack.insts(1) , TruthTable
@@ -41,13 +41,13 @@ class branch_presolve extends Module{
             BitPat("b?????????????????111?????1100011") -> BitPat("b0100"),//BGEU
             BitPat("b?????????????????000?????1100111") -> BitPat("b1000"),//JALR
             BitPat("b?????????????????????????1101111") -> BitPat("b1000"),//JAL
-            BitPat("b00110000001000000000000000000000") -> BitPat("b0010")//MRET
+            //BitPat("b00110000001000000000000000000000") -> BitPat("b0010")//MRET how to add this and ecall
             ), BitPat("b0000"))//BitPat.dontCare(4))
         )
     val br0 = branch_decoder0(0) || branch_decoder0(1) || branch_decoder0(2) || branch_decoder0(3)
     val br1 = branch_decoder1(0) || branch_decoder1(1) || branch_decoder1(2) || branch_decoder1(3)
     //printf("decoder=%x,decoder1=%x,br0=%x,br1=%x\n",io.res,branch_decoder1,br0,br1)
-    io.o_branch_presolve_pack.mispred :=((io.i_branch_predict_pack.valid) ^ br0) || ((io.i_branch_predict_pack.valid) ^ br1) //presolvepack add taken
-    io.o_branch_presolve_pack.pc := io.i_fetch_pack.pc
-
+    io.o_branch_presolve_pack.valid :=((io.i_branch_predict_pack.valid) ^ br0) || ((io.i_branch_predict_pack.valid) ^ br1) //presolvepack add taken
+    io.o_branch_presolve_pack.pc := io.i_fetch_pack.pc //???????
+    io.o_branch_presolve_pack.taken := io.i_branch_predict_pack.taken
 }

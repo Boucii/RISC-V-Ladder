@@ -134,13 +134,13 @@ class Execute extends Module with consts{
     div.io.i_rollback_valid  := io.i_rollback_valid
     csr_bf.io.i_rollback_valid  := io.i_rollback_valid
 
-    alu1.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
-    alu2.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
-    bru.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx//not needed
-    lsu.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx//not implemented
-    mul.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
-    div.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
-    csr_bf.io.i_rollback_rob_idx := io.o_branch_resolve_pack.uop.rob_idx
+    alu1.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx
+    alu2.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx
+    bru.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx//not needed
+    lsu.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx//not implemented
+    mul.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx
+    div.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx
+    csr_bf.io.i_rollback_rob_idx := io.o_branch_resolve_pack.rob_idx
 
 /*????????
     when((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)){

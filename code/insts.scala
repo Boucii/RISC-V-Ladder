@@ -79,14 +79,14 @@ object decode_table extends consts{
     BLT    -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_LT),            BitPat(MEM_N)), 
     BGE    -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_GE),            BitPat(MEM_N)), 
     BLTU   -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_LTU),           BitPat(MEM_N)), 
-    BGEU   -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_GEU),           BitPat(MEM_N)) 
+    BGEU   -> List(Y,    BitPat(FU_BRU),       N,        BitPat(B_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_GEU),           BitPat(MEM_N)), 
 
     EBREAK -> List(Y,    BitPat(FU_CSR),       N,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_EBREAK),  BitPat(BR_N),             BitPat(MEM_N)), 
     MRET   -> List(Y,    BitPat(FU_CSR),       N,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_MRET),    BitPat(BR_N),             BitPat(MEM_N)), 
-    ECALL  -> List(Y,    BitPat(FU_CSR),       N,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_ECALL),   BitPat(BR_N),             BitPat(MEM_N)), 
-    CSRRC  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRC),   BitPat(BR_N),             BitPat(MEM_N)), 
-    CSRRW  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRW),   BitPat(BR_N),             BitPat(MEM_N)), 
-    CSRRS  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE)    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRS),   BitPat(BR_N),             BitPat(MEM_N)), 
+    ECALL  -> List(Y,    BitPat(FU_CSR),       N,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_ECALL),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRC  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRC),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRW  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRW),   BitPat(BR_N),             BitPat(MEM_N)), 
+    CSRRS  -> List(Y,    BitPat(FU_CSR),       Y,        BitPat(I_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(CSR_CSRRS),   BitPat(BR_N),             BitPat(MEM_N)) 
 //  CSRRW  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
 //  CSRRS  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
 //  CSRRC  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(I,    )    BitPat(SRC_RS),     BitPat(SRC_IMM),  BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
@@ -161,4 +161,12 @@ object Instructions {
   def DIVUW              = BitPat("b0000001??????????101?????0111011")
   def REMW               = BitPat("b0000001??????????110?????0111011")
   def REMUW              = BitPat("b0000001??????????111?????0111011")
+  def EBREAK             = BitPat("b00000000000100000000000001110011")
+  def MRET               = BitPat("b00110000001000000000000001110011")
+  def ECALL              = BitPat("b00000000000000000000000001110011")
+  def CSRRW              = BitPat("b?????????????????001?????1110011")  
+  def CSRRC              = BitPat("b?????????????????011?????1110011")  
+  def CSRRS              = BitPat("b?????????????????010?????1110011")  
+
+
 }

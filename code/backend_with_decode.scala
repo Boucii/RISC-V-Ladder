@@ -42,7 +42,7 @@ class Back_End_With_Decode extends Module with consts{
 
     //connect decode input
     decode.io.i_fetch_pack <>  io.i_fetch_pack
-    decode.io.i_exception := io.o_exception
+    decode.io.i_exception := csr.io.o_pc_redirect_valid
     decode.io.i_branch_resolve_pack := io.o_branch_resolve_pack
     decode.io.i_stall := io.o_stall
 
@@ -65,8 +65,8 @@ class Back_End_With_Decode extends Module with consts{
     //csr insts are not bypassed because they are actually executed when commited, not in exu
     val written_back_table_with_bypass = Wire(UInt(128.W))
     written_back_table_with_bypass := rename.io.o_written_back_table | 
-            UIntToOH((execute.io.o_ex_res_packs(0).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(0).valid).asUInt())) & Fill(7,((execute.io.o_ex_res_packs(0).FU_CODE =/= FU_CSR).asUInt())))   |
-            UIntToOH((execute.io.o_ex_res_packs(1).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(1).valid).asUInt())) & Fill(7,((execute.io.o_ex_res_packs(1).FU_CODE =/= FU_CSR).asUInt())))
+            UIntToOH((execute.io.o_ex_res_packs(0).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(0).valid).asUInt())) & Fill(7,((execute.io.o_ex_res_packs(0).uop.func_code =/= FU_CSR).asUInt())))   |
+            UIntToOH((execute.io.o_ex_res_packs(1).uop.phy_dst ) & Fill(7,((execute.io.o_ex_res_packs(1).valid).asUInt())) & Fill(7,((execute.io.o_ex_res_packs(1).uop.func_code =/= FU_CSR).asUInt())))
     reservation_station.io.i_dispatch_packs := dispatch.io.o_dispatch_packs
     reservation_station.io.i_wakeup_port := written_back_table_with_bypass
     reservation_station.io.i_branch_resolve_pack := execute.io.o_branch_resolve_pack
@@ -109,7 +109,6 @@ class Back_End_With_Decode extends Module with consts{
     rob.io.i_rob_allocation_reqs := dispatch.io.o_rob_allocation_reqs
     rob.io.i_ex_res_packs := execute.io.o_ex_res_packs
     rob.io.i_branch_resolve_pack := execute.io.o_branch_resolve_pack
-    rob.io.i_interrupt := io.i_interrupt
 
     //connect csr input
     csr.io.i_exception := rob.io.o_exception

@@ -20,6 +20,11 @@ class Fetch_Queue extends Module
   queue.reset := reset.asBool()||io.i_flush
   queue.io.enq <> io.in
   io.out <> queue.io.deq
+
+  io.out.bits := queue.io.deq.bits
+  io.out.valid := queue.io.deq.valid && (!queue.reset.asBool())
+  queue.io.deq.ready := io.out.ready
+
   io.full := !queue.io.enq.ready
   io.empty := !queue.io.deq.valid
 }

@@ -77,6 +77,7 @@ class Front_End extends Module
     /*stage 3 : fetch to fetch queue, presolve branch*/
     branch_presolve.io.i_fetch_pack := fetch_res.io.o_fetch_pack.bits
     branch_presolve.io.i_branch_predict_pack := if2_if3.io.i_branch_predict_pack
+    branch_presolve.io.i_fetch_pack_valid := fetch_res.io.o_fetch_pack.valid
 
     fetch_res.io.i_pc := if2_if3.io.o_pc
     fetch_res.io.i_flush := front_end_control.io.o_stage3_flush || !if2_if3.io.o_fetch_valid

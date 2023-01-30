@@ -12,6 +12,7 @@ class Branch_Presolve extends Module{
     val io=IO(new Bundle{
         val i_fetch_pack = Input(new fetch_pack())
         val i_branch_predict_pack = Input(new branch_predict_pack())
+        val i_fetch_pack_valid = Input(Bool())
 
         val o_branch_presolve_pack = Output(new branch_presolve_pack())
     })
@@ -47,7 +48,7 @@ class Branch_Presolve extends Module{
     val br0 = branch_decoder0(0) || branch_decoder0(1) || branch_decoder0(2) || branch_decoder0(3)
     val br1 = branch_decoder1(0) || branch_decoder1(1) || branch_decoder1(2) || branch_decoder1(3)
     //printf("decoder=%x,decoder1=%x,br0=%x,br1=%x\n",io.res,branch_decoder1,br0,br1)
-    io.o_branch_presolve_pack.valid :=((io.i_branch_predict_pack.valid) ^ br0) || ((io.i_branch_predict_pack.valid) ^ br1) //presolvepack add taken
+    io.o_branch_presolve_pack.valid :=io.i_fetch_pack_valid && ((io.i_branch_predict_pack.valid) ^ br0) || ((io.i_branch_predict_pack.valid) ^ br1) //presolvepack add taken
     io.o_branch_presolve_pack.pc := io.i_fetch_pack.pc //???????
     io.o_branch_presolve_pack.taken := io.i_branch_predict_pack.taken
 }

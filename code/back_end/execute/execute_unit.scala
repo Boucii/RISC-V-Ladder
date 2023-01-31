@@ -186,6 +186,7 @@ class BRU extends Function_Unit(
   val branch_resolve_pack = Wire(new branch_resolve_pack())
 
   branch_resolve_pack.valid             := state === s_BUSY
+  branch_resolve_pack.pc                := uop.pc
   branch_resolve_pack.mispred           := mispredict
   branch_resolve_pack.taken             := is_taken
   branch_resolve_pack.target            := target_address

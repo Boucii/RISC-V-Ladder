@@ -11,12 +11,13 @@ class CSR extends Module with consts{
     val io = IO(new Bundle{
         val i_exception = Input(Bool())
         val i_interrupt = Input(Bool())
-        val i_commit_packs = Input(Vec(2,new uop()))
+        val i_commit_packs = Input(Vec(2,new valid_uop_pack()))
         val o_pc_redirect_target = Output(UInt(64.W))
         val o_pc_redirect_valid = Output(Bool())
 
         val o_commit_packs_modified = Output(Vec(2,new valid_uop_pack())) //commitpacks considering csr insts
     })
+    //dontTouch(io)
     //csr regfile
     val mepc    = RegInit(0.U(64.W))
     val mtvec   = RegInit(0.U(64.W))
@@ -33,18 +34,18 @@ class CSR extends Module with consts{
     val csr_wdata = Wire(UInt(64.W))
     val csr_rdata = Wire(UInt(64.W))
     commit0_is_csr_rw := io.i_commit_packs(0).valid &&
-            io.i_commit_packs(0).func_code === FU_CSR && (
-            io.i_commit_packs(0).alu_sel === CSR_CSRRC ||
-            io.i_commit_packs(0).alu_sel === CSR_CSRRW ||
-            io.i_commit_packs(0).alu_sel === CSR_CSRRS 
+            io.i_commit_packs(0).uop.func_code === FU_CSR && (
+            io.i_commit_packs(0).uop.alu_sel === CSR_CSRRC ||
+            io.i_commit_packs(0).uop.alu_sel === CSR_CSRRW ||
+            io.i_commit_packs(0).uop.alu_sel === CSR_CSRRS 
             )
     commit1_is_csr_rw := io.i_commit_packs(1).valid &&
-            io.i_commit_packs(1).func_code === FU_CSR && (
-            io.i_commit_packs(1).alu_sel === CSR_CSRRC ||
-            io.i_commit_packs(1).alu_sel === CSR_CSRRW ||
-            io.i_commit_packs(1).alu_sel === CSR_CSRRS 
+            io.i_commit_packs(1).uop.func_code === FU_CSR && (
+            io.i_commit_packs(1).uop.alu_sel === CSR_CSRRC ||
+            io.i_commit_packs(1).uop.alu_sel === CSR_CSRRW ||
+            io.i_commit_packs(1).uop.alu_sel === CSR_CSRRS 
             )
-    csr_addr := Mux(commit0_is_csr_rw, io.i_commit_packs(0).inst(31,20), io.i_commit_packs(1).inst(31,20))
+    csr_addr := Mux(commit0_is_csr_rw, io.i_commit_packs(0).uop.inst(31,20), io.i_commit_packs(1).uop.inst(31,20))
     csr_rdata := MuxCase(0.U,Seq(
         (csr_addr === 0x300.U)-> mstatus,
         (csr_addr === 0x342.U)-> mcause,
@@ -52,12 +53,12 @@ class CSR extends Module with consts{
         (csr_addr === 0x305.U)-> mtvec
     ))
     csr_wdata := MuxCase(0.U,Seq(
-        (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_CSRRC) -> (csr_rdata & (~io.i_commit_packs(0).src1_value)),
-        (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_CSRRW) -> (io.i_commit_packs(0).src1_value),
-        (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_CSRRS) -> (csr_rdata | (io.i_commit_packs(0).src1_value)),
-        (commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_CSRRC) -> (csr_rdata & (~io.i_commit_packs(1).src1_value)),
-        (commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_CSRRW) -> (io.i_commit_packs(1).src1_value),
-        (commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_CSRRS) -> (csr_rdata | (io.i_commit_packs(1).src1_value))
+        (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_CSRRC) -> (csr_rdata & (~io.i_commit_packs(0).uop.src1_value)),
+        (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_CSRRW) -> (io.i_commit_packs(0).uop.src1_value),
+        (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_CSRRS) -> (csr_rdata | (io.i_commit_packs(0).uop.src1_value)),
+        (commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_CSRRC) -> (csr_rdata & (~io.i_commit_packs(1).uop.src1_value)),
+        (commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_CSRRW) -> (io.i_commit_packs(1).uop.src1_value),
+        (commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_CSRRS) -> (csr_rdata | (io.i_commit_packs(1).uop.src1_value))
     ))
 
     assert(!(commit0_is_csr_rw && commit1_is_csr_rw),"cmt 0 and 1 are all csr insts\n")
@@ -72,9 +73,9 @@ class CSR extends Module with consts{
         }.elsewhen(csr_addr===0x305.U){ 
             mtvec := csr_wdata
         }
-    }.elsewhen(commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_ECALL){
+    }.elsewhen(commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL){
         mcause := 11.U
-        mepc := io.i_commit_packs(0).pc//software add 4 later
+        mepc := io.i_commit_packs(0).uop.pc//software add 4 later
     }
 
     io.o_commit_packs_modified := io.i_commit_packs
@@ -88,13 +89,13 @@ class CSR extends Module with consts{
     //exception and interrupt and trap
     assert(io.i_exception =/= true.B ,"not implemented any exception yet!\n")
     io.o_pc_redirect_valid := io.i_exception || io.i_interrupt || 
-            (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_ECALL)||
-            (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_EBREAK)||(commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_EBREAK)||
-            (commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_MRET)
+            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)||
+            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_EBREAK)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_EBREAK)||
+            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)
     io.o_pc_redirect_target := MuxCase(0.U(64.W),Seq(
         (io.i_interrupt) -> 0.U(64.W),//specify which kind of itrpt
         (io.i_exception) -> 0.U(64.W),//same
-        ((commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_ECALL)) -> mtvec,
-        ((commit0_is_csr_rw && io.i_commit_packs(0).alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).alu_sel === CSR_MRET)) -> mepc
+        ((commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)) -> mtvec,
+        ((commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)) -> mepc
     ))
 }

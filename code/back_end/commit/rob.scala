@@ -40,6 +40,7 @@ class Reorder_Buffer extends Module with consts{
         val dbg_allocate_ptr = Output(UInt(7.W))
         //val rob_state = Output(s_normal.asUInt())
     })
+    //dontTouch(io)
 
     val commit_ptr = RegInit(0.U(7.W))//rob head
     val allocate_ptr = RegInit(0.U(7.W))//rob tail
@@ -89,10 +90,10 @@ class Reorder_Buffer extends Module with consts{
     next_can_commit(0) := (rob_valid(commit_ptr)) && (rob_done(commit_ptr))
     next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
-    next_will_commit(0) := !io.i_interrupt && rob_exception(commit_ptr)=/=0.U && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
+    next_will_commit(0) := !io.i_interrupt && !rob_exception(commit_ptr) && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
     next_will_commit(1) := !io.i_interrupt && !(rob_uop(commit_ptr).func_code === FU_CSR && 
         ((rob_uop(commit_ptr).alu_sel === CSR_ECALL) || (rob_uop(commit_ptr).alu_sel === CSR_EBREAK) || (rob_uop(commit_ptr).alu_sel === CSR_MRET))) &&
-        rob_exception(commit_ptr)=/=0.U && rob_exception(commit_ptr+1.U)=/=0.U && next_can_commit(0) && next_can_commit(1) &&
+        !rob_exception(commit_ptr) && !rob_exception(commit_ptr+1.U) && next_can_commit(0) && next_can_commit(1) &&
         (next_rob_state===s_normal || next_rob_state===s_full)
 
     //dispatch unit TODO:ptr pass 127??consider full???consider exception

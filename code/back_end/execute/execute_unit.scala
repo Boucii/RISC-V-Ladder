@@ -37,10 +37,14 @@ class ALU() extends Function_Unit(
     is_bru = false,
     is_lsu = false
 ){
+    val s_FREE :: s_BUSY ::  Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
     val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when(io.i_select_to_commit && !io.i_select){
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
         next_uop.valid:=false.B
     }
     uop:=next_uop
@@ -103,10 +107,7 @@ class ALU() extends Function_Unit(
     )
     )
 
-    val s_FREE :: s_BUSY ::  Nil = Enum(2)
-    val state = RegInit(s_FREE)
-    val next_state = Wire(UInt(2.W))
-    state := next_state
+
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
@@ -129,12 +130,17 @@ class BRU extends Function_Unit(
 ){
     io.o_func_idx := FU_BRU
 
+    val s_FREE :: s_BUSY :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
     val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
-    when(io.i_select_to_commit && !io.i_select){
-        uop.valid:=false.B
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+        next_uop.valid:=false.B
     }
     io.o_ex_res_pack.uop := uop
     val rs1=uop.src1_value
@@ -175,10 +181,7 @@ class BRU extends Function_Unit(
     (pc_sel === PC_PLUS4)   -> (uop.pc+4.U(32.W))
   ))
 
-  val s_FREE :: s_BUSY :: Nil = Enum(2)
-  val state = RegInit(s_FREE)
-  val next_state = Wire(UInt(2.W))
-  state := next_state
+
 
   val mispredict = Wire(Bool())
   mispredict := ((uop.branch_predict_pack.valid) && !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)) || (!uop.branch_predict_pack.valid && is_taken)
@@ -195,11 +198,19 @@ class BRU extends Function_Unit(
   branch_resolve_pack.prediction_valid  := uop.branch_predict_pack.valid
   io.o_branch_resolve_pack := branch_resolve_pack
 
+/*
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
         (!(io.i_exception) && ((state === s_FREE) && (io.i_select && !io.i_select_to_commit))) -> s_BUSY,
         (!(io.i_exception) && ((state === s_BUSY) && (io.i_select_to_commit))) -> s_FREE
     ))
+    */
+    next_state := MuxCase(state,Seq(
+        (io.i_exception) -> s_FREE,
+        (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
+        (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
+    ))
+
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
     io.o_ex_res_pack.valid := uop.valid
 }
@@ -211,9 +222,18 @@ class LSU extends Function_Unit(
 ){
 
     io.o_func_idx:=FU_MEM
-    val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
+
+    val s_FREE :: s_BUSY  :: Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
+    val uop =  RegInit(0.U.asTypeOf(new uop()))
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+        next_uop.valid:=false.B
+    }
     uop:=next_uop
 
     val len = Wire(UInt(32.W))
@@ -246,10 +266,7 @@ class LSU extends Function_Unit(
     io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.uop.dst_value := io.dcache_io.MdataIn
 
-    val s_FREE :: s_BUSY  :: Nil = Enum(2)
-    val state = RegInit(s_FREE)
-    val next_state = Wire(UInt(2.W))
-    state := next_state
+
 
     val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
@@ -301,8 +318,8 @@ class MUL extends Function_Unit(){
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
-    when(io.i_select_to_commit && !io.i_select){
-        uop.valid:=false.B
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+        next_uop.valid:=false.B
     }
     val multiplier = Module(new Multiplier())
     multiplier.io.i_flush := next_state === s_FREE
@@ -359,8 +376,8 @@ class DIV extends Function_Unit(){
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
-    when(io.i_select_to_commit && !io.i_select){
-        uop.valid:=false.B
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+        next_uop.valid:=false.B
     }
 
     val divider = Module(new Divider())
@@ -393,10 +410,15 @@ class CSR_BF() extends Function_Unit(
     is_bru = false,
     is_lsu = false
 ){
+    val s_FREE :: s_BUSY ::  Nil = Enum(2)
+    val state = RegInit(s_FREE)
+    val next_state = Wire(UInt(2.W))
+    state := next_state
+
     val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when(io.i_select_to_commit && !io.i_select){
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
         next_uop.valid:=false.B
     }
     uop:=next_uop
@@ -405,10 +427,7 @@ class CSR_BF() extends Function_Unit(
     io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.valid := uop.valid
 
-    val s_FREE :: s_BUSY ::  Nil = Enum(2)
-    val state = RegInit(s_FREE)
-    val next_state = Wire(UInt(2.W))
-    state := next_state
+
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,

@@ -89,13 +89,13 @@ class CSR extends Module with consts{
     //exception and interrupt and trap
     assert(io.i_exception =/= true.B ,"not implemented any exception yet!\n")
     io.o_pc_redirect_valid := io.i_exception || io.i_interrupt || 
-            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)||
-            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_EBREAK)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_EBREAK)||
-            (commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)
+            (io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)|| (io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)||
+            (io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_EBREAK)||(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_EBREAK)||
+            (io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||  (io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)
     io.o_pc_redirect_target := MuxCase(0.U(64.W),Seq(
         (io.i_interrupt) -> 0.U(64.W),//specify which kind of itrpt
         (io.i_exception) -> 0.U(64.W),//same
-        ((commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)) -> mtvec,
-        ((commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||(commit1_is_csr_rw && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)) -> mepc
+        ((io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)||(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)) -> mtvec,
+        ((io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_MRET)||(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_MRET)) -> mepc
     ))
 }

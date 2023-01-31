@@ -32,6 +32,7 @@ class Reorder_Buffer extends Module with consts{
         val o_rob_head = Output(UInt(7.W))
 
         val i_interrupt = Input(Bool())
+        val i_csr_pc_redirect = Input(Bool())
         val o_exception = Output(Bool())
         val o_rolling_back = Output(Bool())
 
@@ -45,13 +46,15 @@ class Reorder_Buffer extends Module with consts{
     val commit_ptr = RegInit(0.U(7.W))//rob head
     val allocate_ptr = RegInit(0.U(7.W))//rob tail
 
-    //commit_ptr:=0.U
-    //allocate_ptr:=0.U
 
+    //this should be named after last (rob_state, this rob state)
+    //the state machine logic and naming is so shitty, fuck
     val s_reset :: s_normal :: s_rollback :: s_full :: Nil = Enum(4)//modify this FULL added make 1 slot available also full
     val rob_state = RegInit(s_normal)
     val next_rob_state = Wire(UInt(2.W))
-    rob_state:=next_rob_state
+    val last_pc_redirect = Reg(Bool())
+    last_pc_redirect := io.i_csr_pc_redirect
+    rob_state:= next_rob_state 
     next_rob_state := 1.U//initialize,but not good,rewrite with muxcase to change the state
 
     io.dbg_commit_ptr:=commit_ptr
@@ -80,6 +83,9 @@ class Reorder_Buffer extends Module with consts{
     val rob_exception = RegInit(0.U.asTypeOf(Vec(64, Bool())))
     val rob_done = RegInit(0.U.asTypeOf(Vec(64, Bool()))) // is this instr written back and ready to commit? is this necessary
 
+    //this will commmit and next will commit should be named after last commit, and this_will_commit
+    //the reason why the set(reg,wire) should stands for (last,this) instead of (this, next) is actually it would cause a cyc delay since there
+    //is the uop reg that would take 1 cyc to write into in the first place 
     val will_commit = RegInit(0.U.asTypeOf(Vec(2,Bool())))
     val next_will_commit = Wire(Vec(2,Bool()))
     will_commit := next_will_commit
@@ -183,6 +189,13 @@ class Reorder_Buffer extends Module with consts{
       //when rollback, no allocation,no exe write, no commit
       allocate_ptr := allocate_ptr - this_num_to_roll_back
     }
+    when(next_rob_state === s_reset){
+        for(i <- 0 until 64){
+          rob_valid(i) := false.B
+        }
+        allocate_ptr := 0.U
+        commit_ptr := 0.U
+    }
 
 /*
     io.o_exception:=(rob_exception(commit_ptr)===true.B && next_will_commit(0)===true.B || 
@@ -197,14 +210,14 @@ class Reorder_Buffer extends Module with consts{
     
     io.o_rolling_back := next_rob_state
 
-    next_rob_state:=MuxCase(rob_state,Seq(
+    next_rob_state:=Mux(io.o_exception || io.i_interrupt || last_pc_redirect , s_reset ,MuxCase(rob_state,Seq(
       (rob_state === s_reset) -> s_normal,
       (rob_state === s_normal && is_full) -> s_full,
       ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) -> s_rollback,
       (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||
                    (io.i_branch_resolve_pack.rob_idx === allocate_ptr-2.U) )) -> s_normal,
       (rob_state === s_full && will_commit(0)) -> s_normal
-    ))
+    )))
     //printf("rob_state:%d\n",rob_state)
     //printf("allocate_ptr:%d\n",allocate_ptr)
     //printf("rob_state:%d\n",rob_state)

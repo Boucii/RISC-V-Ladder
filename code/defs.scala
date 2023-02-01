@@ -28,8 +28,10 @@ class IcacheIO extends Bundle{
     val i_data_valid = Input(Bool())
 }
 class DcacheIO extends Bundle{
-    val valid = Input(Bool())
-    val ready = Output(Bool())
+    val data_valid = Input(Bool())
+    val data_ready = Output(Bool())
+    val addr_valid = Output(Bool())
+    val addr_ready = Input(Bool())
 
     val Mwout=Output((UInt(1.W)))
     val Maddr=Output(UInt(64.W))

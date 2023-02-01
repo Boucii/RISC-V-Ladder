@@ -39,9 +39,10 @@ class Back_End_With_Decode extends Module with consts{
     val execute =Module(new Execute())
     val rob = Module(new Reorder_Buffer())
     val csr = Module(new CSR())
+    val interrupt_mask = Module(new Interrupt_Mask())
 
     //connect decode input
-    decode.io.i_fetch_pack <>  io.i_fetch_pack
+    decode.io.i_fetch_pack <> io.i_fetch_pack
     decode.io.i_exception := csr.io.o_pc_redirect_valid
     decode.io.i_branch_resolve_pack := io.o_branch_resolve_pack
     decode.io.i_stall := io.o_stall
@@ -96,9 +97,12 @@ class Back_End_With_Decode extends Module with consts{
     }
 
     //dcache
-    execute.io.dcache_io.valid      := io.dcache_io.valid  
-    execute.io.dcache_io.MdataIn    := io.dcache_io.MdataIn  
-    io.dcache_io.ready              :=execute.io.dcache_io.ready  
+    execute.io.dcache_io.data_valid  := io.dcache_io.data_valid  
+    execute.io.dcache_io.MdataIn     := io.dcache_io.MdataIn  
+    io.dcache_io.addr_valid          :=execute.io.dcache_io.addr_valid  
+    io.dcache_io.data_ready          :=execute.io.dcache_io.data_ready
+    execute.io.dcache_io.addr_ready := io.dcache_io.addr_ready
+
     io.dcache_io.Mwout              :=execute.io.dcache_io.Mwout  
     io.dcache_io.Maddr              :=execute.io.dcache_io.Maddr  
     io.dcache_io.Men                :=execute.io.dcache_io.Men    
@@ -109,13 +113,19 @@ class Back_End_With_Decode extends Module with consts{
     rob.io.i_rob_allocation_reqs := dispatch.io.o_rob_allocation_reqs
     rob.io.i_ex_res_packs := execute.io.o_ex_res_packs
     rob.io.i_branch_resolve_pack := execute.io.o_branch_resolve_pack
-    rob.io.i_interrupt := io.i_interrupt  
+    rob.io.i_interrupt := interrupt_mask.io.o_interrupt_with_mask
     rob.io.i_csr_pc_redirect := csr.io.o_pc_redirect_valid
 
     //connect csr input
     csr.io.i_exception := rob.io.o_exception
-    csr.io.i_interrupt := io.i_interrupt
+    csr.io.i_interrupt := interrupt_mask.io.o_interrupt_with_mask
     csr.io.i_commit_packs := rob.io.o_commit_packs
+
+    //connect to interrupt mask input
+    interrupt_mask.io.i_lsu_uop_valid := execute.io.o_lsu_uop_valid
+    interrupt_mask.io.i_rob_idx := rob.io.o_rob_head
+    interrupt_mask.io.i_lsu_uop_rob_idx := execute.io.o_lsu_uop_rob_idx
+    interrupt_mask.io.i_interrupt := io.i_interrupt
 
     //connect regfile input
     regfile.io.i_raddr1 := reservation_station.io.o_issue_packs(0).phy_rs1 

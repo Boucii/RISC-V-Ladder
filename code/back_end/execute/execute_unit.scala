@@ -25,6 +25,8 @@ abstract class Function_Unit (
 
         val i_ROB_first_entry = if(is_lsu) Input(UInt(7.W)) else null
         val dcache_io = if(is_lsu) new DcacheIO() else null
+        val o_lsu_uop_valid = if(is_lsu) Output(Bool()) else null
+        val o_lsu_uop_rob_idx = if(is_lsu) Output(UInt(8.W)) else null
 
         val i_exception = Input(Bool())
 
@@ -231,10 +233,18 @@ class LSU extends Function_Unit(
     val uop =  RegInit(0.U.asTypeOf(new uop()))
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+    when((io.i_select_to_commit && !io.i_select)){
         next_uop.valid:=false.B
     }
     uop:=next_uop
+
+    val exception_occured = RegInit(false.B)
+    when(io.i_exception && state === s_BUSY){
+        exception_occured := true.B
+    }
+    when(next_state === s_FREE){
+        exception_occured := false.B
+    }
 
     val len = Wire(UInt(32.W))
     len := MuxCase(0.U, Seq(
@@ -256,7 +266,8 @@ class LSU extends Function_Unit(
         (!loadu && len===4.U) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
         (!loadu && len===8.U) -> io.dcache_io.MdataIn
     ))
-    io.dcache_io.ready:= !io.i_exception && ((io.i_select && uop.mem_type===MEM_R) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx))
+    io.dcache_io.addr_valid:= (!io.i_exception && ((io.i_select && uop.mem_type===MEM_R)) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx))
+    io.dcache_io.data_ready := true.B
     io.dcache_io.Maddr:= addr
     io.dcache_io.Mwout := uop.mem_type === MEM_W
     io.dcache_io.Men := !(uop.mem_type === MEM_N)
@@ -265,8 +276,6 @@ class LSU extends Function_Unit(
     //----------------------------------
     io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.uop.dst_value := io.dcache_io.MdataIn
-
-
 
     val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
@@ -283,19 +292,21 @@ class LSU extends Function_Unit(
     ))
 
     next_state := MuxCase(state,Seq(
-        (io.i_exception) -> s_FREE,
-        (!(io.i_exception) && ((state === s_FREE) && (io.i_select ))) -> s_BUSY,
-        (!(io.i_exception) && ((state === s_BUSY) && (io.i_select_to_commit))) -> s_FREE,
-        (!(io.i_exception) && ((state === s_BUSY) && (next_ready_to_commit)) && rollback_occured) -> s_FREE
+        ((state === s_FREE) && (io.i_select)) -> s_BUSY,
+        ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE,
+        ((state === s_BUSY) && (uop.mem_type === MEM_R) && exception_occured) -> s_FREE,
+        ((state === s_BUSY) && (next_ready_to_commit)) -> s_FREE
     ))
 
-    next_ready_to_commit:=Mux((state===s_BUSY && io.dcache_io.valid),true.B,ready_to_commit)
     next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
-        (state===s_BUSY && io.dcache_io.valid)->true.B,
+        (state===s_BUSY && io.dcache_io.data_valid)->true.B,
         (state===s_FREE) ->false.B 
     ))
-    io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured
+    io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured && !(exception_occured && uop.mem_type === MEM_R)
     io.o_available := Mux(state === s_BUSY, false.B,true.B)
+
+    io.o_lsu_uop_valid := state === s_BUSY &&  uop.mem_type === MEM_W
+    io.o_lsu_uop_rob_idx := uop.rob_idx
 
    //printf("nextstate=%d\n",next_ready_to_commit)
    //printf("nextstate=%d\n",state)

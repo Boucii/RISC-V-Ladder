@@ -36,6 +36,10 @@ class Execute extends Module with consts{
          
         val i_exception = Input(Bool())
         val i_rollback_valid = Input(Bool()) // ROB is still rolling back, this is duplicated with o_resolvepack.valid && mispred
+
+        //for interrupt mask
+        val o_lsu_uop_valid = Output(Bool()) 
+        val o_lsu_uop_rob_idx = Output(UInt(8.W)) 
     })
 
     //lets do this for now. imrove this by adding a virtual exunit class 
@@ -57,10 +61,12 @@ class Execute extends Module with consts{
     func_units += csr_bf
 
     lsu.io.i_ROB_first_entry :=io.i_ROB_first_entry
-    lsu.io.dcache_io.valid      := io.dcache_io.valid  
-    lsu.io.dcache_io.MdataIn    := io.dcache_io.MdataIn  
-    io.dcache_io.ready          :=lsu.io.dcache_io.ready  
-                             
+    lsu.io.dcache_io.data_valid      := io.dcache_io.data_valid  
+    lsu.io.dcache_io.MdataIn         := io.dcache_io.MdataIn  
+    io.dcache_io.addr_valid          :=lsu.io.dcache_io.addr_valid  
+    io.dcache_io.data_ready          :=lsu.io.dcache_io.data_ready
+    lsu.io.dcache_io.addr_ready := io.dcache_io.addr_ready
+
     io.dcache_io.Mwout          :=lsu.io.dcache_io.Mwout  
     io.dcache_io.Maddr          :=lsu.io.dcache_io.Maddr  
     io.dcache_io.Men            :=lsu.io.dcache_io.Men    
@@ -178,6 +184,9 @@ class Execute extends Module with consts{
 
     io.o_ex_res_packs(0).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid )))
     io.o_ex_res_packs(1).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2))
+
+    io.o_lsu_uop_valid := lsu.io.o_lsu_uop_valid
+    io.o_lsu_uop_rob_idx := lsu.io.o_lsu_uop_rob_idx
 
     //this can be improved by merge the two valid
     assert(((io.o_ex_res_packs(0).valid && io.o_ex_res_packs(0).uop.valid)||(!io.o_ex_res_packs(0).valid)),"exu pack valid, but uop not valid")

@@ -26,11 +26,25 @@ class front_end_control extends Module
         val o_stage2_flush = Output(Bool())
         val o_stage3_flush = Output(Bool())
    })
-   io.o_stage3_flush := io.i_pc_redirect_valid || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)
-   io.o_stage2_flush := io.o_stage3_flush || (io.i_branch_presolve_pack.valid && io.i_branch_presolve_pack.taken)
-   io.o_stage1_flush := io.o_stage2_flush
+   val stage3_flush = RegInit(false.B)
+   val stage2_flush = RegInit(false.B)
+   val stage1_flush = RegInit(false.B)
+   val stage3_stall = RegInit(false.B)
+   val stage2_stall = RegInit(false.B)
+   val stage1_stall = RegInit(false.B)
+
+   io.o_stage3_flush := stage3_flush
+   io.o_stage2_flush := stage2_flush
+   io.o_stage1_flush := stage1_flush
+   io.o_stage3_stall := stage3_stall
+   io.o_stage2_stall := stage2_stall
+   io.o_stage1_stall := stage1_stall
+
+   stage3_flush := io.i_pc_redirect_valid || (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred)
+   stage2_flush := io.o_stage3_flush || (io.i_branch_presolve_pack.valid && io.i_branch_presolve_pack.taken)
+   stage1_flush := io.o_stage2_flush
    
-   io.o_stage3_stall := (io.i_fetch_queue_full || (!io.i_icache_data_valid && io.i_cache_fetch_valid)) && (!io.o_stage3_flush)
-   io.o_stage2_stall := io.o_stage3_stall  && (!io.o_stage2_flush)///??
-   io.o_stage1_stall := (!io.i_icache_addr_ready || io.o_stage2_stall) && (!io.o_stage1_flush)
+   stage3_stall := (io.i_fetch_queue_full || (!io.i_icache_data_valid && io.i_cache_fetch_valid)) && (!io.o_stage3_flush)
+   stage2_stall := io.o_stage3_stall  && (!io.o_stage2_flush)///??
+   stage1_stall := (!io.i_icache_addr_ready || io.o_stage2_stall) && (!io.o_stage1_flush)
 }

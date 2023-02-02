@@ -88,6 +88,7 @@ class CSR extends Module with consts{
 
     //exception and interrupt and trap
     assert(io.i_exception =/= true.B ,"not implemented any exception yet!\n")
+
     io.o_pc_redirect_valid := io.i_exception || io.i_interrupt || 
             (io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL)|| (io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_ECALL)||
             (io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_EBREAK)||(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_CSR && io.i_commit_packs(1).uop.alu_sel === CSR_EBREAK)||

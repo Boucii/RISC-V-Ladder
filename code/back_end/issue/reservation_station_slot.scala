@@ -106,32 +106,33 @@ class Reservation_Station_Slot extends Module with consts{
     assert(((!io.i_uop.op2_sel===SRC_RS)===io.i_uop.src2_valid),"src valid wrong")
 
     when(io.i_write_slot){
-        next_src1_acquired:=(!(io.i_uop.op1_sel===SRC_RS)) || ((io.i_uop.op1_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs1) || (io.i_exe_dst2===io.i_uop.phy_rs1)))
-        next_src1_value := MuxCase(io.i_uop.src1_value,Seq(
+        next_src1_acquired:=(!(io.i_uop.op1_sel===SRC_RS)) || ((io.i_uop.op1_sel===SRC_RS)&&(io.i_uop.phy_rs1 === 0.U)) || ((io.i_uop.op1_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs1) || (io.i_exe_dst2===io.i_uop.phy_rs1)))
+        next_src1_value := Mux(((io.i_uop.op1_sel===SRC_RS)&&(io.i_uop.phy_rs1 === 0.U)),0.U,MuxCase(io.i_uop.src1_value,Seq(
             ((io.i_exe_dst1===io.i_uop.phy_rs1) && (io.i_uop.op1_sel===SRC_RS))->io.i_exe_value1,
             ((io.i_exe_dst2===io.i_uop.phy_rs1) && (io.i_uop.op1_sel===SRC_RS))->io.i_exe_value2
-    ))
+    )))
     }.elsewhen((io.i_wakeup_port(uop.phy_rs1)===1.U && uop.op1_sel===SRC_RS)){ //bypass from ex_out or writtenback
         next_src1_acquired := uop.src1_valid ||(Mux((io.i_exe_dst1===uop.phy_rs1 || io.i_exe_dst2 === uop.phy_rs1),true.B,false.B) )
-        next_src1_value :=MuxCase(uop.src1_value,Seq(
+        next_src1_value :=Mux((!uop.src1_valid && next_src1_acquired),MuxCase(uop.src1_value,Seq(
             (io.i_exe_dst1===uop.phy_rs1)->io.i_exe_value1,
             (io.i_exe_dst2===uop.phy_rs1)->io.i_exe_value2
-        ))
+        )),uop.src1_value)
     }.otherwise{
         next_src1_acquired := uop.src1_valid
         next_src1_value := uop.src1_value
     }
     when(io.i_write_slot){
-        next_src2_acquired:=(!(io.i_uop.op2_sel===SRC_RS)) || ((io.i_uop.op2_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs2) || (io.i_exe_dst2===io.i_uop.phy_rs2)))
-        next_src2_value :=MuxCase(io.i_uop.src2_value,Seq(
+        next_src2_acquired:=(!(io.i_uop.op2_sel===SRC_RS))|| ((io.i_uop.op2_sel===SRC_RS)&&(io.i_uop.phy_rs2 === 0.U))  || ((io.i_uop.op2_sel===SRC_RS) && ((io.i_exe_dst1===io.i_uop.phy_rs2) || (io.i_exe_dst2===io.i_uop.phy_rs2)))
+        next_src2_value :=Mux(((io.i_uop.op2_sel===SRC_RS)&&(io.i_uop.phy_rs2 === 0.U)),0.U,MuxCase(io.i_uop.src2_value,Seq(
             ((io.i_exe_dst1===io.i_uop.phy_rs2) && (io.i_uop.op2_sel===SRC_RS))->io.i_exe_value1,
             ((io.i_exe_dst2===io.i_uop.phy_rs2) && (io.i_uop.op2_sel===SRC_RS))->io.i_exe_value2
-    ))}.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
+    )))
+    }.elsewhen((io.i_wakeup_port(uop.phy_rs2)===1.U && uop.op2_sel===SRC_RS)){
         next_src2_acquired := uop.src2_valid || (Mux((io.i_exe_dst1===uop.phy_rs2 || io.i_exe_dst2 === uop.phy_rs2),true.B,false.B) )
-        next_src2_value := MuxCase(uop.src2_value,Seq(
+        next_src2_value :=Mux((!uop.src2_valid && next_src2_acquired),MuxCase(uop.src2_value,Seq(
             (io.i_exe_dst1===uop.phy_rs2)->io.i_exe_value1,
             (io.i_exe_dst2===uop.phy_rs2)->io.i_exe_value2
-        ))
+        )),uop.src2_value)
     }.otherwise{
         next_src2_acquired := uop.src2_valid
         next_src2_value := uop.src2_value
@@ -152,9 +153,6 @@ class Reservation_Station_Slot extends Module with consts{
     }.otherwise{
         next_src2_ready:=src2_ready
     }
-
-
-
 
     //valid maintain logic,this is redundent for uop also got a valid, remove it ?
     //能写进来的都是uop.valid=true,并不,能写进来的未必valid

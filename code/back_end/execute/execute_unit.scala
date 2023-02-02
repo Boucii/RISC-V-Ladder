@@ -183,14 +183,20 @@ class BRU extends Function_Unit(
     (pc_sel === PC_PLUS4)   -> (uop.pc+4.U(32.W))
   ))
 
-
-
+/*
+mispred scenarios:
+1.predict valid , and mispred taken and not taken.
+2.predict vallid, and predict taken, actually taken, but the predicted address is wrong
+3.predict not valid, but taken
+*/
   val mispredict = Wire(Bool())
-  mispredict := ((uop.branch_predict_pack.valid) && !(is_taken^uop.branch_predict_pack.taken) || (target_address =/= uop.branch_predict_pack.target)) || (!uop.branch_predict_pack.valid && is_taken)
+  mispredict := ((uop.branch_predict_pack.valid) && (is_taken^uop.branch_predict_pack.taken)) || 
+                (uop.branch_predict_pack.valid) && (is_taken && uop.branch_predict_pack.taken && (target_address =/= uop.branch_predict_pack.target)) ||
+                (!uop.branch_predict_pack.valid && is_taken)
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
 
-  branch_resolve_pack.valid             := state === s_BUSY
+  branch_resolve_pack.valid             := uop.valid
   branch_resolve_pack.pc                := uop.pc
   branch_resolve_pack.mispred           := mispredict
   branch_resolve_pack.taken             := is_taken
@@ -233,7 +239,7 @@ class LSU extends Function_Unit(
     val uop =  RegInit(0.U.asTypeOf(new uop()))
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when((io.i_select_to_commit && !io.i_select)){
+    when((io.i_select_to_commit && !io.i_select || next_state === s_FREE)){
         next_uop.valid:=false.B
     }
     uop:=next_uop
@@ -294,12 +300,13 @@ class LSU extends Function_Unit(
     next_state := MuxCase(state,Seq(
         ((state === s_FREE) && (io.i_select)) -> s_BUSY,
         ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE,
-        ((state === s_BUSY) && (uop.mem_type === MEM_R) && exception_occured) -> s_FREE,
-        ((state === s_BUSY) && (next_ready_to_commit)) -> s_FREE
+        //((state === s_BUSY) && (uop.mem_type === MEM_R) && exception_occured) -> s_FREE,
+        ((state === s_BUSY) && (next_ready_to_commit) && (rollback_occured || (exception_occured && uop.mem_type === MEM_R))) -> s_FREE
     ))
 
     next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
-        (state===s_BUSY && io.dcache_io.data_valid)->true.B,
+        (state===s_BUSY && io.dcache_io.addr_ready && uop.mem_type===MEM_W)->true.B,
+        (state===s_BUSY && io.dcache_io.data_valid && uop.mem_type===MEM_R)->true.B,
         (state===s_FREE) ->false.B 
     ))
     io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured && !(exception_occured && uop.mem_type === MEM_R)
@@ -307,9 +314,6 @@ class LSU extends Function_Unit(
 
     io.o_lsu_uop_valid := state === s_BUSY &&  uop.mem_type === MEM_W
     io.o_lsu_uop_rob_idx := uop.rob_idx
-
-   //printf("nextstate=%d\n",next_ready_to_commit)
-   //printf("nextstate=%d\n",state)
 }
 
 class MUL extends Function_Unit(){

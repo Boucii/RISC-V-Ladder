@@ -31,6 +31,7 @@ class Back_End_With_Decode extends Module with consts{
 
         val i_interrupt = Input(Bool())
     }) 
+    dontTouch(io)
     val decode = Module(new Decoder())
     val rename  = Module(new Rename())
     val dispatch = Module(new Dispatch())

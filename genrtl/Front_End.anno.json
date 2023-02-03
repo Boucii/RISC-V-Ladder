@@ -1,0 +1,32 @@
+[
+  {
+    "class":"firrtl.EmitAllModulesAnnotation",
+    "emitter":"firrtl.VerilogEmitter"
+  },
+  {
+    "class":"firrtl.transforms.BlackBoxTargetDirAnno",
+    "targetDir":"genrtl"
+  },
+  {
+    "class":"firrtl.transforms.CombinationalPath",
+    "sink":"~Front_End|Front_End>io_icache_io_o_addr_valid",
+    "sources":[
+      "~Front_End|Front_End>io_icache_io_i_addr_ready",
+      "~Front_End|Front_End>io_i_pc_redirect_valid",
+      "~Front_End|Front_End>io_i_branch_resolve_pack_valid",
+      "~Front_End|Front_End>io_i_branch_resolve_pack_mispred",
+      "~Front_End|Front_End>io_icache_io_i_data_valid",
+      "~Front_End|Front_End>io_icache_io_i_data"
+    ]
+  },
+  {
+    "class":"firrtl.transforms.CombinationalPath",
+    "sink":"~Front_End|Front_End>io_o_fetch_pack_valid",
+    "sources":[
+      "~Front_End|Front_End>reset",
+      "~Front_End|Front_End>io_i_pc_redirect_valid",
+      "~Front_End|Front_End>io_i_branch_resolve_pack_valid",
+      "~Front_End|Front_End>io_i_branch_resolve_pack_mispred"
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+Date : 2023-02-02 13:59:40
+Directory : d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl
+Total : 10 files,  17700 codes, 1 comments, 2 blanks, all 17703 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| JSON     |          1 |     17,570 |          0 |          0 |     17,570 |
+| Verilog  |          9 |        130 |          1 |          2 |        133 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                              | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                 |         10 |     17,700 |          1 |          2 |     17,703 |
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                          | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\BRU.v                  | Verilog  |         -2 |          0 |          0 |         -2 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Back_End_With_Decode.v | Verilog  |         16 |          0 |          0 |         16 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Execute.v              | Verilog  |          4 |          0 |          0 |          4 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Fetch_Queue.v          | Verilog  |        -24 |          0 |          0 |        -24 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Front_End.v            | Verilog  |        -26 |          0 |          0 |        -26 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Interrupt_Mask.v       | Verilog  |         79 |          1 |          1 |         81 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\LSU.v                  | Verilog  |         18 |          0 |          0 |         18 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Ladder.anno.json       | JSON     |     17,570 |          0 |          0 |     17,570 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Ladder.v               | Verilog  |        167 |          0 |          1 |        168 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\genrtl\Queue.v                | Verilog  |       -102 |          0 |          0 |       -102 |
+| Total                                                                                             |          |     17,700 |          1 |          2 |     17,703 |
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

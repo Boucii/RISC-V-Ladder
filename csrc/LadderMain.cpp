@@ -46,8 +46,8 @@ uint64_t img_size=0;
 
 uint64_t *cpu_gpr = NULL;
 uint64_t ref_gpr[33];
-uint32_t *pc_cmt1 = NULL;
-uint32_t *pc_cmt2 = NULL;
+uint64_t *pc_cmt1 = NULL;
+uint64_t *pc_cmt2 = NULL;
 
 struct timeval timeus;
 
@@ -187,9 +187,6 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
 	mem_done=1;
   }
 }
-//-----------------Log Module------------------------
-char logbuf[50]="\0";
-
 //----------------Verilator component----------------
 static VTOP* top;
 VerilatedVcdC* tfp=NULL;
@@ -220,7 +217,53 @@ void reset(int n) {
 	    while (n -- > 0) single_cycle();
 	      top->reset = 0;
 }
-
+//-----------------Log Module------------------------
+char logbuf[50]="\0";
+void log_inst_commit(int commit_pack_idx){
+  if(commit_pack_idx == 0){
+    char hex_string[50];
+      pc_cmt1 = top->dbg_commit_packs0->pc;
+      sprintf(hex_string, "%X", pc_cmt1); 
+      string temp1(hex_string);
+      Log("0x");
+      Log(temp1);
+      Log(":	");
+    uint32_t cur_inst = top->dbg_commit_packs0->inst;
+    uint8_t *instaddr=(uint8_t *)&cur_inst;
+    uint64_t addrin=(uint64_t)((uint64_t)pc_cmt1)-(uint64_t)0xffffffff00000000;
+    if(ITRACE_EN){
+        disassemble(logbuf, 50, addrin, instaddr, 4);//50?
+    }
+    string temp=logbuf;
+    Log(temp);
+    Log("\n");
+    if(ITRACE_EN){
+        cout<<YELLOW<<"PC=0x"<<hex<<pc_cmt1<<RESET<<dec<<endl;                                                   
+        cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl; 
+    }
+  }else if(commit_pack_idx == 1){
+      char hex_string[50];
+      pc_cmt2 = top->dbg_commit_packs1->pc;
+      sprintf(hex_string, "%X", pc_cmt2); 
+      string temp1(hex_string);
+      Log("0x");
+      Log(temp1);
+      Log(":	");
+    uint32_t cur_inst = top->dbg_commit_packs1->inst;
+    uint8_t *instaddr=(uint8_t *)&cur_inst;
+    uint64_t addrin=(uint64_t)((uint64_t)pc_cmt2)-(uint64_t)0xffffffff00000000;
+    if(ITRACE_EN){
+        disassemble(logbuf, 50, addrin, instaddr, 4);//50?
+    }
+    string temp=logbuf;
+    Log(temp);
+    Log("\n");
+    if(ITRACE_EN){
+        cout<<YELLOW<<"PC=0x"<<hex<<pc_cmt2<<RESET<<dec<<endl;                                                   
+        cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl; 
+    }
+  }
+}
 //----------main------------------
 
 int main(int argc, char** argv, char** env){
@@ -265,10 +308,8 @@ int main(int argc, char** argv, char** env){
   uint32_t addr_if2=0;
   uint32_t addr_if3=0;
 
-  pc=&addr_if1;
-
-  //while (time<MAX_TIME) {
-  while (true) {
+  while (time<MAX_TIME) {
+  //while (true) {
     if(ITRACE_EN){
         cout<<"\ncycle "<<time<<" passed\n";
     }
@@ -278,7 +319,9 @@ int main(int argc, char** argv, char** env){
     addr_if1=(int)(top->io_InstAddr);
     uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);
     uint32_t cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
-    top->io_InstIn =(uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
+    top->io_icache_io_i_data_valid = (svBit)1;
+    top->io_icahce_io_i_data =(uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
+    top->io_icache_io_i_addr_ready = (svBit)1;
 
     //memory read/write
     single_cycleup();
@@ -291,15 +334,15 @@ int main(int argc, char** argv, char** env){
     }
     //写reg在下一个周期才发生
     if(DIFFTEST_EN){
+      char hex_string[20];
         if(top->dbg_commit_packs0_valid){
           difftest_exec_once();
-          pc_cmt1 = top->dbg_commit_packs0->pc;
-          log(****);
+          log_inst_commit(0);
+
         }
         if(top->dbg_commit_packs1_valid && diff_pass){
           difftest_exec_once();
-          pc_cmt2 = top->dbg_commit_packs1->pc;
-          log(****);
+          log_inst_commit(1);
         }
 	if(diff_pass==0){
 		cout<<"\n\n";

@@ -26,6 +26,8 @@ class Rename extends Module{
     val rename_table=Module(new Rename_Table()) 
     //val free_list=Module(new Free_List())
     val busy_table=Module(new Busy_Table())
+	val invalidify = Wire(Bool())
+	invalidify := io.i_exception || io.i_stall || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid
 
     io.o_commit_rename_table := rename_table.io.o_commit_rename_table
 
@@ -36,9 +38,9 @@ class Rename extends Module{
 
     //rename table -------------------
     for(i <- 0 until 2){
-        rename_table.io.i_rename_req_packs(i).arch_rs1 := Mux(uops(i).valid,uops(i).arch_rs1,0.U)
-        rename_table.io.i_rename_req_packs(i).arch_rs2 := Mux(uops(i).valid,uops(i).arch_rs2,0.U)
-        rename_table.io.i_rename_req_packs(i).arch_dst := Mux(uops(i).valid,uops(i).arch_dst,0.U)
+        rename_table.io.i_rename_req_packs(i).arch_rs1 := Mux(uops(i).valid && !invalidify && !io.i_stall,uops(i).arch_rs1,0.U)
+        rename_table.io.i_rename_req_packs(i).arch_rs2 := Mux(uops(i).valid && !invalidify && !io.i_stall,uops(i).arch_rs2,0.U)
+        rename_table.io.i_rename_req_packs(i).arch_dst := Mux(uops(i).valid && !invalidify && !io.i_stall,uops(i).arch_dst,0.U)
     }
     rename_table.io.i_commit_packs := io.i_commit_packs
     rename_table.io.i_rollback_packs := io.i_rollback_packs
@@ -55,8 +57,8 @@ class Rename extends Module{
     */
 
     io.o_rename_packs := uops
-    io.o_rename_packs(0).valid := Mux((io.i_exception || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid) ,false.B,uops(0).valid)
-    io.o_rename_packs(1).valid := Mux((io.i_exception || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid) ,false.B,uops(1).valid)
+    io.o_rename_packs(0).valid := Mux(invalidify ,false.B,uops(0).valid)
+    io.o_rename_packs(1).valid := Mux(invalidify ,false.B,uops(1).valid)
     io.o_free_list_empty := busy_table.io.o_empty
 
     io.o_rename_packs(0).phy_rs1 := rename_table.io.o_rename_res_packs(0).phy_rs1
@@ -73,11 +75,96 @@ class Rename extends Module{
     busy_table.io.i_allocated_uops := io.o_rename_packs
     busy_table.io.i_commit_packs := io.i_commit_packs
     busy_table.io.i_rollback_packs := io.i_rollback_packs
-    busy_table.io.i_free_list_reqs(0):= uops(0).valid && (uops(0).arch_dst =/= 0.U)
-    busy_table.io.i_free_list_reqs(1):= uops(1).valid && (uops(1).arch_dst =/= 0.U)
+    //it is implied that for any inst that does not write a reg, the arch_dst field in uop in already set to 0 in the decode stage.
+    busy_table.io.i_free_list_reqs(0):= uops(0).valid && (uops(0).arch_dst =/= 0.U) && !invalidify
+    busy_table.io.i_free_list_reqs(1):= uops(1).valid && (uops(1).arch_dst =/= 0.U) && !invalidify
     busy_table.io.i_exception := io.i_exception
 
     io.o_written_back_table := busy_table.io.o_written_back
 
     //printf("phydst0=%d ,phy_dst1=%d\n",io.o_rename_packs(0).phy_dst,io.o_rename_packs(1).phy_dst)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

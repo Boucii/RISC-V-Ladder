@@ -109,4 +109,5 @@ trait consts{
     val  ALU_SLLW   =   27.U(5.W) 
     val  ALU_SRLW   =   28.U(5.W) 
     val  ALU_SRAW   =   29.U(5.W) 
+    val  ALU_LUI    =   30.U(5.W)
 }

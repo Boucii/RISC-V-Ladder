@@ -25,6 +25,7 @@ class BPU extends Module {
 
         val o_branch_predict_pack = Output(new branch_predict_pack())//two insts in a fetch pack shares the same prediction
     })
+    dontTouch(io)
     def btb_size = 512
     def idx_len = log2Ceil(btb_size)
     val btb = RegInit(0.U.asTypeOf(Vec(btb_size , new btb_pack())))
@@ -64,7 +65,7 @@ class BPU extends Module {
         btb(btb_victim_ptr).tag := io.i_branch_resolve_pack.pc(12,3)//fetchpack address
         btb(btb_victim_ptr).target_address := io.i_branch_resolve_pack.target
         btb(btb_victim_ptr).branch_type := io.i_branch_resolve_pack.branch_type//??
-        btb(btb_victim_ptr).select := io.i_branch_resolve_pack.pc(3) //if it's aligned to fetchpack address
+        btb(btb_victim_ptr).select := io.i_branch_resolve_pack.pc(2) //if it's aligned to fetchpack address
         btb(btb_victim_ptr).bht := Mux(io.i_branch_resolve_pack.taken, 1.U(2.W), 0.U(2.W))
 
         //update victim ptr
@@ -79,17 +80,17 @@ class BPU extends Module {
                 when(btb(i).tag === io.i_branch_resolve_pack.pc(12,3)){
                     entry_found := true.B
                     btb(i).target_address := io.i_branch_resolve_pack.target
-                    btb(i).select := io.i_branch_resolve_pack.pc(3) //if it's aligned to fetchpack address
+                    btb(i).select := io.i_branch_resolve_pack.pc(2) //if it's aligned to fetchpack address
                     btb(i).bht := MuxCase(DontCare,Seq(
                     (io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 1.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 3.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 3.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 3.U(2.W),
+                    (io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 1.U(2.W),
+                    (io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 0.U(2.W),
+                    (io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 2.U(2.W),
 
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 0.U(2.W),
+                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 2.U(2.W),
                     (!io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 0.U(2.W),
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 0.U(2.W),
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 2.U(2.W)
+                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 3.U(2.W),
+                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 3.U(2.W)
                     ))
                 }
             }
@@ -100,7 +101,7 @@ class BPU extends Module {
         btb(btb_victim_ptr).tag := io.i_branch_resolve_pack.pc(12,3)//fetchpack address
         btb(btb_victim_ptr).target_address := io.i_branch_resolve_pack.target
         btb(btb_victim_ptr).branch_type := io.i_branch_resolve_pack.branch_type//??
-        btb(btb_victim_ptr).select := io.i_branch_resolve_pack.pc(3) //if it's aligned to fetchpack address
+        btb(btb_victim_ptr).select := io.i_branch_resolve_pack.pc(2) //if it's aligned to fetchpack address
         btb(btb_victim_ptr).bht := Mux(io.i_branch_resolve_pack.taken, 1.U(2.W), 0.U(2.W))
 
         //update victim ptr

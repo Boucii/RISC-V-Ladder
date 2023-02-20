@@ -23,6 +23,10 @@ class PC_Gen extends Module
     val pc = RegInit(0x80000000L.U(64.W));
     val npc = Wire(UInt(64.W)); 
 
+    //o_pc is not guaranteed to aligned to fetch pack address
+    //addr passed to icache is guaranteed to aligned to it
+    //and the pc passed to later stages are not aligned to fetch address
+    //so they can tell if the first inst of the fetchres is valid
     io.o_pc := pc 
     when(io.i_pc_redirect_valid){//interrupt, exception or ecall, mret
         npc := io.i_pc_redirect_target
@@ -35,7 +39,7 @@ class PC_Gen extends Module
     }.elsewhen(io.i_stall){//????????????????????????
         npc := pc
     }.otherwise{
-        npc := pc + 8.U
+        npc := pc + Mux(pc(2),4.U(64.W),8.U(64.W))
     }
     
         pc := npc;

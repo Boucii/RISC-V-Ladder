@@ -19,9 +19,9 @@
 #pragma GCC diagnostic pop
 #endif
 
-//#if LLVM_VERSION_MAJOR < 11
-//#error Please use LLVM with major version >= 11
-//#endif
+#if LLVM_VERSION_MAJOR < 11
+#error Please use LLVM with major version >= 11
+#endif
 
 using namespace llvm;
 

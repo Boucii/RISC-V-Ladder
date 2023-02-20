@@ -17,7 +17,7 @@ class Reorder_Buffer extends Module with consts{
         val o_empty = Output(Bool())
         val o_full =Output(Bool())
 
-        //from and to decode stage
+        //from and to dispatch stage
         val i_rob_allocation_reqs = Input(Vec(2, new rob_allocation_req_pack()))
         val o_rob_allocation_ress = Output(Vec(2,new allocation_res_pack()))
 
@@ -105,24 +105,34 @@ class Reorder_Buffer extends Module with consts{
     //dispatch unit TODO:ptr pass 127??consider full???consider exception
       io.o_commit_packs(0).valid :=  (next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
       io.o_commit_packs(1).valid :=  (next_will_commit(1))&&(next_will_commit(0))&& (next_rob_state===s_normal || next_rob_state===s_full )
-      io.o_commit_packs(0).uop := (rob_uop(commit_ptr))
-      io.o_commit_packs(1).uop := (rob_uop(commit_ptr+1.U))
+      io.o_commit_packs(0).uop := rob_uop(commit_ptr)
+      io.o_commit_packs(0).uop.dst_value := MuxCase((rob_uop(commit_ptr)).dst_value,Seq(
+        (io.i_ex_res_packs(0).valid && io.i_ex_res_packs(0).uop.rob_idx === commit_ptr) -> io.i_ex_res_packs(0).uop.dst_value,
+        (io.i_ex_res_packs(1).valid && io.i_ex_res_packs(1).uop.rob_idx === commit_ptr) -> io.i_ex_res_packs(1).uop.dst_value
+        ))
+      io.o_commit_packs(1).uop := rob_uop(commit_ptr+1.U)
+      io.o_commit_packs(1).uop.dst_value := MuxCase((rob_uop(commit_ptr+1.U)).dst_value,Seq(
+        (io.i_ex_res_packs(0).valid && io.i_ex_res_packs(0).uop.rob_idx === (commit_ptr+1.U)) -> io.i_ex_res_packs(0).uop.dst_value,
+        (io.i_ex_res_packs(1).valid && io.i_ex_res_packs(1).uop.rob_idx === (commit_ptr+1.U)) -> io.i_ex_res_packs(1).uop.dst_value
+      ))
+      //if the exe res is the head of rob, bypass the exe res to o_commit_pack
 
+      //see rollback state logic
       io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0).valid
       io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1).valid && io.i_rob_allocation_reqs(0).valid //dispatch 会req1 而不req0吗
       
-      io.o_rollback_packs(0).valid := next_rob_state===s_rollback
-      io.o_rollback_packs(1).valid := (this_num_to_roll_back === 2.U) && next_rob_state===s_rollback
+      io.o_rollback_packs(0).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback, true.B, io.i_rob_allocation_reqs(0).valid)
+      io.o_rollback_packs(1).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback,(this_num_to_roll_back === 2.U), io.i_rob_allocation_reqs(1).valid)
       
-      io.o_rollback_packs(0).uop:= rob_uop(allocate_ptr-1.U)
-      io.o_rollback_packs(1).uop:= rob_uop(allocate_ptr-2.U)
+      io.o_rollback_packs(0).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(0).uop, rob_uop(allocate_ptr-1.U))
+      io.o_rollback_packs(1).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(1).uop, rob_uop(allocate_ptr-2.U))
 
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
 
     when(next_rob_state === s_normal){
       when(io.i_rob_allocation_reqs(0).valid && io.i_rob_allocation_reqs(1).valid){
-        //rob_uop(allocate_ptr) := io.i_allocate_uops(0) write when write back
+        //uop must be written in the dispatch stage, since we could use these when rollback
         rob_uop(allocate_ptr) := io.i_rob_allocation_reqs(0).uop
         rob_valid(allocate_ptr) := true.B
         rob_done(allocate_ptr) := false.B
@@ -139,16 +149,16 @@ class Reorder_Buffer extends Module with consts{
       }//otherwise no allocation
 
       when(io.i_ex_res_packs(0).valid){
-        rob_valid(io.i_ex_res_packs(0).uop.rob_idx) := true.B
-        rob_uop(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop //modified for just dst value and other necessary info
-        rob_exception(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop.exception
-        rob_done(io.i_ex_res_packs(0).uop.rob_idx) := true.B
+        rob_valid(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := true.B
+        rob_uop(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := io.i_ex_res_packs(0).uop //modified for just dst value and other necessary info
+        rob_exception(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := io.i_ex_res_packs(0).uop.exception
+        rob_done(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := true.B
       }
       when(io.i_ex_res_packs(1).valid){
-        rob_valid(io.i_ex_res_packs(1).uop.rob_idx) := true.B
-        rob_uop(io.i_ex_res_packs(1).uop.rob_idx) := io.i_ex_res_packs(1).uop
-        rob_exception(io.i_ex_res_packs(1).uop.rob_idx) := io.i_ex_res_packs(1).uop.exception
-        rob_done(io.i_ex_res_packs(1).uop.rob_idx) := true.B
+        rob_valid(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := true.B
+        rob_uop(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := io.i_ex_res_packs(1).uop
+        rob_exception(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := io.i_ex_res_packs(1).uop.exception
+        rob_done(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := true.B
       }
       //commit
 
@@ -164,16 +174,16 @@ class Reorder_Buffer extends Module with consts{
     when(next_rob_state === s_full){
       //when full cannot allocate ,but can roll back,exe write and commit
       when(io.i_ex_res_packs(0).valid){
-        rob_valid(io.i_ex_res_packs(0).uop.rob_idx) := true.B
-        rob_uop(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop
-        rob_exception(io.i_ex_res_packs(0).uop.rob_idx) := io.i_ex_res_packs(0).uop.exception
-        rob_done(io.i_ex_res_packs(0).uop.rob_idx) := true.B
+        rob_valid(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := true.B
+        rob_uop(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := io.i_ex_res_packs(0).uop
+        rob_exception(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := io.i_ex_res_packs(0).uop.exception
+        rob_done(io.i_ex_res_packs(0).uop.rob_idx(5,0)) := true.B
       }
       when(io.i_ex_res_packs(1).valid){
-        rob_valid(io.i_ex_res_packs(1).uop.rob_idx) := true.B
-        rob_uop(io.i_ex_res_packs(1).uop.rob_idx) := io.i_ex_res_packs(1).uop
-        rob_exception(io.i_ex_res_packs(1).uop.rob_idx) := io.i_ex_res_packs(1).uop.exception
-        rob_done(io.i_ex_res_packs(1).uop.rob_idx) := true.B
+        rob_valid(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := true.B
+        rob_uop(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := io.i_ex_res_packs(1).uop
+        rob_exception(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := io.i_ex_res_packs(1).uop.exception
+        rob_done(io.i_ex_res_packs(1).uop.rob_idx(5,0)) := true.B
       }
       //commit
       when(next_will_commit(0) && next_will_commit(1)){
@@ -187,7 +197,20 @@ class Reorder_Buffer extends Module with consts{
     }
     when(next_rob_state === s_rollback){
       //when rollback, no allocation,no exe write, no commit
-      allocate_ptr := allocate_ptr - this_num_to_roll_back
+      //the first rollback cycle we should rollback the insts in the dispatch stage
+      //since they are not written in the rob yet
+      //this is under the assumption that there would not be consecutive s_rbk of 2 different
+      //insts. aka.2 con rbk must be seperated by a s_normal.(this is guarenteed by next state logic)
+      when(rob_state === s_rollback){
+        allocate_ptr := allocate_ptr - this_num_to_roll_back
+        when(this_num_to_roll_back === 2.U){
+          rob_valid(allocate_ptr-1.U) := false.B
+          rob_valid(allocate_ptr-2.U) := false.B
+        }
+        when(this_num_to_roll_back === 1.U){
+          rob_valid(allocate_ptr-1.U) := false.B
+        }
+      }
     }
     when(next_rob_state === s_reset){
         for(i <- 0 until 64){
@@ -204,7 +227,8 @@ class Reorder_Buffer extends Module with consts{
     io.o_exception:= rob_exception(commit_ptr)===true.B 
 
     val is_full =Wire(Bool()) //consider dynamic action
-    is_full := (allocate_ptr + 2.U) === commit_ptr || (allocate_ptr + 1.U) === commit_ptr
+    is_full := (((allocate_ptr + 2.U)(5,0) === commit_ptr(5,0)) && (allocate_ptr + 2.U)(6)^commit_ptr(6)) || 
+          (((allocate_ptr + 1.U)(5,0) === commit_ptr(5,0)) && ((allocate_ptr + 1.U)(6) ^ commit_ptr(6)))
     io.o_empty :=  commit_ptr === allocate_ptr  
     io.o_full := is_full
     
@@ -213,7 +237,7 @@ class Reorder_Buffer extends Module with consts{
     next_rob_state:=Mux(io.o_exception || io.i_interrupt || last_pc_redirect , s_reset ,MuxCase(rob_state,Seq(
       (rob_state === s_reset) -> s_normal,
       (rob_state === s_normal && is_full) -> s_full,
-      ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) -> s_rollback,
+      ((rob_state ===s_normal) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx)) -> s_rollback,
       (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||
                    (io.i_branch_resolve_pack.rob_idx === allocate_ptr-2.U) )) -> s_normal,
       (rob_state === s_full && will_commit(0)) -> s_normal

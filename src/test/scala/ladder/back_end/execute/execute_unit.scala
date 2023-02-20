@@ -22,6 +22,7 @@ abstract class Function_Unit (
         val o_ex_res_pack=Output(new valid_uop_pack())//include a valid(ready bit) TODO:decouple this
 
         val o_available = Output(Bool())
+        val o_this_available = Output(Bool())
 
         val i_ROB_first_entry = if(is_lsu) Input(UInt(7.W)) else null
         val dcache_io = if(is_lsu) new DcacheIO() else null
@@ -39,6 +40,7 @@ class ALU() extends Function_Unit(
     is_bru = false,
     is_lsu = false
 ){
+    io.o_this_available := false.B
     val s_FREE :: s_BUSY ::  Nil = Enum(2)
     val state = RegInit(s_FREE)
     val next_state = Wire(UInt(2.W))
@@ -46,9 +48,13 @@ class ALU() extends Function_Unit(
     val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception ||
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))){
         next_uop.valid:=false.B
     }
+
     uop:=next_uop
 
     assert(uop.func_code ===FU_ALU || uop.func_code===0.U,"funccode is not alu")
@@ -73,7 +79,13 @@ class ALU() extends Function_Unit(
     opr2 := uop.src2_value
 
     val intermediate = Wire(UInt(64.W))
-    intermediate := 0.U
+    intermediate := MuxCase(0.U,Seq(
+        (uop.alu_sel === ALU_ADDIW  ) -> ((opr1+opr2)(31,0))  ,
+        (uop.alu_sel === ALU_SRLIW  ) -> ((opr1(31,0).asUInt>>opr2(4,0)).asUInt)  ,
+        (uop.alu_sel === ALU_SRAIW  ) -> ((opr1(31,0).asSInt>>opr2(4,0)).asUInt)  ,
+        (uop.alu_sel === ALU_SLLW   ) -> ((opr1(63,0)<<opr2(4,0))(31,0)) ,
+        (uop.alu_sel === ALU_SRLW   ) -> ((opr1(31,0).asUInt>>opr2(4,0)).asUInt)   ,
+      ))
 
     io.o_ex_res_pack.uop.dst_value := MuxCase(0.U,Seq(
         (uop.alu_sel === ALU_NONE   ) -> 0.U  ,
@@ -84,17 +96,17 @@ class ALU() extends Function_Unit(
         (uop.alu_sel === ALU_XORI   ) -> (opr1^opr2 )    ,
         (uop.alu_sel === ALU_ORI    ) -> (opr1|opr2 )    ,
         (uop.alu_sel === ALU_ANDI   ) -> (opr1&opr2 )    ,
-        (uop.alu_sel === ALU_ADDIW  ) -> {intermediate:=(opr1+opr2)(31,0) ; Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))  }  ,
+        (uop.alu_sel === ALU_ADDIW  ) -> Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))    ,
         (uop.alu_sel === ALU_SLLI   ) -> (opr1(63,0)<<opr2(4,0))   ,
         (uop.alu_sel === ALU_SRLI   ) -> (opr1(63,0).asUInt>>opr2(4,0)).asUInt    ,
         (uop.alu_sel === ALU_SRAI   ) -> (opr1(63,0).asSInt>>opr2(4,0)).asUInt    ,
         (uop.alu_sel === ALU_SLLIW  ) -> (opr1(31,0).asUInt<<opr2(4,0)).asUInt    ,
-        (uop.alu_sel === ALU_SRLIW  ) -> {intermediate:=(opr1(31,0).asUInt>>opr2(4,0)).asUInt; Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0)) }  ,
-        (uop.alu_sel === ALU_SRAIW  ) -> {intermediate:=(opr1(31,0).asSInt>>opr2(4,0)).asUInt; Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0)) }  ,
+        (uop.alu_sel === ALU_SRLIW  ) -> Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0))   ,
+        (uop.alu_sel === ALU_SRAIW  ) -> Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0))   ,
         (uop.alu_sel === ALU_ADD    ) -> (opr1+opr2)    ,
         (uop.alu_sel === ALU_SUB    ) -> (opr1-opr2)    ,
         (uop.alu_sel === ALU_SLL    ) -> (opr1(63,0)<<opr2(4,0))    ,
-        (uop.alu_sel === ALU_SLT    ) -> (Mux(opr1.asSInt>=opr2.asSInt,0.U,1.U)).asUInt    ,
+        (uop.alu_sel === ALU_SLT    ) -> Mux(opr1.asSInt>=opr2.asSInt,0.U,1.U).asUInt    ,
         (uop.alu_sel === ALU_SLTU   ) -> Mux(opr1.asUInt>=opr2.asUInt,0.U,1.U)     ,
         (uop.alu_sel === ALU_XOR    ) -> (opr1^opr2)    ,
         (uop.alu_sel === ALU_SRL    ) -> (opr1.asUInt>>opr2(4,0).asUInt),
@@ -103,18 +115,16 @@ class ALU() extends Function_Unit(
         (uop.alu_sel === ALU_AND    ) -> (opr1&opr2 )   ,
         (uop.alu_sel === ALU_ADDW   ) -> Mux((opr1+opr2)(31)=/=1.U,(opr1+opr2)(31,0),Cat(0xffffffffL.U,(opr1+opr2)(31,0)))    ,
         (uop.alu_sel === ALU_SUBW   ) -> Mux((opr1-opr2)(31)=/=1.U,(opr1-opr2)(31,0),Cat(0xffffffffL.U,(opr1-opr2)(31,0)))    ,
-        (uop.alu_sel === ALU_SLLW   ) -> {intermediate:=(opr1(63,0)<<opr2(4,0))(31,0); Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0))) }   ,
-        (uop.alu_sel === ALU_SRLW   ) -> {intermediate:=(opr1(31,0).asUInt>>opr2(4,0)).asUInt; Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0))) }   ,
-        (uop.alu_sel === ALU_SRAW   ) -> (opr1.asSInt>>opr2(4,0)).asUInt    
-    )
-    )
-
-
-
+        (uop.alu_sel === ALU_SLLW   ) -> Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))    ,
+        (uop.alu_sel === ALU_SRLW   ) -> Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))    ,
+        (uop.alu_sel === ALU_SRAW   ) -> ((opr1.asSInt>>opr2(4,0)).asUInt),
+        (uop.alu_sel === ALU_LUI    ) -> (opr1)
+    ))
+    
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
-            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -130,6 +140,7 @@ class BRU extends Function_Unit(
     is_bru = true,
     is_lsu = false
 ){
+    io.o_this_available := false.B
     io.o_func_idx := FU_BRU
 
     val s_FREE :: s_BUSY :: Nil = Enum(2)
@@ -141,10 +152,14 @@ class BRU extends Function_Unit(
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
+
     when((io.i_select_to_commit && !io.i_select)||io.i_exception){
         next_uop.valid:=false.B
     }
+
     io.o_ex_res_pack.uop := uop
+    io.o_ex_res_pack.uop.dst_value := uop.pc + 4.U
+
     val rs1=uop.src1_value
     val rs2=uop.src2_value
 
@@ -219,7 +234,8 @@ mispred scenarios:
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    //io.o_available := Mux(!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit),false.B,true.B)
+    io.o_available := (next_state=/=s_BUSY)
     io.o_ex_res_pack.valid := uop.valid
 }
 //lsu that only has one load/store in flight
@@ -228,6 +244,7 @@ class LSU extends Function_Unit(
     is_bru = false,
     is_lsu = true
 ){
+    io.o_this_available := false.B
 
     io.o_func_idx:=FU_MEM
 
@@ -266,13 +283,29 @@ class LSU extends Function_Unit(
     addr := Mux(uop.mem_type === MEM_R,uop.src1_value+uop.src2_value,uop.src1_value+uop.imm)
 
     //dcache io
-    io.o_ex_res_pack.uop.dst_value := MuxCase(io.dcache_io.MdataIn,Seq(
-        (!loadu && len===1.U) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
-        (!loadu && len===2.U) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
-        (!loadu && len===4.U) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
-        (!loadu && len===8.U) -> io.dcache_io.MdataIn
+    io.o_ex_res_pack.uop.dst_value := MuxCase(uop.dst_value,Seq(
+        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
+        (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
+        (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
+        (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
     ))
-    io.dcache_io.addr_valid:= (!io.i_exception && ((io.i_select && uop.mem_type===MEM_R)) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx))
+    //this is incorrect if the inst can be issued the cycle data_valid turns true
+    uop.dst_value := MuxCase(uop.dst_value,Seq(
+        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
+        (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
+        (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
+        (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
+    ))
+    //io.dcache_io.addr_valid:= (!io.i_exception && ((io.i_select && uop.mem_type===MEM_R)) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx))
+    //use addr_given to limit addr valid in one cycle.
+    //this is under the assumption that cache is always ready. change the logic when adding cache.
+    val addr_given = RegInit(false.B)
+    addr_given := MuxCase(addr_given,Seq(
+      ((io.dcache_io.addr_valid) && !io.i_select_to_commit)->true.B,
+      (next_state === s_FREE)->false.B
+      ))
+    //addr_given := Mux(io.dcache_io.addr_valid && (uop.mem_type===MEM_W), true.B, false.B)
+    io.dcache_io.addr_valid := (uop.valid && !addr_given && next_uop.mem_type === MEM_R) || (uop.valid && !addr_given && uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx)
     io.dcache_io.data_ready := true.B
     io.dcache_io.Maddr:= addr
     io.dcache_io.Mwout := uop.mem_type === MEM_W
@@ -281,7 +314,6 @@ class LSU extends Function_Unit(
     io.dcache_io.MdataOut := uop.src2_value
     //----------------------------------
     io.o_ex_res_pack.uop := uop
-    io.o_ex_res_pack.uop.dst_value := io.dcache_io.MdataIn
 
     val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
@@ -293,8 +325,9 @@ class LSU extends Function_Unit(
 
     next_rollback_occured := MuxCase(rollback_occured,Seq(
         (next_state === s_FREE) -> false.B,
-        ((io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
-            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U)))) -> true.B
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> true.B,//TODO:rob被套圈怎么判断
+
     ))
 
     next_state := MuxCase(state,Seq(
@@ -305,8 +338,8 @@ class LSU extends Function_Unit(
     ))
 
     next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
-        (state===s_BUSY && io.dcache_io.addr_ready && uop.mem_type===MEM_W)->true.B,
-        (state===s_BUSY && io.dcache_io.data_valid && uop.mem_type===MEM_R)->true.B,
+        (state===s_BUSY && io.dcache_io.addr_ready && uop.mem_type===MEM_W && addr_given)->true.B,
+        (state===s_BUSY && io.dcache_io.data_valid && uop.mem_type===MEM_R && addr_given)->true.B,
         (state===s_FREE) ->false.B 
     ))
     io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured && !(exception_occured && uop.mem_type === MEM_R)
@@ -317,15 +350,17 @@ class LSU extends Function_Unit(
 }
 
 class MUL extends Function_Unit(){
+    io.o_this_available := false.B
     val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val s_FREE :: s_BUSY :: Nil = Enum(2)
     val state = RegInit(s_FREE)
     val next_state = Wire(UInt(2.W))
     state := next_state
+
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
-            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (io.i_select)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -333,7 +368,7 @@ class MUL extends Function_Unit(){
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
-    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+    when(next_state === s_FREE){
         next_uop.valid:=false.B
     }
     val multiplier = Module(new Multiplier())
@@ -375,15 +410,17 @@ class MUL extends Function_Unit(){
     io.o_func_idx:=FU_MUL //useless
 }
 class DIV extends Function_Unit(){
+    io.o_this_available := false.B
     val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
     val s_FREE :: s_BUSY :: Nil = Enum(2)
     val state = RegInit(s_FREE)
     val next_state = Wire(UInt(2.W))
     state := next_state
+
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
-            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (io.i_select)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -391,7 +428,7 @@ class DIV extends Function_Unit(){
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
-    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+    when(next_state === s_FREE){
         next_uop.valid:=false.B
     }
 
@@ -433,7 +470,10 @@ class CSR_BF() extends Function_Unit(
     val uop = RegInit(0.U.asTypeOf(new uop()))//null uop
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
-    when((io.i_select_to_commit && !io.i_select)||io.i_exception){
+
+    when((io.i_select_to_commit && !io.i_select)||io.i_exception ||
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))){
         next_uop.valid:=false.B
     }
     uop:=next_uop
@@ -442,15 +482,17 @@ class CSR_BF() extends Function_Unit(
     io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.valid := uop.valid
 
-
-
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx > uop.rob_idx)||
-            (io.i_rollback_rob_idx < uop.rob_idx && io.i_rollback_rob_idx(6)===1.U && uop.rob_idx(6) === 0.U))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
+            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(next_state === s_BUSY, false.B,true.B)
+    val available = RegInit(false.B)
+    available := io.o_available
+    io.o_this_available := available
+
 }

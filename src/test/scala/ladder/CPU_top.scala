@@ -7,7 +7,7 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
-class Ladder extends Module {
+class Ladder_nodpic extends Module {
   val io = IO(new Bundle {
     //icache io
     val icache_io = new IcacheIO()
@@ -19,7 +19,11 @@ class Ladder extends Module {
   val back_end = Module(new Back_End_With_Decode())
 
   //connect front end input
-  front_end.io.i_branch_resolve_pack := back_end.io.o_branch_resolve_pack
+  val last_branch_resolve_pack = RegInit(0.U.asTypeOf(new branch_resolve_pack()))
+  last_branch_resolve_pack := back_end.io.o_branch_resolve_pack
+  //when backend branch resolve flush, the front end just have to flush one cycle
+  front_end.io.i_branch_resolve_pack := Mux(last_branch_resolve_pack.asUInt === back_end.io.o_branch_resolve_pack.asUInt, 
+       0.U.asTypeOf(new branch_resolve_pack()), back_end.io.o_branch_resolve_pack)
   front_end.io.i_pc_redirect_valid := back_end.io.o_pc_redirect_valid
   front_end.io.i_pc_redirect_target := back_end.io.o_pc_redirect_target
 

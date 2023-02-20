@@ -12,21 +12,14 @@ import scala.collection.mutable.{ArrayBuffer}
 //what happens if two consecutive branch
 class Execute extends Module with consts{
     val io=IO(new Bundle{
-        //val i_=Input(UInt(32.W))
-
         val i_issue_res_packs = Input(Vec(2, new uop()))
-        //to phy-regfile
-        //physical reg read finished in previous module
-        //val i_pregs_read = Input(Vec(4, UInt(64.W))) 
 
         //to issue(reservation station)
         val o_available_funcs = Output(Vec(7,UInt(2.W)))
-        //val o_func_code = Output(UInt(x.W))//??
-        //val o_func_mask = Output(Vec)//??
 
         //to rob
         val o_ex_res_packs = Output(Vec(2, new valid_uop_pack()))//rename result to res 
-        val i_ROB_first_entry = Input(UInt(8.W))
+        val i_ROB_first_entry = Input(UInt(7.W))
         val dcache_io = (new DcacheIO())
 
         val o_branch_resolve_pack=Output(new branch_resolve_pack())
@@ -51,6 +44,14 @@ class Execute extends Module with consts{
     val mul = Module(new MUL())
     val div = Module(new DIV())
     val csr_bf = Module(new CSR_BF())
+
+    //because bru is pipelined, only when the second cycle after the resolve can ex know if theres rbk.(unless input next_rob_state)
+    //we must know this cyc if this is a new mispred. And when mispred, the ex must be stalled 1 cycle before rbk info comes in next cyc
+    //to take the control of deciding wether to stall
+    val last_branch_resolve_pack = RegInit(0.U.asTypeOf(new branch_resolve_pack()))
+    last_branch_resolve_pack := io.o_branch_resolve_pack
+    val new_br_resolve = Wire(Bool())
+    new_br_resolve := last_branch_resolve_pack.asUInt =/= io.o_branch_resolve_pack.asUInt 
 
     func_units += alu1
     func_units += alu2
@@ -101,19 +102,19 @@ class Execute extends Module with consts{
         &&(!(alu1.io.o_available)))),true.B,false.B)
         
     bru.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_BRU)) || 
-                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)),true.B,false.B)
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_BRU)),true.B,false.B) && (bru.io.o_available)
 
     lsu.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_MEM)) || 
-                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_MEM)),true.B,false.B)
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_MEM)),true.B,false.B) && (lsu.io.o_available)
 
     mul.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_MUL)) || 
-                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_MUL)),true.B,false.B)
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_MUL)),true.B,false.B) && (mul.io.o_available)
 
     div.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_DIV)) || 
-                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_DIV)),true.B,false.B)
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_DIV)),true.B,false.B) && (div.io.o_available)
 
     csr_bf.io.i_select := !io.i_rollback_valid && Mux(((io.i_issue_res_packs(1).valid)&&(io.i_issue_res_packs(1).func_code === FU_CSR)) || 
-                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_CSR)),true.B,false.B)
+                            ((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_CSR)),true.B,false.B)// && (csr_bf.io.o_this_available)
 
     alu1.io.i_uop:= Mux((io.i_issue_res_packs(0).valid)&&(io.i_issue_res_packs(0).func_code === FU_ALU),io.i_issue_res_packs(0),io.i_issue_res_packs(1))
     //when alu1 is busy and inst 0 is alu
@@ -176,14 +177,14 @@ class Execute extends Module with consts{
             div.io.o_ex_res_pack.valid,csr_bf.io.o_ex_res_pack.valid).reverse)
 
     for(i <- 0 until func_units.length){// use switch case to connect specialized function unit
-        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid && (!io.i_rollback_valid)
+        func_units(i).io.i_select_to_commit:= (i.U ===issue_idx1 || i.U === issue_idx2) && func_units(i).io.o_ex_res_pack.valid && (!io.i_rollback_valid) && (!new_br_resolve)
     }
 
     io.o_ex_res_packs(0).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.uop ))
     io.o_ex_res_packs(1).uop := MuxCase(func_units(0).io.o_ex_res_pack.uop,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.uop ))
 
-    io.o_ex_res_packs(0).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid )))
-    io.o_ex_res_packs(1).valid :=Mux(io.i_exception, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2))
+    io.o_ex_res_packs(0).valid :=Mux(io.i_exception || io.i_rollback_valid || new_br_resolve, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx1) ->func_units(i).io.o_ex_res_pack.valid )))
+    io.o_ex_res_packs(1).valid :=Mux(io.i_exception || io.i_rollback_valid || new_br_resolve, false.B, MuxCase(false.B,for(i <- 0 until func_units.length)yield((i.U===issue_idx2) ->func_units(i).io.o_ex_res_pack.valid )) && (issue_idx1=/=issue_idx2))
 
     io.o_lsu_uop_valid := lsu.io.o_lsu_uop_valid
     io.o_lsu_uop_rob_idx := lsu.io.o_lsu_uop_rob_idx

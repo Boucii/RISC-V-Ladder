@@ -10,6 +10,8 @@ module Queue(
   input  [31:0] io_enq_bits_insts_1,
   input         io_enq_bits_branch_predict_pack_valid,
   input  [63:0] io_enq_bits_branch_predict_pack_target,
+  input  [3:0]  io_enq_bits_branch_predict_pack_branch_type,
+  input         io_enq_bits_branch_predict_pack_select,
   input         io_enq_bits_branch_predict_pack_taken,
   input         io_deq_ready,
   output        io_deq_valid,
@@ -186,7 +188,7 @@ module Queue(
   assign ram_branch_predict_pack_branch_type_io_deq_bits_MPORT_addr = deq_ptr_value;
   assign ram_branch_predict_pack_branch_type_io_deq_bits_MPORT_data =
     ram_branch_predict_pack_branch_type[ram_branch_predict_pack_branch_type_io_deq_bits_MPORT_addr]; // @[Decoupled.scala 275:95]
-  assign ram_branch_predict_pack_branch_type_MPORT_data = 4'h0;
+  assign ram_branch_predict_pack_branch_type_MPORT_data = io_enq_bits_branch_predict_pack_branch_type;
   assign ram_branch_predict_pack_branch_type_MPORT_addr = enq_ptr_value;
   assign ram_branch_predict_pack_branch_type_MPORT_mask = 1'h1;
   assign ram_branch_predict_pack_branch_type_MPORT_en = io_enq_ready & io_enq_valid;
@@ -194,7 +196,7 @@ module Queue(
   assign ram_branch_predict_pack_select_io_deq_bits_MPORT_addr = deq_ptr_value;
   assign ram_branch_predict_pack_select_io_deq_bits_MPORT_data =
     ram_branch_predict_pack_select[ram_branch_predict_pack_select_io_deq_bits_MPORT_addr]; // @[Decoupled.scala 275:95]
-  assign ram_branch_predict_pack_select_MPORT_data = 1'h0;
+  assign ram_branch_predict_pack_select_MPORT_data = io_enq_bits_branch_predict_pack_select;
   assign ram_branch_predict_pack_select_MPORT_addr = enq_ptr_value;
   assign ram_branch_predict_pack_select_MPORT_mask = 1'h1;
   assign ram_branch_predict_pack_select_MPORT_en = io_enq_ready & io_enq_valid;

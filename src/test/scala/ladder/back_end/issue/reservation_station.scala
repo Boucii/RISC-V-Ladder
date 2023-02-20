@@ -25,9 +25,12 @@ class Reservation_Station extends Module with consts{
      val i_exception = Input(Bool())
      val i_available_funcs = Input(Vec(7, UInt(2.W)))
 
+     //used to make sure issue loads and stores only when they are the first of ROB,
+     //and a better solution is down here, but not fully implemented
+      val i_ROB_first_entry = Input(UInt(7.W))
    }) 
      //val uops = Reg(Vec(2,new uop()))
-     val uops = RegInit(0.U.asTypeOf(Vec(2,new uop())))
+     val uops = Wire((Vec(2,new uop())))
      uops:=io.i_dispatch_packs
 
      val reservation_station = Seq.fill(64)(Module(new Reservation_Station_Slot()))
@@ -40,6 +43,62 @@ class Reservation_Station extends Module with consts{
      val write_idx1 = Wire(UInt(6.W))
      val write_idx2 = Wire(UInt(6.W))
 
+/*  //this is a half-done better plan
+    //this is used to make sure loads and stores execute in the right order,
+    //an ls inst can be issued only after last inflight ls is executed.
+    //the highest bit is the valid bit, and the other 7 bits are the rob_idx of the last ls inst
+    //the current plan is just to let loads and stores to issue only when they are the first of rob
+    
+    val last_inflight_ls_rob_idx = RegInit(0.U(8.W))
+    val next_last_inflight_ls_rob_idx = Wire(UInt(8.W))
+    last_inflight_ls_rob_idx := next_last_inflight_ls_rob_idx
+    when(io.i_exception){
+      next_last_inflight_ls_rob_idx := 0.U
+    }.elsewhen(io.i_rollback_pack.valid(0) && io.i_rollback_pack(0).uop.func_code === FU_MEM){
+      next_last_inflight_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack.uop.stale_ls_rob_idx)
+    }.elsewhen(io.i_rollback_pack.valid(1) && io.i_rollback_pack(1).uop.func_code === FU_MEM){//implies that 0 is not mem inst
+      next_last_inflight_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack(1).uop.stale_ls_rob_idx)
+    }.elsewhen(uops(1).valid && uops(1).func_code === FU_MEM){
+      next_last_inflight_ls_rob_idx :=  Cat(1.U(1.W), uops(1).rob_idx)
+    }.elsewhen(uops(0).valid && uops(0).func_code === FU_MEM){//cat yixia
+      next_last_inflight_ls_rob_idx :=  Cat(1.U(1.W), uops(0).rob_idx)
+    }.elsewhen(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_MEM  &&  io.i_commit_packs(1).uop.rob_idx === last_inflight_ls_rob_idx){
+      next_last_inflight_ls_rob_idx := 0.U
+    }.elsewhen(io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_MEM  &&  io.i_commit_packs(0).uop.rob_idx === last_inflight_ls_rob_idx){
+      next_last_inflight_ls_rob_idx := 0.U
+    }otherwise{
+      next_last_inflight_ls_rob_idx := last_inflight_ls_rob_idx
+    }
+
+    when(io.i_exception){
+      uops(0).stale_ls_rob_idx := 0.U
+    }.elsewhen(io.i_rollback_pack.valid(0) && io.i_rollback_pack(0).uop.func_code === FU_MEM){
+      uops(0).stale_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack(0).uop.stale_ls_rob_idx)
+    }.elsewhen(io.i_rollback_pack.valid(1) && io.i_rollback_pack(1).uop.func_code === FU_MEM){
+      uops(0).stale_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack(1).uop.stale_ls_rob_idx)
+    }.elsewhen(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_MEM  &&  io.i_commit_packs(1).uop.rob_idx === last_inflight_ls_rob_idx){
+      uops(0).stale_ls_rob_idx := 0.U
+    }.elsewhen(io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_MEM  &&  io.i_commit_packs(0).uop.rob_idx === last_inflight_ls_rob_idx){
+      uops(0).stale_ls_rob_idx := 0.U
+    }.otherwise{
+      uops(0).stale_ls_rob_idx := last_inflight_ls_rob_idx
+    }
+    
+    when(io.i_exception){
+      uops(1).stale_ls_rob_idx := 0.U
+    }.elsewhen(io.i_rollback_pack.valid(0) && io.i_rollback_pack(0).uop.func_code === FU_MEM){
+      uops(1).stale_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack(0).uop.stale_ls_rob_idx)
+    }.elsewhen(io.i_rollback_pack.valid(1) && io.i_rollback_pack(1).uop.func_code === FU_MEM){//implys that 0 is not mem inst
+      uops(1).stale_ls_rob_idx := Cat(1.U(1.W), io.i_rollback_pack(1).uop.stale_ls_rob_idx)
+    }.elsewhen(uops(0).valid && uops(0).func_code === FU_MEM){
+      uops(1).stale_ls_rob_idx := Cat(1.U(1.W), uops(0).rob_idx)
+    }.elsewhen(io.i_commit_packs(1).valid && io.i_commit_packs(1).uop.func_code === FU_MEM  &&  io.i_commit_packs(1).uop.rob_idx === last_inflight_ls_rob_idx){
+      uops(1).stale_ls_rob_idx := 0.U
+    }.elsewhen(io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_MEM  &&  io.i_commit_packs(0).uop.rob_idx === last_inflight_ls_rob_idx){
+      uops(1).stale_ls_rob_idx := 0.U
+    }.otherwise{
+      uops(1).stale_ls_rob_idx := last_inflight_ls_rob_idx
+*/
      reservation_station_valid := temp.asUInt()
      write_idx1:=PriorityEncoder(~(reservation_station_valid)) //可能错的不是他,是用到他的变量
      reservation_station_valid_withmask:= reservation_station_valid |(UIntToOH(write_idx1))
@@ -89,7 +148,7 @@ class Reservation_Station extends Module with consts{
      }.elsewhen(issue1_func_code === FU_NUL) {
        available_funcs_with_mask(6) := Mux(io.i_available_funcs(6)===0.U,available_funcs(6), (available_funcs(6)-1.U))
      }*/
-     available_funcs_with_mask(OHToUInt(issue1_func_code)):=io.i_available_funcs(issue1_idx)-1.U //optimize this OHToUInt
+     available_funcs_with_mask(OHToUInt(issue1_func_code)):=io.i_available_funcs(OHToUInt(issue1_func_code))-1.U //optimize this OHToUInt
 
      val temp3=Wire(Vec(7,Bool()))
      for (i <- 0 until 7) {
@@ -120,9 +179,9 @@ class Reservation_Station extends Module with consts{
 
       val write_num = Wire(UInt(2.W))
       write_num := MuxCase(0.U,Seq(
-         (write_idx1===63.U && write_idx2===63.U) -> 0.U,
-         (((write_idx1===63.U && write_idx2=/=63.U) || (write_idx1=/=63.U && write_idx2===63.U))&& (uops(0).valid || uops(1).valid)) ->1.U,
-         ((write_idx1=/=63.U && write_idx2=/=63.U ) && uops(0).valid && uops(1).valid)->2.U
+         (write_idx1===63.U || write_idx2===63.U) -> 0.U,//full
+         (!(write_idx1===63.U || write_idx2===63.U) && (uops(0).valid && uops(1).valid)) -> 2.U,
+         (!(write_idx1===63.U || write_idx2===63.U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
       ))//需要考虑 writeidx到底能不能等于63呢,得把这个选项排除掉,得额外考虑满的情况
 
      next_max_age := issued_age_pack.max_age- issue_num + write_num
@@ -132,7 +191,9 @@ class Reservation_Station extends Module with consts{
      issued_age_pack.max_age := next_max_age
      issued_age_pack.issued_ages(0) := MuxCase(63.U,(for(i <- 0 to 63)yield(i.U===issue1_idx)->reservation_station(i).io.o_age))
      issued_age_pack.issued_ages(1) := MuxCase(63.U,(for(i <- 0 to 63)yield(i.U===issue2_idx)->reservation_station(i).io.o_age))
-     
+     when(io.i_exception){
+        issued_age_pack := 0.U.asTypeOf(new age_pack())
+     }     
 
      io.o_full := issued_age_pack.max_age>60.U
 
@@ -161,6 +222,8 @@ class Reservation_Station extends Module with consts{
      
      reservation_station(i).io.i_exe_value1 := io.i_ex_res_packs(0).uop.dst_value
      reservation_station(i).io.i_exe_value2 := io.i_ex_res_packs(1).uop.dst_value
+
+     reservation_station(i).io.i_ROB_first_entry := io.i_ROB_first_entry
 
      }
      //printf("iuopsrc1value=%d\n",uops(0).src1_value)

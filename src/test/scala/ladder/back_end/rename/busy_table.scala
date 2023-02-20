@@ -68,6 +68,7 @@ class Busy_Table extends Module{
     val num_rbk = Wire(UInt(2.W))
     val num_cmt_stale = Wire(UInt(2.W))
     val num_cmt_phy = Wire(UInt(2.W))
+    /*
     num_allocate := Mux(io.i_free_list_reqs(0), 1.U, 0.U) + Mux(io.i_free_list_reqs(1), 1.U, 0.U)
     num_rbk := Mux((io.i_rollback_packs(0).valid)&&(io.i_rollback_packs(0).uop.phy_dst=/=0.U), 1.U, 0.U) + 
                Mux((io.i_rollback_packs(1).valid)&&(io.i_rollback_packs(1).uop.phy_dst=/=0.U), 1.U, 0.U) 
@@ -75,6 +76,14 @@ class Busy_Table extends Module{
                      Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.stale_dst=/=0.U), 1.U, 0.U)
     num_cmt_phy := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.phy_dst=/=0.U), 1.U, 0.U) +
                    Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.phy_dst=/=0.U), 1.U, 0.U)
+*/
+    num_allocate := Mux(io.i_free_list_reqs(0), 1.U(2.W), 0.U(2.W)) + Mux(io.i_free_list_reqs(1), 1.U(2.W), 0.U(2.W))
+    num_rbk := Mux((io.i_rollback_packs(0).valid)&&(io.i_rollback_packs(0).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
+               Mux((io.i_rollback_packs(1).valid)&&(io.i_rollback_packs(1).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W))
+    num_cmt_stale := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.stale_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
+                     Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.stale_dst=/=0.U), 1.U(2.W), 0.U(2.W))
+    num_cmt_phy := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
+                   Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W))
 
     val num_mapped_not_writtenback = RegInit(0.U(7.W))
     val next_num_mapped_not_writtenback = Wire(UInt(7.W))

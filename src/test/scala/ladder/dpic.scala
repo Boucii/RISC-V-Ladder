@@ -17,10 +17,10 @@ class dpic extends BlackBox{
     val addr_ready = Output(Bool())
     val addr_valid = Input(Bool())
     val Mwout = Input(Bool())
-    val Maddr = Input(Bool())
+    val Maddr = Input(UInt(64.W))
     val Men = Input(Bool())
-    val Mlen = Input(Bool())
-    val MdataIn = Input(Bool())
+    val Mlen = Input(UInt(32.W))
+    val MdataIn = Output(UInt(64.W))
     val MdataOut = Input(UInt(64.W))
 
     //regfile dpi

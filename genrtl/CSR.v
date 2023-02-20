@@ -3,36 +3,131 @@ module CSR(
   input         reset,
   input         io_i_interrupt,
   input         io_i_commit_packs_0_valid,
+  input         io_i_commit_packs_0_uop_valid,
   input  [31:0] io_i_commit_packs_0_uop_pc,
   input  [31:0] io_i_commit_packs_0_uop_inst,
   input  [6:0]  io_i_commit_packs_0_uop_func_code,
+  input         io_i_commit_packs_0_uop_branch_predict_pack_valid,
+  input  [63:0] io_i_commit_packs_0_uop_branch_predict_pack_target,
+  input  [3:0]  io_i_commit_packs_0_uop_branch_predict_pack_branch_type,
+  input         io_i_commit_packs_0_uop_branch_predict_pack_select,
+  input         io_i_commit_packs_0_uop_branch_predict_pack_taken,
   input  [6:0]  io_i_commit_packs_0_uop_phy_dst,
   input  [6:0]  io_i_commit_packs_0_uop_stale_dst,
   input  [4:0]  io_i_commit_packs_0_uop_arch_dst,
+  input  [2:0]  io_i_commit_packs_0_uop_inst_type,
+  input         io_i_commit_packs_0_uop_regWen,
+  input         io_i_commit_packs_0_uop_src1_valid,
+  input  [6:0]  io_i_commit_packs_0_uop_phy_rs1,
+  input  [4:0]  io_i_commit_packs_0_uop_arch_rs1,
+  input         io_i_commit_packs_0_uop_src2_valid,
+  input  [6:0]  io_i_commit_packs_0_uop_phy_rs2,
+  input  [4:0]  io_i_commit_packs_0_uop_arch_rs2,
+  input  [6:0]  io_i_commit_packs_0_uop_rob_idx,
+  input  [63:0] io_i_commit_packs_0_uop_imm,
   input  [63:0] io_i_commit_packs_0_uop_dst_value,
   input  [63:0] io_i_commit_packs_0_uop_src1_value,
+  input  [63:0] io_i_commit_packs_0_uop_src2_value,
+  input  [2:0]  io_i_commit_packs_0_uop_op1_sel,
+  input  [2:0]  io_i_commit_packs_0_uop_op2_sel,
   input  [4:0]  io_i_commit_packs_0_uop_alu_sel,
+  input  [3:0]  io_i_commit_packs_0_uop_branch_type,
+  input  [1:0]  io_i_commit_packs_0_uop_mem_type,
   input         io_i_commit_packs_1_valid,
+  input         io_i_commit_packs_1_uop_valid,
+  input  [31:0] io_i_commit_packs_1_uop_pc,
   input  [31:0] io_i_commit_packs_1_uop_inst,
   input  [6:0]  io_i_commit_packs_1_uop_func_code,
+  input         io_i_commit_packs_1_uop_branch_predict_pack_valid,
+  input  [63:0] io_i_commit_packs_1_uop_branch_predict_pack_target,
+  input  [3:0]  io_i_commit_packs_1_uop_branch_predict_pack_branch_type,
+  input         io_i_commit_packs_1_uop_branch_predict_pack_select,
+  input         io_i_commit_packs_1_uop_branch_predict_pack_taken,
   input  [6:0]  io_i_commit_packs_1_uop_phy_dst,
   input  [6:0]  io_i_commit_packs_1_uop_stale_dst,
   input  [4:0]  io_i_commit_packs_1_uop_arch_dst,
+  input  [2:0]  io_i_commit_packs_1_uop_inst_type,
+  input         io_i_commit_packs_1_uop_regWen,
+  input         io_i_commit_packs_1_uop_src1_valid,
+  input  [6:0]  io_i_commit_packs_1_uop_phy_rs1,
+  input  [4:0]  io_i_commit_packs_1_uop_arch_rs1,
+  input         io_i_commit_packs_1_uop_src2_valid,
+  input  [6:0]  io_i_commit_packs_1_uop_phy_rs2,
+  input  [4:0]  io_i_commit_packs_1_uop_arch_rs2,
+  input  [6:0]  io_i_commit_packs_1_uop_rob_idx,
+  input  [63:0] io_i_commit_packs_1_uop_imm,
   input  [63:0] io_i_commit_packs_1_uop_dst_value,
   input  [63:0] io_i_commit_packs_1_uop_src1_value,
+  input  [63:0] io_i_commit_packs_1_uop_src2_value,
+  input  [2:0]  io_i_commit_packs_1_uop_op1_sel,
+  input  [2:0]  io_i_commit_packs_1_uop_op2_sel,
   input  [4:0]  io_i_commit_packs_1_uop_alu_sel,
+  input  [3:0]  io_i_commit_packs_1_uop_branch_type,
+  input  [1:0]  io_i_commit_packs_1_uop_mem_type,
   output [63:0] io_o_pc_redirect_target,
   output        io_o_pc_redirect_valid,
   output        io_o_commit_packs_modified_0_valid,
+  output        io_o_commit_packs_modified_0_uop_valid,
+  output [31:0] io_o_commit_packs_modified_0_uop_pc,
+  output [31:0] io_o_commit_packs_modified_0_uop_inst,
+  output [6:0]  io_o_commit_packs_modified_0_uop_func_code,
+  output        io_o_commit_packs_modified_0_uop_branch_predict_pack_valid,
+  output [63:0] io_o_commit_packs_modified_0_uop_branch_predict_pack_target,
+  output [3:0]  io_o_commit_packs_modified_0_uop_branch_predict_pack_branch_type,
+  output        io_o_commit_packs_modified_0_uop_branch_predict_pack_select,
+  output        io_o_commit_packs_modified_0_uop_branch_predict_pack_taken,
   output [6:0]  io_o_commit_packs_modified_0_uop_phy_dst,
   output [6:0]  io_o_commit_packs_modified_0_uop_stale_dst,
   output [4:0]  io_o_commit_packs_modified_0_uop_arch_dst,
+  output [2:0]  io_o_commit_packs_modified_0_uop_inst_type,
+  output        io_o_commit_packs_modified_0_uop_regWen,
+  output        io_o_commit_packs_modified_0_uop_src1_valid,
+  output [6:0]  io_o_commit_packs_modified_0_uop_phy_rs1,
+  output [4:0]  io_o_commit_packs_modified_0_uop_arch_rs1,
+  output        io_o_commit_packs_modified_0_uop_src2_valid,
+  output [6:0]  io_o_commit_packs_modified_0_uop_phy_rs2,
+  output [4:0]  io_o_commit_packs_modified_0_uop_arch_rs2,
+  output [6:0]  io_o_commit_packs_modified_0_uop_rob_idx,
+  output [63:0] io_o_commit_packs_modified_0_uop_imm,
   output [63:0] io_o_commit_packs_modified_0_uop_dst_value,
+  output [63:0] io_o_commit_packs_modified_0_uop_src1_value,
+  output [63:0] io_o_commit_packs_modified_0_uop_src2_value,
+  output [2:0]  io_o_commit_packs_modified_0_uop_op1_sel,
+  output [2:0]  io_o_commit_packs_modified_0_uop_op2_sel,
+  output [4:0]  io_o_commit_packs_modified_0_uop_alu_sel,
+  output [3:0]  io_o_commit_packs_modified_0_uop_branch_type,
+  output [1:0]  io_o_commit_packs_modified_0_uop_mem_type,
   output        io_o_commit_packs_modified_1_valid,
+  output        io_o_commit_packs_modified_1_uop_valid,
+  output [31:0] io_o_commit_packs_modified_1_uop_pc,
+  output [31:0] io_o_commit_packs_modified_1_uop_inst,
+  output [6:0]  io_o_commit_packs_modified_1_uop_func_code,
+  output        io_o_commit_packs_modified_1_uop_branch_predict_pack_valid,
+  output [63:0] io_o_commit_packs_modified_1_uop_branch_predict_pack_target,
+  output [3:0]  io_o_commit_packs_modified_1_uop_branch_predict_pack_branch_type,
+  output        io_o_commit_packs_modified_1_uop_branch_predict_pack_select,
+  output        io_o_commit_packs_modified_1_uop_branch_predict_pack_taken,
   output [6:0]  io_o_commit_packs_modified_1_uop_phy_dst,
   output [6:0]  io_o_commit_packs_modified_1_uop_stale_dst,
   output [4:0]  io_o_commit_packs_modified_1_uop_arch_dst,
-  output [63:0] io_o_commit_packs_modified_1_uop_dst_value
+  output [2:0]  io_o_commit_packs_modified_1_uop_inst_type,
+  output        io_o_commit_packs_modified_1_uop_regWen,
+  output        io_o_commit_packs_modified_1_uop_src1_valid,
+  output [6:0]  io_o_commit_packs_modified_1_uop_phy_rs1,
+  output [4:0]  io_o_commit_packs_modified_1_uop_arch_rs1,
+  output        io_o_commit_packs_modified_1_uop_src2_valid,
+  output [6:0]  io_o_commit_packs_modified_1_uop_phy_rs2,
+  output [4:0]  io_o_commit_packs_modified_1_uop_arch_rs2,
+  output [6:0]  io_o_commit_packs_modified_1_uop_rob_idx,
+  output [63:0] io_o_commit_packs_modified_1_uop_imm,
+  output [63:0] io_o_commit_packs_modified_1_uop_dst_value,
+  output [63:0] io_o_commit_packs_modified_1_uop_src1_value,
+  output [63:0] io_o_commit_packs_modified_1_uop_src2_value,
+  output [2:0]  io_o_commit_packs_modified_1_uop_op1_sel,
+  output [2:0]  io_o_commit_packs_modified_1_uop_op2_sel,
+  output [4:0]  io_o_commit_packs_modified_1_uop_alu_sel,
+  output [3:0]  io_o_commit_packs_modified_1_uop_branch_type,
+  output [1:0]  io_o_commit_packs_modified_1_uop_mem_type
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [63:0] _RAND_0;
@@ -109,15 +204,73 @@ module CSR(
   assign io_o_pc_redirect_valid = _io_o_pc_redirect_valid_T_25 | _commit1_is_csr_rw_T_1 &
     io_i_commit_packs_1_uop_alu_sel == 5'h5; // @[csr.scala 95:139]
   assign io_o_commit_packs_modified_0_valid = io_i_commit_packs_0_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_valid = io_i_commit_packs_0_uop_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_pc = io_i_commit_packs_0_uop_pc; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_inst = io_i_commit_packs_0_uop_inst; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_func_code = io_i_commit_packs_0_uop_func_code; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_predict_pack_valid = io_i_commit_packs_0_uop_branch_predict_pack_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_predict_pack_target =
+    io_i_commit_packs_0_uop_branch_predict_pack_target; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_predict_pack_branch_type =
+    io_i_commit_packs_0_uop_branch_predict_pack_branch_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_predict_pack_select =
+    io_i_commit_packs_0_uop_branch_predict_pack_select; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_predict_pack_taken = io_i_commit_packs_0_uop_branch_predict_pack_taken; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_0_uop_phy_dst = io_i_commit_packs_0_uop_phy_dst; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_0_uop_stale_dst = io_i_commit_packs_0_uop_stale_dst; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_0_uop_arch_dst = io_i_commit_packs_0_uop_arch_dst; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_inst_type = io_i_commit_packs_0_uop_inst_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_regWen = io_i_commit_packs_0_uop_regWen; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_src1_valid = io_i_commit_packs_0_uop_src1_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_phy_rs1 = io_i_commit_packs_0_uop_phy_rs1; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_arch_rs1 = io_i_commit_packs_0_uop_arch_rs1; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_src2_valid = io_i_commit_packs_0_uop_src2_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_phy_rs2 = io_i_commit_packs_0_uop_phy_rs2; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_arch_rs2 = io_i_commit_packs_0_uop_arch_rs2; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_rob_idx = io_i_commit_packs_0_uop_rob_idx; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_imm = io_i_commit_packs_0_uop_imm; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_0_uop_dst_value = commit0_is_csr_rw ? csr_rdata : io_i_commit_packs_0_uop_dst_value; // @[csr.scala 82:28 81:32 83:53]
+  assign io_o_commit_packs_modified_0_uop_src1_value = io_i_commit_packs_0_uop_src1_value; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_src2_value = io_i_commit_packs_0_uop_src2_value; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_op1_sel = io_i_commit_packs_0_uop_op1_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_op2_sel = io_i_commit_packs_0_uop_op2_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_alu_sel = io_i_commit_packs_0_uop_alu_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_branch_type = io_i_commit_packs_0_uop_branch_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_0_uop_mem_type = io_i_commit_packs_0_uop_mem_type; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_1_valid = io_i_commit_packs_1_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_valid = io_i_commit_packs_1_uop_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_pc = io_i_commit_packs_1_uop_pc; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_inst = io_i_commit_packs_1_uop_inst; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_func_code = io_i_commit_packs_1_uop_func_code; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_predict_pack_valid = io_i_commit_packs_1_uop_branch_predict_pack_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_predict_pack_target =
+    io_i_commit_packs_1_uop_branch_predict_pack_target; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_predict_pack_branch_type =
+    io_i_commit_packs_1_uop_branch_predict_pack_branch_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_predict_pack_select =
+    io_i_commit_packs_1_uop_branch_predict_pack_select; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_predict_pack_taken = io_i_commit_packs_1_uop_branch_predict_pack_taken; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_1_uop_phy_dst = io_i_commit_packs_1_uop_phy_dst; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_1_uop_stale_dst = io_i_commit_packs_1_uop_stale_dst; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_1_uop_arch_dst = io_i_commit_packs_1_uop_arch_dst; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_inst_type = io_i_commit_packs_1_uop_inst_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_regWen = io_i_commit_packs_1_uop_regWen; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_src1_valid = io_i_commit_packs_1_uop_src1_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_phy_rs1 = io_i_commit_packs_1_uop_phy_rs1; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_arch_rs1 = io_i_commit_packs_1_uop_arch_rs1; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_src2_valid = io_i_commit_packs_1_uop_src2_valid; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_phy_rs2 = io_i_commit_packs_1_uop_phy_rs2; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_arch_rs2 = io_i_commit_packs_1_uop_arch_rs2; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_rob_idx = io_i_commit_packs_1_uop_rob_idx; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_imm = io_i_commit_packs_1_uop_imm; // @[csr.scala 81:32]
   assign io_o_commit_packs_modified_1_uop_dst_value = commit1_is_csr_rw ? csr_rdata : io_i_commit_packs_1_uop_dst_value; // @[csr.scala 85:28 81:32 86:53]
+  assign io_o_commit_packs_modified_1_uop_src1_value = io_i_commit_packs_1_uop_src1_value; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_src2_value = io_i_commit_packs_1_uop_src2_value; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_op1_sel = io_i_commit_packs_1_uop_op1_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_op2_sel = io_i_commit_packs_1_uop_op2_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_alu_sel = io_i_commit_packs_1_uop_alu_sel; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_branch_type = io_i_commit_packs_1_uop_branch_type; // @[csr.scala 81:32]
+  assign io_o_commit_packs_modified_1_uop_mem_type = io_i_commit_packs_1_uop_mem_type; // @[csr.scala 81:32]
   always @(posedge clock) begin
     if (reset) begin // @[csr.scala 22:26]
       mepc <= 64'h0; // @[csr.scala 22:26]

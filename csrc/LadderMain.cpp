@@ -6,18 +6,18 @@
 #include <assert.h>
 #include <string>
 #include <dlfcn.h>
-#include "VTOP.h"
+#include "VLadder.h"
 #include "verilated_vcd_c.h"
 #include "verilated_dpi.h"
 #include "log.h"
 #include "memory.h"
 //#include <verilated.h>
 //#include <svdpi.h>
-#include "VTOP__Dpi.h"
+#include "VLadder__Dpi.h"
 
-#define DIFFTEST_EN 0
-#define ITRACE_EN 0
-#define MAX_TIME 10000000
+#define DIFFTEST_EN 1
+#define ITRACE_EN 1
+#define MAX_TIME 10000//10000000
 #define RESET_VECTOR 0x80000000
 
 #define RESET   "\033[0m"
@@ -45,14 +45,18 @@ extern uint8_t *mem;
 uint64_t img_size=0;
 
 uint64_t *cpu_gpr = NULL;
+uint64_t last_ref_gpr[32] = {0}; 
 uint64_t ref_gpr[33];
-uint64_t *pc_cmt1 = NULL;
-uint64_t *pc_cmt2 = NULL;
+uint64_t *pc_cmt1 = new uint64_t;
+uint64_t *pc_cmt2 = new uint64_t;
+uint64_t *pc = new uint64_t;
+uint64_t *last_ref_pc = new uint64_t;
+
 
 struct timeval timeus;
 
 bool mem_done=0;
-bool diff_pass=0;
+bool diff_pass=1;
 
 #define RTC_PORT_BASE 0x48
 #define SERIAL_PORT_BASE 0x3f8
@@ -73,12 +77,25 @@ void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
 
 void init_difftest() {
-  char ref_so_file[]="/home/mint/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so";
+  //char ref_so_file[]="/home/mint/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so";
+  //char ref_so_file[]="~/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so";
+  char ref_so_file[]="/home/qin/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so";
   assert(ref_so_file != NULL);
+
+  dlerror();
+  volatile char *error;
 
   void *handle;
   handle = dlopen(ref_so_file, RTLD_LAZY);
-  assert(handle);
+ // assert(handle);
+   if ((error = dlerror()) != NULL)  {
+        fprintf(stderr, "%s\n", error);
+        exit(EXIT_FAILURE);
+    }
+        if (!handle) {  
+            printf ("%s", dlerror());  
+	    assert(handle);
+        } 
 
   ref_difftest_memcpy = (void (*)(uint32_t addr, void *buf, size_t n, bool direction))dlsym(handle, "difftest_memcpy");
   assert(ref_difftest_memcpy);
@@ -105,26 +122,34 @@ void init_difftest() {
 
 void diff_check_regs(){
 	diff_pass=1;
+	//cout<<hex<< pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
 	for(int i=0;i<32;i++){
 	  if(ref_gpr[i]!=cpu_gpr[i]){
-	      cout<<hex<<"\nError:Difftest failed at pc=0x"<<*pc<<"	"<<dec<<"in reg["<<i<<"]\n";
+	      cout<<hex<<"\nError:Difftest failed at pc=0x"<< *pc<<"	"<<dec<<"in reg["<<i<<"]\n";
 	      cout<<hex<<"cpu_gpr="<<GREEN<<cpu_gpr[i]<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[i]<<dec<<RESET<<endl;
 	      diff_pass=0;
 	      return;
 	  }
-	  if(ref_gpr[32]!=*pc){
-	      cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[32]<<dec<<RESET<<endl;
+	}
+
+	  if(*last_ref_pc!=*pc){
+	      //cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[32]<<dec<<RESET<<endl;
+	      cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
 	      diff_pass=0;
 	      return;
 	  }
-	  
-	}
+
 }
 
 void difftest_exec_once(){
+	*last_ref_pc = ref_gpr[32];
 	ref_difftest_exec(1);
 	ref_difftest_regcpy(ref_gpr,DIFFTEST_TO_DUT);
-	diff_check_regs();
+
+	  for(int i=0;i<32;i++){
+	  	last_ref_gpr[i] = ref_gpr[i];
+	  }
+
 }
 //----------------DPI-C functions------------------ 
 extern svBit Check();
@@ -140,7 +165,6 @@ void dump_gpr() {
   }
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
- // cout<<BOLDCYAN<<hex<<endl<<"raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
   if(mem_done==0){
 	if(raddr==RTC_PORT_BASE){
   		gettimeofday(&timeus,NULL);
@@ -154,11 +178,13 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 		mem_done=1;
 		return;
 	}
-  	*rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
+  *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
+  cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
   	mem_done=1;
   }
 }
 extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
+  cout<<BOLDCYAN<<hex<<endl<<"mem write, waddr is "<<waddr<<endl<<"wdata is "<<wdata<<" mask is"<<(uint8_t)wmask<<RESET<<endl;
   if(mem_done==0){
 	  if(waddr==SERIAL_PORT_BASE){
 		char a=(char)wdata;
@@ -188,7 +214,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   }
 }
 //----------------Verilator component----------------
-static VTOP* top;
+static VLadder* top;
 VerilatedVcdC* tfp=NULL;
 VerilatedContext* contextp=NULL;
 void dumpwave(){
@@ -222,15 +248,17 @@ char logbuf[50]="\0";
 void log_inst_commit(int commit_pack_idx){
   if(commit_pack_idx == 0){
     char hex_string[50];
-      pc_cmt1 = top->dbg_commit_packs0->pc;
-      sprintf(hex_string, "%X", pc_cmt1); 
+      *pc_cmt1 = top-> io_o_dbg_commit_packs_0_uop_pc;
+      *pc = *pc_cmt1;
+      sprintf(hex_string, "%lX", *pc_cmt1); 
       string temp1(hex_string);
       Log("0x");
       Log(temp1);
       Log(":	");
-    uint32_t cur_inst = top->dbg_commit_packs0->inst;
+    uint32_t cur_inst = top->io_o_dbg_commit_packs_0_uop_inst;
     uint8_t *instaddr=(uint8_t *)&cur_inst;
-    uint64_t addrin=(uint64_t)((uint64_t)pc_cmt1)-(uint64_t)0xffffffff00000000;
+    //uint64_t addrin=(uint64_t)((uint64_t)*pc_cmt1)-(uint64_t)0xffffffff00000000;
+    uint64_t addrin=(uint64_t)((uint64_t)*pc_cmt1);
     if(ITRACE_EN){
         disassemble(logbuf, 50, addrin, instaddr, 4);//50?
     }
@@ -238,20 +266,21 @@ void log_inst_commit(int commit_pack_idx){
     Log(temp);
     Log("\n");
     if(ITRACE_EN){
-        cout<<YELLOW<<"PC=0x"<<hex<<pc_cmt1<<RESET<<dec<<endl;                                                   
-        cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl; 
+        cout<<YELLOW<<"PC=0x"<<hex<<*pc_cmt1<<RESET<<dec<<endl;                                                   
+        cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<RESET<<endl;//temp<<RESET<<endl; 
     }
   }else if(commit_pack_idx == 1){
       char hex_string[50];
-      pc_cmt2 = top->dbg_commit_packs1->pc;
-      sprintf(hex_string, "%X", pc_cmt2); 
+      *pc_cmt2 = top->io_o_dbg_commit_packs_1_uop_pc;
+      *pc = *pc_cmt2;
+      sprintf(hex_string, "%lX", *pc_cmt2); 
       string temp1(hex_string);
       Log("0x");
       Log(temp1);
       Log(":	");
-    uint32_t cur_inst = top->dbg_commit_packs1->inst;
+    uint32_t cur_inst = top->io_o_dbg_commit_packs_1_uop_inst;
     uint8_t *instaddr=(uint8_t *)&cur_inst;
-    uint64_t addrin=(uint64_t)((uint64_t)pc_cmt2)-(uint64_t)0xffffffff00000000;
+    uint64_t addrin=(uint64_t)((uint64_t)*pc_cmt2)-(uint64_t)0xffffffff00000000;
     if(ITRACE_EN){
         disassemble(logbuf, 50, addrin, instaddr, 4);//50?
     }
@@ -259,7 +288,7 @@ void log_inst_commit(int commit_pack_idx){
     Log(temp);
     Log("\n");
     if(ITRACE_EN){
-        cout<<YELLOW<<"PC=0x"<<hex<<pc_cmt2<<RESET<<dec<<endl;                                                   
+        cout<<YELLOW<<"PC=0x"<<hex<<*pc_cmt2<<RESET<<dec<<endl;                                                   
         cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl; 
     }
   }
@@ -268,13 +297,15 @@ void log_inst_commit(int commit_pack_idx){
 
 int main(int argc, char** argv, char** env){
   //cout<<"argvs:"<<argv[0]<<argv[1]<<endl;
+  *pc = RESET_VECTOR;
+  *last_ref_pc = *pc;
   contextp = new VerilatedContext;
   contextp->commandArgs(argc, argv);
-  top= new VTOP{contextp};
+  top= new VLadder{contextp};
   
   //set scope for dpi-c function  
   Verilated::scopesDump();
-  const svScope scope = svGetScopeFromName("TOP.npc_ctl");
+  const svScope scope = svGetScopeFromName("TOP.Ladder.dpic");
   assert(scope);  // Check for nullptr if scope not found
   svSetScope(scope);
 
@@ -284,7 +315,7 @@ int main(int argc, char** argv, char** env){
   tfp->open("wave.vcd"); //设置输出的文件wave.vcd
 
 
-  int time=0;
+  volatile int time=0;
   LogInit();
   mem_init();
   load_img(argv);
@@ -302,11 +333,17 @@ int main(int argc, char** argv, char** env){
       cout<<"\nstart simulating\n";
   }
   dumpwave();
+  //*pc = RESET_VECTOR;
 
 
   uint32_t addr_if1=0;
   uint32_t addr_if2=0;
   uint32_t addr_if3=0;
+  uint64_t data_if1=0;
+  uint64_t data_if2=0;
+  uint64_t data_if3=0;
+
+  int first_cycle = 1;
 
   while (time<MAX_TIME) {
   //while (true) {
@@ -316,11 +353,14 @@ int main(int argc, char** argv, char** env){
     //instruction fetch
     addr_if3 = addr_if2;
     addr_if2 = addr_if1;
-    addr_if1=(int)(top->io_InstAddr);
+    addr_if1=(int)(top->io_icache_io_o_addr);
     uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);
     uint32_t cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
+    data_if3 = data_if2;
+    data_if2 = data_if1;
+    data_if1 = (uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
     top->io_icache_io_i_data_valid = (svBit)1;
-    top->io_icahce_io_i_data =(uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
+    top->io_icache_io_i_data = data_if3;
     top->io_icache_io_i_addr_ready = (svBit)1;
 
     //memory read/write
@@ -334,21 +374,30 @@ int main(int argc, char** argv, char** env){
     }
     //写reg在下一个周期才发生
     if(DIFFTEST_EN){
+	    if(!first_cycle){
+      		diff_check_regs();
+	    }
       char hex_string[20];
-        if(top->dbg_commit_packs0_valid){
-          difftest_exec_once();
+      //if commit two
+        if(top->io_o_dbg_commit_packs_0_valid && top->io_o_dbg_commit_packs_1_valid){
           log_inst_commit(0);
-
-        }
-        if(top->dbg_commit_packs1_valid && diff_pass){
+	  log_inst_commit(1);
           difftest_exec_once();
-          log_inst_commit(1);
+          difftest_exec_once();
+	    first_cycle =0;
+        }
+	//if commit one
+        if(top->io_o_dbg_commit_packs_0_valid && !top->io_o_dbg_commit_packs_1_valid ){
+          log_inst_commit(0);
+          difftest_exec_once();
+	    first_cycle =0;
         }
 	if(diff_pass==0){
+		uint32_t cur_inst=top->io_o_dbg_commit_packs_1_valid?top->io_o_dbg_commit_packs_1_uop_inst:top->io_o_dbg_commit_packs_0_uop_inst;
 		cout<<"\n\n";
 		cout<<BOLDRED<<"------------DIFF FAILED------------"<<RESET<<endl;
-                cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl;
-	        assert(0);
+                cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW/*<<temp*/<<RESET<<endl;
+		goto end;
 	}
     }
     time++;
@@ -356,10 +405,19 @@ int main(int argc, char** argv, char** env){
   if(time==MAX_TIME){
       cout<<"HIT BAD TRAP"<<endl;
   }
+end:
+  dumpwave();
   //dump_gpr();
   cout<<"simulation over\n";
   delete top;
+
   delete contextp;
   tfp->close();
+  delete pc_cmt1;
+  delete pc_cmt2;
+  delete pc ;
+  delete last_ref_pc ;
+
+
   return 0;
 }

@@ -227,8 +227,11 @@ class Reorder_Buffer extends Module with consts{
     io.o_exception:= rob_exception(commit_ptr)===true.B 
 
     val is_full =Wire(Bool()) //consider dynamic action
-    is_full := (((allocate_ptr + 2.U)(5,0) === commit_ptr(5,0)) && (allocate_ptr + 2.U)(6)^commit_ptr(6)) || 
-          (((allocate_ptr + 1.U)(5,0) === commit_ptr(5,0)) && ((allocate_ptr + 1.U)(6) ^ commit_ptr(6)))
+ //   is_full := (((allocate_ptr + 2.U)(5,0) === commit_ptr(5,0)) && ((allocate_ptr + 2.U)(6).asBool^commit_ptr(6).asBool)) || 
+ //         (((allocate_ptr + 1.U)(5,0) === commit_ptr(5,0)) && ((allocate_ptr + 1.U)(6).asBool ^ commit_ptr(6).asBool))
+
+    is_full := ((allocate_ptr + 2.U)(5,0) === commit_ptr(5,0)) || ((allocate_ptr + 1.U)(5,0) === commit_ptr(5,0))
+
     io.o_empty :=  commit_ptr === allocate_ptr  
     io.o_full := is_full
     

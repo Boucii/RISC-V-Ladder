@@ -17,7 +17,6 @@ class Fetch_Res extends Module{
 
         val o_fetch_pack = Decoupled(new fetch_pack())
    })
-     dontTouch(io)
     io.o_fetch_pack.valid := (io.o_fetch_pack.bits.valids(0) || io.o_fetch_pack.bits.valids(1))   
     io.o_fetch_pack.bits.valids(0) := !io.i_stall && !io.i_pc(2) && !io.i_flush
     io.o_fetch_pack.bits.valids(1) := !io.i_stall && !io.i_flush

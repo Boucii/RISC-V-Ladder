@@ -69,7 +69,7 @@ class Front_End extends Module
 
     /*stage 2 and stage 3*/
     if2_if3.io.i_stall := front_end_control.io.o_stage2_stall
-    if2_if3.io.i_flush := front_end_control.io.o_stage2_flush || !if1_if2.io.o_fetch_valid 
+    if2_if3.io.i_flush := front_end_control.io.o_stage2_flush //|| !if1_if2.io.o_fetch_valid 
     if2_if3.io.i_pc := if1_if2.io.o_pc
     if2_if3.io.i_branch_predict_pack := if1_if2.io.o_branch_predict_pack
     if2_if3.io.i_fetch_valid := if1_if2.io.o_fetch_valid
@@ -78,7 +78,7 @@ class Front_End extends Module
     branch_presolve.io.i_fetch_pack := fetch_res.io.o_fetch_pack.bits
 
     fetch_res.io.i_pc := if2_if3.io.o_pc
-    fetch_res.io.i_flush := front_end_control.io.o_stage3_flush || !if2_if3.io.o_fetch_valid
+    fetch_res.io.i_flush := front_end_control.io.o_stage3_flush //|| !if2_if3.io.o_fetch_valid
     fetch_res.io.i_stall := front_end_control.io.o_stage3_stall
     fetch_res.io.i_fetch_res := io.icache_io.i_data
     fetch_res.io.i_branch_predict_pack := if2_if3.io.o_branch_predict_pack

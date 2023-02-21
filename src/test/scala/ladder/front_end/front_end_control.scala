@@ -13,18 +13,18 @@ class front_end_control extends Module
         val i_pc_redirect_valid = Input(new Bool())
         val i_icache_data_valid = Input(Bool())
         val i_icache_addr_ready = Input(Bool())
-        val i_cache_fetch_valid = Input(Bool())//?????这个真的可以这么做吗
+        val i_cache_fetch_valid = Input(Bool())//aka.valid fetch
         val i_branch_resolve_pack = Input(new branch_resolve_pack())
         val i_branch_presolve_pack = Input(new branch_presolve_pack())
         val i_fetch_queue_full = Input(Bool())
 
         val o_stage1_stall = Output(Bool())
         val o_stage2_stall = Output(Bool())
-        val o_stage3_stall = Output(Bool())
+        val o_stage3_stall = Output(Bool())//this is actually stage3 fetch invalid
                              
         val o_stage1_flush = Output(Bool())
         val o_stage2_flush = Output(Bool())
-        val o_stage3_flush = Output(Bool())
+        val o_stage3_flush = Output(Bool())//means flush everything inside fetchqueue
    })
    /*
    val stage3_flush = RegInit(false.B)

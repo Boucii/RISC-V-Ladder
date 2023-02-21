@@ -30,6 +30,7 @@ class IF1_IF2 extends Module
     io.o_branch_predict_pack :=branch_predict_pack
 
     val fetch_valid = RegInit(false.B)
-    fetch_valid := !io.i_flush && !io.i_stall 
+    //val fetch_valid = Wire(Bool())
+    fetch_valid := !io.i_flush  && !io.i_stall 
     io.o_fetch_valid := fetch_valid
 }

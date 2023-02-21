@@ -1,7 +1,6 @@
 module Fetch_Queue(
   input         clock,
   input         reset,
-  output        io_in_ready,
   input         io_in_valid,
   input         io_in_bits_valids_0,
   input         io_in_bits_valids_1,
@@ -82,7 +81,6 @@ module Fetch_Queue(
     .io_deq_bits_branch_predict_pack_select(queue_io_deq_bits_branch_predict_pack_select),
     .io_deq_bits_branch_predict_pack_taken(queue_io_deq_bits_branch_predict_pack_taken)
   );
-  assign io_in_ready = queue_io_enq_ready; // @[fetch_queue.scala 21:16]
   assign io_out_valid = queue_io_deq_valid & ~queue_reset; // @[fetch_queue.scala 25:38]
   assign io_out_bits_valids_0 = queue_io_deq_bits_valids_0; // @[fetch_queue.scala 24:15]
   assign io_out_bits_valids_1 = queue_io_deq_bits_valids_1; // @[fetch_queue.scala 24:15]

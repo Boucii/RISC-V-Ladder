@@ -113,7 +113,6 @@ module Front_End(
   wire [63:0] branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 30:33]
   wire  fetch_queue_clock; // @[front_end.scala 31:29]
   wire  fetch_queue_reset; // @[front_end.scala 31:29]
-  wire  fetch_queue_io_in_ready; // @[front_end.scala 31:29]
   wire  fetch_queue_io_in_valid; // @[front_end.scala 31:29]
   wire  fetch_queue_io_in_bits_valids_0; // @[front_end.scala 31:29]
   wire  fetch_queue_io_in_bits_valids_1; // @[front_end.scala 31:29]
@@ -163,7 +162,6 @@ module Front_End(
   wire [3:0] fetch_res_io_i_branch_predict_pack_branch_type; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_predict_pack_select; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_predict_pack_taken; // @[front_end.scala 33:27]
-  wire  fetch_res_io_o_fetch_pack_ready; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_valid; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 33:27]
@@ -270,7 +268,6 @@ module Front_End(
   Fetch_Queue fetch_queue ( // @[front_end.scala 31:29]
     .clock(fetch_queue_clock),
     .reset(fetch_queue_reset),
-    .io_in_ready(fetch_queue_io_in_ready),
     .io_in_valid(fetch_queue_io_in_valid),
     .io_in_bits_valids_0(fetch_queue_io_in_bits_valids_0),
     .io_in_bits_valids_1(fetch_queue_io_in_bits_valids_1),
@@ -324,7 +321,6 @@ module Front_End(
     .io_i_branch_predict_pack_branch_type(fetch_res_io_i_branch_predict_pack_branch_type),
     .io_i_branch_predict_pack_select(fetch_res_io_i_branch_predict_pack_select),
     .io_i_branch_predict_pack_taken(fetch_res_io_i_branch_predict_pack_taken),
-    .io_o_fetch_pack_ready(fetch_res_io_o_fetch_pack_ready),
     .io_o_fetch_pack_valid(fetch_res_io_o_fetch_pack_valid),
     .io_o_fetch_pack_bits_valids_0(fetch_res_io_o_fetch_pack_bits_valids_0),
     .io_o_fetch_pack_bits_valids_1(fetch_res_io_o_fetch_pack_bits_valids_1),
@@ -392,7 +388,7 @@ module Front_End(
   assign if2_if3_clock = clock;
   assign if2_if3_reset = reset;
   assign if2_if3_io_i_stall = front_end_control_io_o_stage2_stall; // @[front_end.scala 71:24]
-  assign if2_if3_io_i_flush = front_end_control_io_o_stage2_flush | ~if1_if2_io_o_fetch_valid; // @[front_end.scala 72:63]
+  assign if2_if3_io_i_flush = front_end_control_io_o_stage2_flush; // @[front_end.scala 72:24]
   assign if2_if3_io_i_fetch_valid = if1_if2_io_o_fetch_valid; // @[front_end.scala 75:30]
   assign if2_if3_io_i_pc = if1_if2_io_o_pc; // @[front_end.scala 73:21]
   assign if2_if3_io_i_branch_predict_pack_valid = if1_if2_io_o_branch_predict_pack_valid; // @[front_end.scala 74:38]
@@ -441,7 +437,7 @@ module Front_End(
   assign front_end_control_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 40:49]
   assign front_end_control_io_i_fetch_queue_full = fetch_queue_io_full; // @[front_end.scala 42:45]
   assign fetch_res_io_i_pc = if2_if3_io_o_pc; // @[front_end.scala 80:23]
-  assign fetch_res_io_i_flush = front_end_control_io_o_stage3_flush | ~if2_if3_io_o_fetch_valid; // @[front_end.scala 81:65]
+  assign fetch_res_io_i_flush = front_end_control_io_o_stage3_flush; // @[front_end.scala 81:26]
   assign fetch_res_io_i_stall = front_end_control_io_o_stage3_stall; // @[front_end.scala 82:26]
   assign fetch_res_io_i_fetch_res = io_icache_io_i_data; // @[front_end.scala 83:30]
   assign fetch_res_io_i_branch_predict_pack_valid = if2_if3_io_o_branch_predict_pack_valid; // @[front_end.scala 84:40]
@@ -449,5 +445,4 @@ module Front_End(
   assign fetch_res_io_i_branch_predict_pack_branch_type = if2_if3_io_o_branch_predict_pack_branch_type; // @[front_end.scala 84:40]
   assign fetch_res_io_i_branch_predict_pack_select = if2_if3_io_o_branch_predict_pack_select; // @[front_end.scala 84:40]
   assign fetch_res_io_i_branch_predict_pack_taken = if2_if3_io_o_branch_predict_pack_taken; // @[front_end.scala 84:40]
-  assign fetch_res_io_o_fetch_pack_ready = fetch_queue_io_in_ready; // @[front_end.scala 86:24]
 endmodule

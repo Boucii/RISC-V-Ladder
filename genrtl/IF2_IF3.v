@@ -34,7 +34,7 @@ module IF2_IF3(
   reg  branch_predict_pack_select; // @[if2_if3.scala 27:38]
   reg  branch_predict_pack_taken; // @[if2_if3.scala 27:38]
   reg  fetch_valid; // @[if2_if3.scala 32:30]
-  assign io_o_fetch_valid = fetch_valid; // @[if2_if3.scala 34:22]
+  assign io_o_fetch_valid = fetch_valid; // @[if2_if3.scala 37:22]
   assign io_o_pc = pc; // @[if2_if3.scala 25:13]
   assign io_o_branch_predict_pack_valid = branch_predict_pack_valid; // @[if2_if3.scala 30:30]
   assign io_o_branch_predict_pack_target = branch_predict_pack_target; // @[if2_if3.scala 30:30]
@@ -79,7 +79,7 @@ module IF2_IF3(
     if (reset) begin // @[if2_if3.scala 32:30]
       fetch_valid <= 1'h0; // @[if2_if3.scala 32:30]
     end else begin
-      fetch_valid <= ~io_i_flush & ~io_i_stall & io_i_fetch_valid; // @[if2_if3.scala 33:17]
+      fetch_valid <= ~io_i_stall & ~io_i_flush & io_i_fetch_valid; // @[if2_if3.scala 36:17]
     end
   end
 // Register and memory initialization

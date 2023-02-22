@@ -50,8 +50,8 @@ class ALU() extends Function_Unit(
     next_uop := Mux(io.i_select,io.i_uop,uop)
 
     when((io.i_select_to_commit && !io.i_select)||io.i_exception ||
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))){
+        ((io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))))){
         next_uop.valid:=false.B
     }
 
@@ -123,8 +123,8 @@ class ALU() extends Function_Unit(
     
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -325,9 +325,8 @@ class LSU extends Function_Unit(
 
     next_rollback_occured := MuxCase(rollback_occured,Seq(
         (next_state === s_FREE) -> false.B,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> true.B,//TODO:rob被套圈怎么判断
-
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+            (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> true.B,
     ))
 
     next_state := MuxCase(state,Seq(
@@ -359,8 +358,8 @@ class MUL extends Function_Unit(){
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (io.i_select)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -419,8 +418,8 @@ class DIV extends Function_Unit(){
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (io.i_select)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
@@ -472,10 +471,11 @@ class CSR_BF() extends Function_Unit(
     next_uop := Mux(io.i_select,io.i_uop,uop)
 
     when((io.i_select_to_commit && !io.i_select)||io.i_exception ||
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))){
+        ((io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))))){
         next_uop.valid:=false.B
     }
+
     uop:=next_uop
 
     io.o_func_idx:=FU_CSR
@@ -484,8 +484,8 @@ class CSR_BF() extends Function_Unit(
 
     next_state := MuxCase(state,Seq(
         (io.i_exception) -> s_FREE,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx < uop.rob_idx)||
-            (io.i_rollback_rob_idx > uop.rob_idx && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> s_FREE,//TODO:rob被套圈怎么判断
+        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+              (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> s_FREE,//TODO:rob被套圈怎么判断
         (!(io.i_exception) && (state === s_FREE) && (uop.valid && !io.i_select_to_commit)) -> s_BUSY,
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))

@@ -24,6 +24,7 @@ module IF1_IF2(
   reg [31:0] _RAND_3;
   reg [31:0] _RAND_4;
   reg [31:0] _RAND_5;
+  reg [31:0] _RAND_6;
 `endif // RANDOMIZE_REG_INIT
   reg [63:0] pc; // @[if1_if2.scala 23:21]
   reg  branch_predict_pack_valid; // @[if1_if2.scala 27:38]
@@ -31,7 +32,8 @@ module IF1_IF2(
   reg [3:0] branch_predict_pack_branch_type; // @[if1_if2.scala 27:38]
   reg  branch_predict_pack_select; // @[if1_if2.scala 27:38]
   reg  branch_predict_pack_taken; // @[if1_if2.scala 27:38]
-  assign io_o_fetch_valid = ~io_i_flush & ~io_i_stall; // @[if1_if2.scala 33:33]
+  reg  fetch_valid; // @[if1_if2.scala 32:30]
+  assign io_o_fetch_valid = fetch_valid; // @[if1_if2.scala 34:22]
   assign io_o_pc = pc; // @[if1_if2.scala 25:13]
   assign io_o_branch_predict_pack_valid = branch_predict_pack_valid; // @[if1_if2.scala 30:30]
   assign io_o_branch_predict_pack_target = branch_predict_pack_target; // @[if1_if2.scala 30:30]
@@ -72,6 +74,13 @@ module IF1_IF2(
       branch_predict_pack_taken <= 1'h0; // @[if1_if2.scala 27:38]
     end else begin
       branch_predict_pack_taken <= io_i_branch_predict_pack_taken; // @[if1_if2.scala 28:25]
+    end
+    if (reset) begin // @[if1_if2.scala 32:30]
+      fetch_valid <= 1'h0; // @[if1_if2.scala 32:30]
+    end else if (io_i_flush) begin // @[if1_if2.scala 33:23]
+      fetch_valid <= 1'h0;
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 33:48]
+      fetch_valid <= 1'h1;
     end
   end
 // Register and memory initialization
@@ -122,6 +131,8 @@ initial begin
   branch_predict_pack_select = _RAND_4[0:0];
   _RAND_5 = {1{`RANDOM}};
   branch_predict_pack_taken = _RAND_5[0:0];
+  _RAND_6 = {1{`RANDOM}};
+  fetch_valid = _RAND_6[0:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

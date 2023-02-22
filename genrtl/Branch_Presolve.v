@@ -5,8 +5,6 @@ module Branch_Presolve(
   input  [31:0] io_i_fetch_pack_insts_0,
   input  [31:0] io_i_fetch_pack_insts_1,
   input         io_i_fetch_pack_branch_predict_pack_valid,
-  input  [63:0] io_i_fetch_pack_branch_predict_pack_target,
-  input  [3:0]  io_i_fetch_pack_branch_predict_pack_branch_type,
   input         io_i_fetch_pack_branch_predict_pack_select,
   input         io_i_fetch_pack_branch_predict_pack_taken,
   output        io_o_branch_presolve_pack_valid,
@@ -96,18 +94,18 @@ module Branch_Presolve(
   wire  br1 = branch_decoder1_invMatrixOutputs[0] | branch_decoder1_invMatrixOutputs[1] |
     branch_decoder1_invMatrixOutputs[2] | branch_decoder1_invMatrixOutputs[3]; // @[branch_presolve.scala 44:78]
   wire  _io_o_branch_presolve_pack_valid_T_3 = io_i_fetch_pack_valids_0 & ~br0 &
-    io_i_fetch_pack_branch_predict_pack_valid & io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 51:120]
+    io_i_fetch_pack_branch_predict_pack_valid & io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 49:120]
   wire  _io_o_branch_presolve_pack_valid_T_5 = _io_o_branch_presolve_pack_valid_T_3 & ~
-    io_i_fetch_pack_branch_predict_pack_select; // @[branch_presolve.scala 52:55]
+    io_i_fetch_pack_branch_predict_pack_select; // @[branch_presolve.scala 50:55]
   wire  _io_o_branch_presolve_pack_valid_T_9 = io_i_fetch_pack_valids_1 & ~br1 &
-    io_i_fetch_pack_branch_predict_pack_valid & io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 53:93]
+    io_i_fetch_pack_branch_predict_pack_valid & io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 51:93]
   wire  _io_o_branch_presolve_pack_valid_T_11 = _io_o_branch_presolve_pack_valid_T_9 &
-    io_i_fetch_pack_branch_predict_pack_select; // @[branch_presolve.scala 54:55]
+    io_i_fetch_pack_branch_predict_pack_select; // @[branch_presolve.scala 52:55]
   wire [63:0] _io_o_branch_presolve_pack_pc_T_1 = {io_i_fetch_pack_pc[63:3],3'h0}; // @[Cat.scala 33:92]
-  wire [3:0] _io_o_branch_presolve_pack_pc_T_8 = _io_o_branch_presolve_pack_valid_T_5 ? 4'h4 : 4'h8; // @[branch_presolve.scala 55:81]
-  wire [63:0] _GEN_0 = {{60'd0}, _io_o_branch_presolve_pack_pc_T_8}; // @[branch_presolve.scala 55:76]
+  wire [3:0] _io_o_branch_presolve_pack_pc_T_8 = _io_o_branch_presolve_pack_valid_T_5 ? 4'h4 : 4'h8; // @[branch_presolve.scala 53:81]
+  wire [63:0] _GEN_0 = {{60'd0}, _io_o_branch_presolve_pack_pc_T_8}; // @[branch_presolve.scala 53:76]
   assign io_o_branch_presolve_pack_valid = _io_o_branch_presolve_pack_valid_T_3 & ~
-    io_i_fetch_pack_branch_predict_pack_select | _io_o_branch_presolve_pack_valid_T_11; // @[branch_presolve.scala 52:110]
-  assign io_o_branch_presolve_pack_taken = io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 57:37]
-  assign io_o_branch_presolve_pack_pc = _io_o_branch_presolve_pack_pc_T_1 + _GEN_0; // @[branch_presolve.scala 55:76]
+    io_i_fetch_pack_branch_predict_pack_select | _io_o_branch_presolve_pack_valid_T_11; // @[branch_presolve.scala 50:110]
+  assign io_o_branch_presolve_pack_taken = io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 55:37]
+  assign io_o_branch_presolve_pack_pc = _io_o_branch_presolve_pack_pc_T_1 + _GEN_0; // @[branch_presolve.scala 53:76]
 endmodule

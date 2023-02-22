@@ -29,8 +29,7 @@ class IF1_IF2 extends Module
     branch_predict_pack.valid := Mux(io.i_flush, false.B, Mux(io.i_stall, branch_predict_pack.valid, io.i_branch_predict_pack.valid))
     io.o_branch_predict_pack :=branch_predict_pack
 
-    val fetch_valid = RegInit(false.B)
-    //val fetch_valid = Wire(Bool())
+    val fetch_valid = Wire(Bool())
     fetch_valid := !io.i_flush  && !io.i_stall 
     io.o_fetch_valid := fetch_valid
 }

@@ -17547,62 +17547,6 @@
   },
   {
     "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_valids_0"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_valids_1"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_pc"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_insts_0"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_insts_1"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_branch_predict_pack_valid"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_branch_predict_pack_target"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_branch_predict_pack_branch_type"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_branch_predict_pack_select"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_i_fetch_pack_branch_predict_pack_taken"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_o_branch_presolve_pack_valid"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_o_branch_presolve_pack_taken"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>io_o_branch_presolve_pack_pc"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
-    "target":"~Ladder|Branch_Presolve>br1"
-  },
-  {
-    "class":"firrtl.transforms.DontTouchAnnotation",
     "target":"~Ladder|BPU>io_i_addr"
   },
   {

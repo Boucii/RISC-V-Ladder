@@ -2,7 +2,6 @@ module front_end_control(
   input   io_i_pc_redirect_valid,
   input   io_i_icache_data_valid,
   input   io_i_icache_addr_ready,
-  input   io_i_cache_fetch_valid,
   input   io_i_branch_resolve_pack_valid,
   input   io_i_branch_resolve_pack_mispred,
   input   io_i_branch_presolve_pack_valid,
@@ -10,16 +9,14 @@ module front_end_control(
   input   io_i_fetch_queue_full,
   output  io_o_stage1_stall,
   output  io_o_stage2_stall,
-  output  io_o_stage3_stall,
   output  io_o_stage1_flush,
   output  io_o_stage2_flush,
-  output  io_o_stage3_flush
+  output  io_o_fetch_queue_flush
 );
-  assign io_o_stage1_stall = (~io_i_icache_addr_ready | io_o_stage2_stall) & ~io_o_stage1_flush; // @[front_end_control.scala 50:72]
-  assign io_o_stage2_stall = io_o_stage3_stall & ~io_o_stage2_flush; // @[front_end_control.scala 49:44]
-  assign io_o_stage3_stall = (io_i_fetch_queue_full | ~io_i_icache_data_valid & io_i_cache_fetch_valid) & ~
-    io_o_stage3_flush; // @[front_end_control.scala 48:104]
-  assign io_o_stage1_flush = io_o_stage2_flush; // @[front_end_control.scala 46:22]
-  assign io_o_stage2_flush = io_o_stage3_flush | io_i_branch_presolve_pack_valid & io_i_branch_presolve_pack_taken; // @[front_end_control.scala 45:43]
-  assign io_o_stage3_flush = io_i_pc_redirect_valid | io_i_branch_resolve_pack_valid & io_i_branch_resolve_pack_mispred; // @[front_end_control.scala 44:48]
+  assign io_o_stage1_stall = (~io_i_icache_addr_ready | io_o_stage2_stall) & ~io_o_stage1_flush; // @[front_end_control.scala 35:72]
+  assign io_o_stage2_stall = (io_i_fetch_queue_full | ~io_i_icache_data_valid) & ~io_o_stage2_flush; // @[front_end_control.scala 34:78]
+  assign io_o_stage1_flush = io_o_stage2_flush | io_i_branch_presolve_pack_valid & io_i_branch_presolve_pack_taken; // @[front_end_control.scala 32:43]
+  assign io_o_stage2_flush = io_o_fetch_queue_flush; // @[front_end_control.scala 31:22]
+  assign io_o_fetch_queue_flush = io_i_pc_redirect_valid | io_i_branch_resolve_pack_valid &
+    io_i_branch_resolve_pack_mispred; // @[front_end_control.scala 30:53]
 endmodule

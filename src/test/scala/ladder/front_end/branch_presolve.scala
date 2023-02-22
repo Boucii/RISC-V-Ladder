@@ -42,8 +42,6 @@ class Branch_Presolve extends Module{
         )
     val br0 = branch_decoder0(0) || branch_decoder0(1) || branch_decoder0(2) || branch_decoder0(3)
     val br1 = branch_decoder1(0) || branch_decoder1(1) || branch_decoder1(2) || branch_decoder1(3)
-    dontTouch(br1)
-    dontTouch(io)
     //branch_presolve_valid is mispred, only when mispred a non-br to a br, and taken was predicted, presolve is valid.
     //another case of mispred a br to a non-br can't resolve by presolve if it's really going to take the branch,
     //and according to the bpu policy of only write btb on a branch taken, this case will be ignored now.  

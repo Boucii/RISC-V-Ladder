@@ -36,7 +36,6 @@ class Front_End extends Module
     front_end_control.io.i_pc_redirect_valid := io.i_pc_redirect_valid
     front_end_control.io.i_icache_addr_ready := io.icache_io.i_addr_ready
     front_end_control.io.i_icache_data_valid := io.icache_io.i_data_valid
-    front_end_control.io.i_cache_fetch_valid := if2_if3.io.o_fetch_valid
     front_end_control.io.i_branch_presolve_pack := branch_presolve.io.o_branch_presolve_pack
     front_end_control.io.i_branch_resolve_pack := io.i_branch_resolve_pack
     front_end_control.io.i_fetch_queue_full := fetch_queue.io.full
@@ -76,15 +75,17 @@ class Front_End extends Module
 
     /*stage 3 : fetch to fetch queue, presolve branch*/
     branch_presolve.io.i_fetch_pack := fetch_res.io.o_fetch_pack.bits
+	fetch_res.io.o_fetch_pack.ready := true.B //this is ugly, remove this decouple later
 
     fetch_res.io.i_pc := if2_if3.io.o_pc
-    fetch_res.io.i_flush := front_end_control.io.o_stage3_flush //|| !if2_if3.io.o_fetch_valid
-    fetch_res.io.i_stall := front_end_control.io.o_stage3_stall
+    fetch_res.io.i_flush := front_end_control.io.o_fetch_queue_flush || !if2_if3.io.o_fetch_valid
+    fetch_res.io.i_stall := front_end_control.io.o_stage2_stall//this port and flush port is used to prevent write fetchqueue
+	fetch_res.io.i_branch_presolve_pack := branch_presolve.io.o_branch_presolve_pack
     fetch_res.io.i_fetch_res := io.icache_io.i_data
     fetch_res.io.i_branch_predict_pack := if2_if3.io.o_branch_predict_pack
 
-    fetch_queue.io.in  <> fetch_res.io.o_fetch_pack
-    fetch_queue.io.i_flush := front_end_control.io.o_stage3_flush
+    fetch_queue.io.in  <> fetch_res.io.o_fetch_pack_with_presolve
+    fetch_queue.io.i_flush := front_end_control.io.o_fetch_queue_flush
  
     /*connect to back_end*/
     io.o_fetch_pack <> fetch_queue.io.out

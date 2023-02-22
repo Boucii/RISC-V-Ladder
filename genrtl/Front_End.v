@@ -104,8 +104,6 @@ module Front_End(
   wire [31:0] branch_presolve_io_i_fetch_pack_insts_0; // @[front_end.scala 30:33]
   wire [31:0] branch_presolve_io_i_fetch_pack_insts_1; // @[front_end.scala 30:33]
   wire  branch_presolve_io_i_fetch_pack_branch_predict_pack_valid; // @[front_end.scala 30:33]
-  wire [63:0] branch_presolve_io_i_fetch_pack_branch_predict_pack_target; // @[front_end.scala 30:33]
-  wire [3:0] branch_presolve_io_i_fetch_pack_branch_predict_pack_branch_type; // @[front_end.scala 30:33]
   wire  branch_presolve_io_i_fetch_pack_branch_predict_pack_select; // @[front_end.scala 30:33]
   wire  branch_presolve_io_i_fetch_pack_branch_predict_pack_taken; // @[front_end.scala 30:33]
   wire  branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 30:33]
@@ -141,7 +139,6 @@ module Front_End(
   wire  front_end_control_io_i_pc_redirect_valid; // @[front_end.scala 32:35]
   wire  front_end_control_io_i_icache_data_valid; // @[front_end.scala 32:35]
   wire  front_end_control_io_i_icache_addr_ready; // @[front_end.scala 32:35]
-  wire  front_end_control_io_i_cache_fetch_valid; // @[front_end.scala 32:35]
   wire  front_end_control_io_i_branch_resolve_pack_valid; // @[front_end.scala 32:35]
   wire  front_end_control_io_i_branch_resolve_pack_mispred; // @[front_end.scala 32:35]
   wire  front_end_control_io_i_branch_presolve_pack_valid; // @[front_end.scala 32:35]
@@ -149,10 +146,9 @@ module Front_End(
   wire  front_end_control_io_i_fetch_queue_full; // @[front_end.scala 32:35]
   wire  front_end_control_io_o_stage1_stall; // @[front_end.scala 32:35]
   wire  front_end_control_io_o_stage2_stall; // @[front_end.scala 32:35]
-  wire  front_end_control_io_o_stage3_stall; // @[front_end.scala 32:35]
   wire  front_end_control_io_o_stage1_flush; // @[front_end.scala 32:35]
   wire  front_end_control_io_o_stage2_flush; // @[front_end.scala 32:35]
-  wire  front_end_control_io_o_stage3_flush; // @[front_end.scala 32:35]
+  wire  front_end_control_io_o_fetch_queue_flush; // @[front_end.scala 32:35]
   wire [63:0] fetch_res_io_i_pc; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_flush; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_stall; // @[front_end.scala 33:27]
@@ -162,6 +158,8 @@ module Front_End(
   wire [3:0] fetch_res_io_i_branch_predict_pack_branch_type; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_predict_pack_select; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_predict_pack_taken; // @[front_end.scala 33:27]
+  wire  fetch_res_io_i_branch_presolve_pack_valid; // @[front_end.scala 33:27]
+  wire  fetch_res_io_i_branch_presolve_pack_taken; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_valid; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 33:27]
@@ -173,6 +171,17 @@ module Front_End(
   wire [3:0] fetch_res_io_o_fetch_pack_bits_branch_predict_pack_branch_type; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_branch_predict_pack_select; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_valid; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_bits_valids_0; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_bits_valids_1; // @[front_end.scala 33:27]
+  wire [63:0] fetch_res_io_o_fetch_pack_with_presolve_bits_pc; // @[front_end.scala 33:27]
+  wire [31:0] fetch_res_io_o_fetch_pack_with_presolve_bits_insts_0; // @[front_end.scala 33:27]
+  wire [31:0] fetch_res_io_o_fetch_pack_with_presolve_bits_insts_1; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_valid; // @[front_end.scala 33:27]
+  wire [63:0] fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_target; // @[front_end.scala 33:27]
+  wire [3:0] fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_branch_type; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_select; // @[front_end.scala 33:27]
+  wire  fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_taken; // @[front_end.scala 33:27]
   PC_Gen pc_gen ( // @[front_end.scala 26:24]
     .clock(pc_gen_clock),
     .reset(pc_gen_reset),
@@ -257,8 +266,6 @@ module Front_End(
     .io_i_fetch_pack_insts_0(branch_presolve_io_i_fetch_pack_insts_0),
     .io_i_fetch_pack_insts_1(branch_presolve_io_i_fetch_pack_insts_1),
     .io_i_fetch_pack_branch_predict_pack_valid(branch_presolve_io_i_fetch_pack_branch_predict_pack_valid),
-    .io_i_fetch_pack_branch_predict_pack_target(branch_presolve_io_i_fetch_pack_branch_predict_pack_target),
-    .io_i_fetch_pack_branch_predict_pack_branch_type(branch_presolve_io_i_fetch_pack_branch_predict_pack_branch_type),
     .io_i_fetch_pack_branch_predict_pack_select(branch_presolve_io_i_fetch_pack_branch_predict_pack_select),
     .io_i_fetch_pack_branch_predict_pack_taken(branch_presolve_io_i_fetch_pack_branch_predict_pack_taken),
     .io_o_branch_presolve_pack_valid(branch_presolve_io_o_branch_presolve_pack_valid),
@@ -298,7 +305,6 @@ module Front_End(
     .io_i_pc_redirect_valid(front_end_control_io_i_pc_redirect_valid),
     .io_i_icache_data_valid(front_end_control_io_i_icache_data_valid),
     .io_i_icache_addr_ready(front_end_control_io_i_icache_addr_ready),
-    .io_i_cache_fetch_valid(front_end_control_io_i_cache_fetch_valid),
     .io_i_branch_resolve_pack_valid(front_end_control_io_i_branch_resolve_pack_valid),
     .io_i_branch_resolve_pack_mispred(front_end_control_io_i_branch_resolve_pack_mispred),
     .io_i_branch_presolve_pack_valid(front_end_control_io_i_branch_presolve_pack_valid),
@@ -306,10 +312,9 @@ module Front_End(
     .io_i_fetch_queue_full(front_end_control_io_i_fetch_queue_full),
     .io_o_stage1_stall(front_end_control_io_o_stage1_stall),
     .io_o_stage2_stall(front_end_control_io_o_stage2_stall),
-    .io_o_stage3_stall(front_end_control_io_o_stage3_stall),
     .io_o_stage1_flush(front_end_control_io_o_stage1_flush),
     .io_o_stage2_flush(front_end_control_io_o_stage2_flush),
-    .io_o_stage3_flush(front_end_control_io_o_stage3_flush)
+    .io_o_fetch_queue_flush(front_end_control_io_o_fetch_queue_flush)
   );
   Fetch_Res fetch_res ( // @[front_end.scala 33:27]
     .io_i_pc(fetch_res_io_i_pc),
@@ -321,6 +326,8 @@ module Front_End(
     .io_i_branch_predict_pack_branch_type(fetch_res_io_i_branch_predict_pack_branch_type),
     .io_i_branch_predict_pack_select(fetch_res_io_i_branch_predict_pack_select),
     .io_i_branch_predict_pack_taken(fetch_res_io_i_branch_predict_pack_taken),
+    .io_i_branch_presolve_pack_valid(fetch_res_io_i_branch_presolve_pack_valid),
+    .io_i_branch_presolve_pack_taken(fetch_res_io_i_branch_presolve_pack_taken),
     .io_o_fetch_pack_valid(fetch_res_io_o_fetch_pack_valid),
     .io_o_fetch_pack_bits_valids_0(fetch_res_io_o_fetch_pack_bits_valids_0),
     .io_o_fetch_pack_bits_valids_1(fetch_res_io_o_fetch_pack_bits_valids_1),
@@ -332,117 +339,134 @@ module Front_End(
     .io_o_fetch_pack_bits_branch_predict_pack_branch_type(fetch_res_io_o_fetch_pack_bits_branch_predict_pack_branch_type
       ),
     .io_o_fetch_pack_bits_branch_predict_pack_select(fetch_res_io_o_fetch_pack_bits_branch_predict_pack_select),
-    .io_o_fetch_pack_bits_branch_predict_pack_taken(fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken)
+    .io_o_fetch_pack_bits_branch_predict_pack_taken(fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken),
+    .io_o_fetch_pack_with_presolve_valid(fetch_res_io_o_fetch_pack_with_presolve_valid),
+    .io_o_fetch_pack_with_presolve_bits_valids_0(fetch_res_io_o_fetch_pack_with_presolve_bits_valids_0),
+    .io_o_fetch_pack_with_presolve_bits_valids_1(fetch_res_io_o_fetch_pack_with_presolve_bits_valids_1),
+    .io_o_fetch_pack_with_presolve_bits_pc(fetch_res_io_o_fetch_pack_with_presolve_bits_pc),
+    .io_o_fetch_pack_with_presolve_bits_insts_0(fetch_res_io_o_fetch_pack_with_presolve_bits_insts_0),
+    .io_o_fetch_pack_with_presolve_bits_insts_1(fetch_res_io_o_fetch_pack_with_presolve_bits_insts_1),
+    .io_o_fetch_pack_with_presolve_bits_branch_predict_pack_valid(
+      fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_valid),
+    .io_o_fetch_pack_with_presolve_bits_branch_predict_pack_target(
+      fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_target),
+    .io_o_fetch_pack_with_presolve_bits_branch_predict_pack_branch_type(
+      fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_branch_type),
+    .io_o_fetch_pack_with_presolve_bits_branch_predict_pack_select(
+      fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_select),
+    .io_o_fetch_pack_with_presolve_bits_branch_predict_pack_taken(
+      fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_taken)
   );
   assign io_icache_io_o_addr = {pc_gen_io_o_pc[63:3],3'h0}; // @[Cat.scala 33:92]
-  assign io_icache_io_o_addr_valid = front_end_control_io_o_stage1_stall; // @[front_end.scala 55:31]
-  assign io_o_fetch_pack_valid = fetch_queue_io_out_valid; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_valids_0 = fetch_queue_io_out_bits_valids_0; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_valids_1 = fetch_queue_io_out_bits_valids_1; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_pc = fetch_queue_io_out_bits_pc; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_insts_0 = fetch_queue_io_out_bits_insts_0; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_insts_1 = fetch_queue_io_out_bits_insts_1; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_branch_predict_pack_valid = fetch_queue_io_out_bits_branch_predict_pack_valid; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_branch_predict_pack_target = fetch_queue_io_out_bits_branch_predict_pack_target; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_branch_predict_pack_branch_type = fetch_queue_io_out_bits_branch_predict_pack_branch_type; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_branch_predict_pack_select = fetch_queue_io_out_bits_branch_predict_pack_select; // @[front_end.scala 90:21]
-  assign io_o_fetch_pack_bits_branch_predict_pack_taken = fetch_queue_io_out_bits_branch_predict_pack_taken; // @[front_end.scala 90:21]
+  assign io_icache_io_o_addr_valid = front_end_control_io_o_stage1_stall; // @[front_end.scala 54:31]
+  assign io_o_fetch_pack_valid = fetch_queue_io_out_valid; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_valids_0 = fetch_queue_io_out_bits_valids_0; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_valids_1 = fetch_queue_io_out_bits_valids_1; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_pc = fetch_queue_io_out_bits_pc; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_insts_0 = fetch_queue_io_out_bits_insts_0; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_insts_1 = fetch_queue_io_out_bits_insts_1; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_branch_predict_pack_valid = fetch_queue_io_out_bits_branch_predict_pack_valid; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_branch_predict_pack_target = fetch_queue_io_out_bits_branch_predict_pack_target; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_branch_predict_pack_branch_type = fetch_queue_io_out_bits_branch_predict_pack_branch_type; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_branch_predict_pack_select = fetch_queue_io_out_bits_branch_predict_pack_select; // @[front_end.scala 91:21]
+  assign io_o_fetch_pack_bits_branch_predict_pack_taken = fetch_queue_io_out_bits_branch_predict_pack_taken; // @[front_end.scala 91:21]
   assign pc_gen_clock = clock;
   assign pc_gen_reset = reset;
-  assign pc_gen_io_i_stall = front_end_control_io_o_stage1_stall; // @[front_end.scala 46:23]
-  assign pc_gen_io_i_pc_redirect_valid = io_i_pc_redirect_valid; // @[front_end.scala 47:35]
-  assign pc_gen_io_i_pc_redirect_target = io_i_pc_redirect_target; // @[front_end.scala 48:36]
-  assign pc_gen_io_i_branch_predict_pack_valid = bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 49:37]
-  assign pc_gen_io_i_branch_predict_pack_target = bpu_io_o_branch_predict_pack_target; // @[front_end.scala 49:37]
-  assign pc_gen_io_i_branch_predict_pack_taken = bpu_io_o_branch_predict_pack_taken; // @[front_end.scala 49:37]
-  assign pc_gen_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 50:38]
-  assign pc_gen_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 50:38]
-  assign pc_gen_io_i_branch_presolve_pack_pc = branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 50:38]
-  assign pc_gen_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 51:37]
-  assign pc_gen_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 51:37]
-  assign pc_gen_io_i_branch_resolve_pack_target = io_i_branch_resolve_pack_target; // @[front_end.scala 51:37]
+  assign pc_gen_io_i_stall = front_end_control_io_o_stage1_stall; // @[front_end.scala 45:23]
+  assign pc_gen_io_i_pc_redirect_valid = io_i_pc_redirect_valid; // @[front_end.scala 46:35]
+  assign pc_gen_io_i_pc_redirect_target = io_i_pc_redirect_target; // @[front_end.scala 47:36]
+  assign pc_gen_io_i_branch_predict_pack_valid = bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 48:37]
+  assign pc_gen_io_i_branch_predict_pack_target = bpu_io_o_branch_predict_pack_target; // @[front_end.scala 48:37]
+  assign pc_gen_io_i_branch_predict_pack_taken = bpu_io_o_branch_predict_pack_taken; // @[front_end.scala 48:37]
+  assign pc_gen_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 49:38]
+  assign pc_gen_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 49:38]
+  assign pc_gen_io_i_branch_presolve_pack_pc = branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 49:38]
+  assign pc_gen_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 50:37]
+  assign pc_gen_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 50:37]
+  assign pc_gen_io_i_branch_resolve_pack_target = io_i_branch_resolve_pack_target; // @[front_end.scala 50:37]
   assign bpu_clock = clock;
   assign bpu_reset = reset;
-  assign bpu_io_i_addr = pc_gen_io_o_pc; // @[front_end.scala 58:19]
-  assign bpu_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_taken = io_i_branch_resolve_pack_taken; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_pc = io_i_branch_resolve_pack_pc; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_target = io_i_branch_resolve_pack_target; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_rob_idx = io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_prediction_valid = io_i_branch_resolve_pack_prediction_valid; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_resolve_pack_branch_type = io_i_branch_resolve_pack_branch_type; // @[front_end.scala 60:34]
-  assign bpu_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 59:35]
-  assign bpu_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 59:35]
-  assign bpu_io_i_branch_presolve_pack_pc = branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 59:35]
+  assign bpu_io_i_addr = pc_gen_io_o_pc; // @[front_end.scala 57:19]
+  assign bpu_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_taken = io_i_branch_resolve_pack_taken; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_pc = io_i_branch_resolve_pack_pc; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_target = io_i_branch_resolve_pack_target; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_rob_idx = io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_prediction_valid = io_i_branch_resolve_pack_prediction_valid; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_resolve_pack_branch_type = io_i_branch_resolve_pack_branch_type; // @[front_end.scala 59:34]
+  assign bpu_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 58:35]
+  assign bpu_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 58:35]
+  assign bpu_io_i_branch_presolve_pack_pc = branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 58:35]
   assign if1_if2_clock = clock;
   assign if1_if2_reset = reset;
-  assign if1_if2_io_i_stall = front_end_control_io_o_stage1_stall; // @[front_end.scala 63:24]
-  assign if1_if2_io_i_flush = front_end_control_io_o_stage1_flush; // @[front_end.scala 64:24]
-  assign if1_if2_io_i_pc = pc_gen_io_o_pc; // @[front_end.scala 65:21]
-  assign if1_if2_io_i_branch_predict_pack_valid = bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 66:38]
-  assign if1_if2_io_i_branch_predict_pack_target = bpu_io_o_branch_predict_pack_target; // @[front_end.scala 66:38]
-  assign if1_if2_io_i_branch_predict_pack_branch_type = bpu_io_o_branch_predict_pack_branch_type; // @[front_end.scala 66:38]
-  assign if1_if2_io_i_branch_predict_pack_select = bpu_io_o_branch_predict_pack_select; // @[front_end.scala 66:38]
-  assign if1_if2_io_i_branch_predict_pack_taken = bpu_io_o_branch_predict_pack_taken; // @[front_end.scala 66:38]
+  assign if1_if2_io_i_stall = front_end_control_io_o_stage1_stall; // @[front_end.scala 62:24]
+  assign if1_if2_io_i_flush = front_end_control_io_o_stage1_flush; // @[front_end.scala 63:24]
+  assign if1_if2_io_i_pc = pc_gen_io_o_pc; // @[front_end.scala 64:21]
+  assign if1_if2_io_i_branch_predict_pack_valid = bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 65:38]
+  assign if1_if2_io_i_branch_predict_pack_target = bpu_io_o_branch_predict_pack_target; // @[front_end.scala 65:38]
+  assign if1_if2_io_i_branch_predict_pack_branch_type = bpu_io_o_branch_predict_pack_branch_type; // @[front_end.scala 65:38]
+  assign if1_if2_io_i_branch_predict_pack_select = bpu_io_o_branch_predict_pack_select; // @[front_end.scala 65:38]
+  assign if1_if2_io_i_branch_predict_pack_taken = bpu_io_o_branch_predict_pack_taken; // @[front_end.scala 65:38]
   assign if2_if3_clock = clock;
   assign if2_if3_reset = reset;
-  assign if2_if3_io_i_stall = front_end_control_io_o_stage2_stall; // @[front_end.scala 71:24]
-  assign if2_if3_io_i_flush = front_end_control_io_o_stage2_flush; // @[front_end.scala 72:24]
-  assign if2_if3_io_i_fetch_valid = if1_if2_io_o_fetch_valid; // @[front_end.scala 75:30]
-  assign if2_if3_io_i_pc = if1_if2_io_o_pc; // @[front_end.scala 73:21]
-  assign if2_if3_io_i_branch_predict_pack_valid = if1_if2_io_o_branch_predict_pack_valid; // @[front_end.scala 74:38]
-  assign if2_if3_io_i_branch_predict_pack_target = if1_if2_io_o_branch_predict_pack_target; // @[front_end.scala 74:38]
-  assign if2_if3_io_i_branch_predict_pack_branch_type = if1_if2_io_o_branch_predict_pack_branch_type; // @[front_end.scala 74:38]
-  assign if2_if3_io_i_branch_predict_pack_select = if1_if2_io_o_branch_predict_pack_select; // @[front_end.scala 74:38]
-  assign if2_if3_io_i_branch_predict_pack_taken = if1_if2_io_o_branch_predict_pack_taken; // @[front_end.scala 74:38]
-  assign branch_presolve_io_i_fetch_pack_valids_0 = fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_valids_1 = fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_pc = fetch_res_io_o_fetch_pack_bits_pc; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_insts_0 = fetch_res_io_o_fetch_pack_bits_insts_0; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_insts_1 = fetch_res_io_o_fetch_pack_bits_insts_1; // @[front_end.scala 78:37]
+  assign if2_if3_io_i_stall = front_end_control_io_o_stage2_stall; // @[front_end.scala 70:24]
+  assign if2_if3_io_i_flush = front_end_control_io_o_stage2_flush; // @[front_end.scala 71:24]
+  assign if2_if3_io_i_fetch_valid = if1_if2_io_o_fetch_valid; // @[front_end.scala 74:30]
+  assign if2_if3_io_i_pc = if1_if2_io_o_pc; // @[front_end.scala 72:21]
+  assign if2_if3_io_i_branch_predict_pack_valid = if1_if2_io_o_branch_predict_pack_valid; // @[front_end.scala 73:38]
+  assign if2_if3_io_i_branch_predict_pack_target = if1_if2_io_o_branch_predict_pack_target; // @[front_end.scala 73:38]
+  assign if2_if3_io_i_branch_predict_pack_branch_type = if1_if2_io_o_branch_predict_pack_branch_type; // @[front_end.scala 73:38]
+  assign if2_if3_io_i_branch_predict_pack_select = if1_if2_io_o_branch_predict_pack_select; // @[front_end.scala 73:38]
+  assign if2_if3_io_i_branch_predict_pack_taken = if1_if2_io_o_branch_predict_pack_taken; // @[front_end.scala 73:38]
+  assign branch_presolve_io_i_fetch_pack_valids_0 = fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 77:37]
+  assign branch_presolve_io_i_fetch_pack_valids_1 = fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 77:37]
+  assign branch_presolve_io_i_fetch_pack_pc = fetch_res_io_o_fetch_pack_bits_pc; // @[front_end.scala 77:37]
+  assign branch_presolve_io_i_fetch_pack_insts_0 = fetch_res_io_o_fetch_pack_bits_insts_0; // @[front_end.scala 77:37]
+  assign branch_presolve_io_i_fetch_pack_insts_1 = fetch_res_io_o_fetch_pack_bits_insts_1; // @[front_end.scala 77:37]
   assign branch_presolve_io_i_fetch_pack_branch_predict_pack_valid =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_valid; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_branch_predict_pack_target =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_target; // @[front_end.scala 78:37]
-  assign branch_presolve_io_i_fetch_pack_branch_predict_pack_branch_type =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_branch_type; // @[front_end.scala 78:37]
+    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_valid; // @[front_end.scala 77:37]
   assign branch_presolve_io_i_fetch_pack_branch_predict_pack_select =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_select; // @[front_end.scala 78:37]
+    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_select; // @[front_end.scala 77:37]
   assign branch_presolve_io_i_fetch_pack_branch_predict_pack_taken =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken; // @[front_end.scala 78:37]
+    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken; // @[front_end.scala 77:37]
   assign fetch_queue_clock = clock;
   assign fetch_queue_reset = reset;
-  assign fetch_queue_io_in_valid = fetch_res_io_o_fetch_pack_valid; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_valids_0 = fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_valids_1 = fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_pc = fetch_res_io_o_fetch_pack_bits_pc; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_insts_0 = fetch_res_io_o_fetch_pack_bits_insts_0; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_insts_1 = fetch_res_io_o_fetch_pack_bits_insts_1; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_branch_predict_pack_valid = fetch_res_io_o_fetch_pack_bits_branch_predict_pack_valid; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_branch_predict_pack_target = fetch_res_io_o_fetch_pack_bits_branch_predict_pack_target; // @[front_end.scala 86:24]
+  assign fetch_queue_io_in_valid = fetch_res_io_o_fetch_pack_with_presolve_valid; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_valids_0 = fetch_res_io_o_fetch_pack_with_presolve_bits_valids_0; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_valids_1 = fetch_res_io_o_fetch_pack_with_presolve_bits_valids_1; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_pc = fetch_res_io_o_fetch_pack_with_presolve_bits_pc; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_insts_0 = fetch_res_io_o_fetch_pack_with_presolve_bits_insts_0; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_insts_1 = fetch_res_io_o_fetch_pack_with_presolve_bits_insts_1; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_branch_predict_pack_valid =
+    fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_valid; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_branch_predict_pack_target =
+    fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_target; // @[front_end.scala 87:24]
   assign fetch_queue_io_in_bits_branch_predict_pack_branch_type =
-    fetch_res_io_o_fetch_pack_bits_branch_predict_pack_branch_type; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_branch_predict_pack_select = fetch_res_io_o_fetch_pack_bits_branch_predict_pack_select; // @[front_end.scala 86:24]
-  assign fetch_queue_io_in_bits_branch_predict_pack_taken = fetch_res_io_o_fetch_pack_bits_branch_predict_pack_taken; // @[front_end.scala 86:24]
-  assign fetch_queue_io_out_ready = io_o_fetch_pack_ready; // @[front_end.scala 90:21]
-  assign fetch_queue_io_i_flush = front_end_control_io_o_stage3_flush; // @[front_end.scala 87:28]
+    fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_branch_type; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_branch_predict_pack_select =
+    fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_select; // @[front_end.scala 87:24]
+  assign fetch_queue_io_in_bits_branch_predict_pack_taken =
+    fetch_res_io_o_fetch_pack_with_presolve_bits_branch_predict_pack_taken; // @[front_end.scala 87:24]
+  assign fetch_queue_io_out_ready = io_o_fetch_pack_ready; // @[front_end.scala 91:21]
+  assign fetch_queue_io_i_flush = front_end_control_io_o_fetch_queue_flush; // @[front_end.scala 88:28]
   assign front_end_control_io_i_pc_redirect_valid = io_i_pc_redirect_valid; // @[front_end.scala 36:46]
   assign front_end_control_io_i_icache_data_valid = io_icache_io_i_data_valid; // @[front_end.scala 38:46]
   assign front_end_control_io_i_icache_addr_ready = io_icache_io_i_addr_ready; // @[front_end.scala 37:46]
-  assign front_end_control_io_i_cache_fetch_valid = if2_if3_io_o_fetch_valid; // @[front_end.scala 39:46]
-  assign front_end_control_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 41:48]
-  assign front_end_control_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 41:48]
-  assign front_end_control_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 40:49]
-  assign front_end_control_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 40:49]
-  assign front_end_control_io_i_fetch_queue_full = fetch_queue_io_full; // @[front_end.scala 42:45]
+  assign front_end_control_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 40:48]
+  assign front_end_control_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 40:48]
+  assign front_end_control_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 39:49]
+  assign front_end_control_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 39:49]
+  assign front_end_control_io_i_fetch_queue_full = fetch_queue_io_full; // @[front_end.scala 41:45]
   assign fetch_res_io_i_pc = if2_if3_io_o_pc; // @[front_end.scala 80:23]
-  assign fetch_res_io_i_flush = front_end_control_io_o_stage3_flush; // @[front_end.scala 81:26]
-  assign fetch_res_io_i_stall = front_end_control_io_o_stage3_stall; // @[front_end.scala 82:26]
-  assign fetch_res_io_i_fetch_res = io_icache_io_i_data; // @[front_end.scala 83:30]
-  assign fetch_res_io_i_branch_predict_pack_valid = if2_if3_io_o_branch_predict_pack_valid; // @[front_end.scala 84:40]
-  assign fetch_res_io_i_branch_predict_pack_target = if2_if3_io_o_branch_predict_pack_target; // @[front_end.scala 84:40]
-  assign fetch_res_io_i_branch_predict_pack_branch_type = if2_if3_io_o_branch_predict_pack_branch_type; // @[front_end.scala 84:40]
-  assign fetch_res_io_i_branch_predict_pack_select = if2_if3_io_o_branch_predict_pack_select; // @[front_end.scala 84:40]
-  assign fetch_res_io_i_branch_predict_pack_taken = if2_if3_io_o_branch_predict_pack_taken; // @[front_end.scala 84:40]
+  assign fetch_res_io_i_flush = front_end_control_io_o_fetch_queue_flush | ~if2_if3_io_o_fetch_valid; // @[front_end.scala 81:70]
+  assign fetch_res_io_i_stall = front_end_control_io_o_stage2_stall; // @[front_end.scala 82:26]
+  assign fetch_res_io_i_fetch_res = io_icache_io_i_data; // @[front_end.scala 84:30]
+  assign fetch_res_io_i_branch_predict_pack_valid = if2_if3_io_o_branch_predict_pack_valid; // @[front_end.scala 85:40]
+  assign fetch_res_io_i_branch_predict_pack_target = if2_if3_io_o_branch_predict_pack_target; // @[front_end.scala 85:40]
+  assign fetch_res_io_i_branch_predict_pack_branch_type = if2_if3_io_o_branch_predict_pack_branch_type; // @[front_end.scala 85:40]
+  assign fetch_res_io_i_branch_predict_pack_select = if2_if3_io_o_branch_predict_pack_select; // @[front_end.scala 85:40]
+  assign fetch_res_io_i_branch_predict_pack_taken = if2_if3_io_o_branch_predict_pack_taken; // @[front_end.scala 85:40]
+  assign fetch_res_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 83:45]
+  assign fetch_res_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 83:45]
 endmodule

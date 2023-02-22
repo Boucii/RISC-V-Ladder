@@ -51,7 +51,7 @@ class Execute extends Module with consts{
     val last_branch_resolve_pack = RegInit(0.U.asTypeOf(new branch_resolve_pack()))
     last_branch_resolve_pack := io.o_branch_resolve_pack
     val new_br_resolve = Wire(Bool())
-    new_br_resolve := last_branch_resolve_pack.asUInt =/= io.o_branch_resolve_pack.asUInt 
+    new_br_resolve := last_branch_resolve_pack.asUInt =/= io.o_branch_resolve_pack.asUInt && (io.o_branch_resolve_pack.valid && io.o_branch_resolve_pack.mispred)
 
     func_units += alu1
     func_units += alu2

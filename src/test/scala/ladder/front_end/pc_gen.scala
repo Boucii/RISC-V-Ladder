@@ -34,10 +34,10 @@ class PC_Gen extends Module
         npc := io.i_branch_resolve_pack.target
     }.elsewhen(io.i_branch_presolve_pack.valid && io.i_branch_presolve_pack.taken){//mispred a non-br as br and tk,redirect
         npc := io.i_branch_presolve_pack.pc + 4.U
+    }.elsewhen(io.i_stall){
+        npc := pc
     }.elsewhen(io.i_branch_predict_pack.valid && io.i_branch_predict_pack.taken){
         npc := io.i_branch_predict_pack.target
-    }.elsewhen(io.i_stall){//????????????????????????
-        npc := pc
     }.otherwise{
         npc := pc + Mux(pc(2),4.U(64.W),8.U(64.W))
     }

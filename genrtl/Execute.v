@@ -667,7 +667,8 @@ module Execute(
   wire [142:0] _new_br_resolve_T_1 = {io_o_branch_resolve_pack_valid,io_o_branch_resolve_pack_mispred,
     io_o_branch_resolve_pack_taken,io_o_branch_resolve_pack_pc,io_o_branch_resolve_pack_target,
     io_o_branch_resolve_pack_rob_idx,io_o_branch_resolve_pack_prediction_valid,io_o_branch_resolve_pack_branch_type}; // @[execute.scala 54:84]
-  wire  new_br_resolve = _new_br_resolve_T != _new_br_resolve_T_1; // @[execute.scala 54:55]
+  wire  new_br_resolve = _new_br_resolve_T != _new_br_resolve_T_1 & (io_o_branch_resolve_pack_valid &
+    io_o_branch_resolve_pack_mispred); // @[execute.scala 54:91]
   wire  _io_o_available_funcs_0_T_1 = alu1_io_o_available & ~alu2_io_o_available; // @[execute.scala 84:31]
   wire  _io_o_available_funcs_0_T_2 = ~alu1_io_o_available; // @[execute.scala 85:10]
   wire  _io_o_available_funcs_0_T_3 = ~alu1_io_o_available & alu2_io_o_available; // @[execute.scala 85:32]

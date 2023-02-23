@@ -70,8 +70,9 @@ class Reorder_Buffer extends Module with consts{
     //!!!!!!改了branchresolvepakc的结果
     //判定要用下个周期的allocateptr而不是这个周期的
     //robstate也应该要看robstatenext
-    this_num_to_roll_back := MuxCase(0.U,Seq(
-      (next_rob_state === s_rollback && (allocate_ptr -2.U) > io.i_branch_resolve_pack.rob_idx) ->2.U,
+    this_num_to_roll_back := MuxCase(2.U,Seq(
+      (next_rob_state =/= s_rollback) -> 0.U,
+      //(next_rob_state === s_rollback && (allocate_ptr -2.U) > io.i_branch_resolve_pack.rob_idx) ->2.U,//consider loop out
       (next_rob_state === s_rollback && (allocate_ptr -2.U) === io.i_branch_resolve_pack.rob_idx)->1.U,
       (next_rob_state === s_rollback && (allocate_ptr -1.U) === io.i_branch_resolve_pack.rob_idx) ->0.U
     )) 
@@ -241,8 +242,11 @@ class Reorder_Buffer extends Module with consts{
       (rob_state === s_reset) -> s_normal,
       (rob_state === s_normal && is_full) -> s_full,
       ((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx)) -> s_rollback,
+      /*
       (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||
                    (io.i_branch_resolve_pack.rob_idx === allocate_ptr-2.U) )) -> s_normal,
+*/
+      (rob_state === s_rollback && (io.i_branch_resolve_pack.rob_idx +1.U === allocate_ptr )) -> s_normal,
       (rob_state === s_full && will_commit(0)) -> s_normal
     )))
     //printf("rob_state:%d\n",rob_state)

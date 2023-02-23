@@ -17614,6 +17614,46 @@
     "target":"~Ladder|BPU>io_o_branch_predict_pack_taken"
   },
   {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_o_wen"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_o_addr"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_i_data"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_i_addr_ready"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_o_addr_valid"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_i_data_valid"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_o_stall1"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_o_stall2"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_dbg_i_addr2"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Ladder>io_icache_io_dbg_i_addr3"
+  },
+  {
     "class":"firrtl.transforms.BlackBoxTargetDirAnno",
     "targetDir":"genrtl"
   },

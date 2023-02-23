@@ -345,14 +345,16 @@ int main(int argc, char** argv, char** env){
 
   int first_cycle = 1;
 
+  bool stall1 = (bool)(top->io_icache_io_o_stall1);
+  bool stall2 = (bool)(top->io_icache_io_o_stall2);
+
   while (time<MAX_TIME) {
   //while (true) {
     if(ITRACE_EN){
         cout<<"\ncycle "<<time<<" passed\n";
     }
     //instruction fetch
-	bool stall1 = (bool)(top->io_icache_io_o_stall1);
-	bool stall2 = (bool)(top->io_icache_io_o_stall2);
+	//must be if3->if2->if1
     addr_if3 = stall2? addr_if3 : addr_if2;
     addr_if2 = stall1? addr_if2 : addr_if1;
     addr_if1 = (int)(top->io_icache_io_o_addr);
@@ -361,12 +363,20 @@ int main(int argc, char** argv, char** env){
     data_if3 = stall2? data_if3 : data_if2;
     data_if2 = stall1? data_if2 : data_if1;
     data_if1 = (uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
+
+	top->io_icache_io_dbg_i_addr2 = addr_if2;
+	top->io_icache_io_dbg_i_addr3 = addr_if3;
+
     top->io_icache_io_i_data_valid = (svBit)1;
     top->io_icache_io_i_data = data_if3;
     top->io_icache_io_i_addr_ready = (svBit)1;
 
     //memory read/write
     single_cycleup();
+
+ 	stall1 = (bool)(top->io_icache_io_o_stall1);
+ 	stall2 = (bool)(top->io_icache_io_o_stall2);
+
     single_cycledown();
     
     //check for trap

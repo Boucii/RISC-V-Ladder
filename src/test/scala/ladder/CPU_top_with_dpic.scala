@@ -17,6 +17,7 @@ class Ladder extends Module {
     //cmt_dbg
     val o_dbg_commit_packs = Output(Vec(2,new valid_uop_pack()))
   })
+  dontTouch(io.icache_io)
   val front_end = Module(new Front_End())
   val back_end = Module(new Back_End_With_Decode())
   val dpic = Module(new dpic())
@@ -38,6 +39,11 @@ class Ladder extends Module {
   io.icache_io.o_stall1 := front_end.io.icache_io.o_stall1
   io.icache_io.o_stall2 := front_end.io.icache_io.o_stall2
   front_end.io.icache_io.i_data := io.icache_io.i_data
+
+  //dbg usage
+  front_end.io.icache_io.dbg_i_addr2 := io.icache_io.dbg_i_addr2
+  front_end.io.icache_io.dbg_i_addr3 := io.icache_io.dbg_i_addr3
+
 
   //connect back end input
   back_end.io.i_fetch_pack <> front_end.io.o_fetch_pack

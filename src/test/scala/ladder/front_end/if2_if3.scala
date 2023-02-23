@@ -25,7 +25,7 @@ class IF2_IF3 extends Module
     io.o_pc := pc;
 
     val branch_predict_pack = RegInit(0.U.asTypeOf(new branch_predict_pack()));
-    branch_predict_pack := Mux(io.i_flush, false.B, Mux(io.i_i_stall, branch_predict_pack, io.i_branch_predict_pack))
+    branch_predict_pack := Mux(io.i_flush, false.B, Mux(io.i_stall, branch_predict_pack, io.i_branch_predict_pack))
     branch_predict_pack.valid := Mux(io.i_flush, false.B, Mux(io.i_stall, branch_predict_pack.valid, io.i_branch_predict_pack.valid))
     io.o_branch_predict_pack :=branch_predict_pack
 

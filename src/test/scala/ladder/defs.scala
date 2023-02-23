@@ -26,6 +26,9 @@ class IcacheIO extends Bundle{
     val i_addr_ready = Input(Bool())
     val o_addr_valid = Output(Bool())
     val i_data_valid = Input(Bool())
+
+    val o_stall1 = Output(Bool())
+    val o_stall2 = Output(Bool())
 }
 class DcacheIO extends Bundle{
     val data_valid = Input(Bool())

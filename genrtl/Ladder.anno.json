@@ -17643,6 +17643,16 @@
   },
   {
     "class":"firrtl.transforms.CombinationalPath",
+    "sink":"~Ladder|Ladder>io_icache_io_o_stall1",
+    "sources":[
+      "~Ladder|Ladder>io_icache_io_i_addr_ready",
+      "~Ladder|Ladder>io_icache_io_i_data_valid",
+      "~Ladder|Ladder>io_icache_io_i_data",
+      "~Ladder|Ladder>io_i_interrupt"
+    ]
+  },
+  {
+    "class":"firrtl.transforms.CombinationalPath",
     "sink":"~Ladder|Ladder>io_dcache_io_addr_valid",
     "sources":[
       "~Ladder|Ladder>io_i_interrupt"
@@ -17652,6 +17662,14 @@
     "class":"firrtl.transforms.CombinationalPath",
     "sink":"~Ladder|Ladder>io_o_dbg_commit_packs_1_valid",
     "sources":[
+      "~Ladder|Ladder>io_i_interrupt"
+    ]
+  },
+  {
+    "class":"firrtl.transforms.CombinationalPath",
+    "sink":"~Ladder|Ladder>io_icache_io_o_stall2",
+    "sources":[
+      "~Ladder|Ladder>io_icache_io_i_data_valid",
       "~Ladder|Ladder>io_i_interrupt"
     ]
   },

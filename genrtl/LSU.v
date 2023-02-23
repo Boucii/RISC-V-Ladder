@@ -149,26 +149,26 @@ module LSU(
   reg [3:0] uop_branch_type; // @[execute_unit.scala 256:23]
   reg [1:0] uop_mem_type; // @[execute_unit.scala 256:23]
   wire [1:0] next_uop_mem_type = io_i_select ? io_i_uop_mem_type : uop_mem_type; // @[execute_unit.scala 258:20]
-  wire  _next_state_T = ~state; // @[execute_unit.scala 334:17]
-  wire  _next_state_T_1 = ~state & io_i_select; // @[execute_unit.scala 334:29]
-  wire  _next_state_T_3 = state & io_i_select_to_commit; // @[execute_unit.scala 335:29]
-  wire  _next_ready_to_commit_T_2 = uop_mem_type == 2'h1; // @[execute_unit.scala 341:67]
+  wire  _next_state_T = ~state; // @[execute_unit.scala 333:17]
+  wire  _next_state_T_1 = ~state & io_i_select; // @[execute_unit.scala 333:29]
+  wire  _next_state_T_3 = state & io_i_select_to_commit; // @[execute_unit.scala 334:29]
+  wire  _next_ready_to_commit_T_2 = uop_mem_type == 2'h1; // @[execute_unit.scala 340:67]
   reg  addr_given; // @[execute_unit.scala 302:29]
-  wire  _next_ready_to_commit_T_4 = state & io_dcache_io_addr_ready & uop_mem_type == 2'h1 & addr_given; // @[execute_unit.scala 341:76]
-  wire  _next_ready_to_commit_T_7 = uop_mem_type == 2'h2; // @[execute_unit.scala 342:67]
-  wire  _next_ready_to_commit_T_9 = state & io_dcache_io_data_valid & uop_mem_type == 2'h2 & addr_given; // @[execute_unit.scala 342:76]
+  wire  _next_ready_to_commit_T_4 = state & io_dcache_io_addr_ready & uop_mem_type == 2'h1 & addr_given; // @[execute_unit.scala 340:76]
+  wire  _next_ready_to_commit_T_7 = uop_mem_type == 2'h2; // @[execute_unit.scala 341:67]
+  wire  _next_ready_to_commit_T_9 = state & io_dcache_io_data_valid & uop_mem_type == 2'h2 & addr_given; // @[execute_unit.scala 341:76]
   reg  ready_to_commit; // @[execute_unit.scala 318:34]
   wire  _next_ready_to_commit_T_11 = _next_state_T ? 1'h0 : ready_to_commit; // @[Mux.scala 101:16]
   wire  next_ready_to_commit = _next_ready_to_commit_T_4 | (_next_ready_to_commit_T_9 | _next_ready_to_commit_T_11); // @[Mux.scala 101:16]
   reg  rollback_occured; // @[execute_unit.scala 322:35]
   reg  exception_occured; // @[execute_unit.scala 264:36]
-  wire  _next_state_T_7 = exception_occured & _next_ready_to_commit_T_7; // @[execute_unit.scala 337:98]
+  wire  _next_state_T_7 = exception_occured & _next_ready_to_commit_T_7; // @[execute_unit.scala 336:98]
   wire  _next_state_T_9 = state & next_ready_to_commit & (rollback_occured | exception_occured &
-    _next_ready_to_commit_T_7); // @[execute_unit.scala 337:55]
+    _next_ready_to_commit_T_7); // @[execute_unit.scala 336:55]
   wire  _next_state_T_10 = _next_state_T_9 ? 1'h0 : state; // @[Mux.scala 101:16]
   wire  _next_state_T_11 = _next_state_T_3 ? 1'h0 : _next_state_T_10; // @[Mux.scala 101:16]
   wire  _next_state_T_12 = _next_state_T_1 | _next_state_T_11; // @[Mux.scala 101:16]
-  wire [1:0] next_state = {{1'd0}, _next_state_T_12}; // @[execute_unit.scala 253:26 333:16]
+  wire [1:0] next_state = {{1'd0}, _next_state_T_12}; // @[execute_unit.scala 253:26 332:16]
   wire  _T_2 = next_state == 2'h0; // @[execute_unit.scala 259:63]
   wire  _GEN_1 = io_i_exception & state | exception_occured; // @[execute_unit.scala 265:45 266:27 264:36]
   wire  _len_T_1 = uop_inst[13:12] == 2'h0; // @[execute_unit.scala 274:26]
@@ -202,11 +202,12 @@ module LSU(
   wire  _addr_given_T_1 = io_dcache_io_addr_valid & ~io_i_select_to_commit; // @[execute_unit.scala 304:34]
   wire  _addr_given_T_3 = _T_2 ? 1'h0 : addr_given; // @[Mux.scala 101:16]
   wire  _addr_given_T_4 = _addr_given_T_1 | _addr_given_T_3; // @[Mux.scala 101:16]
-  wire  _next_rollback_occured_T_6 = io_i_rollback_rob_idx > uop_rob_idx & (io_i_rollback_rob_idx[6] ^ uop_rob_idx[6]); // @[execute_unit.scala 329:50]
-  wire  _next_rollback_occured_T_8 = io_i_rollback_valid & (io_i_rollback_rob_idx < uop_rob_idx |
-    _next_rollback_occured_T_6); // @[execute_unit.scala 328:30]
+  wire  _next_rollback_occured_T_14 = io_i_rollback_rob_idx[5:0] > uop_rob_idx[5:0] & (io_i_rollback_rob_idx[6] ^
+    uop_rob_idx[6]); // @[execute_unit.scala 329:60]
+  wire  _next_rollback_occured_T_16 = io_i_rollback_valid & (io_i_rollback_rob_idx[5:0] < uop_rob_idx[5:0] &
+    io_i_rollback_rob_idx[6] == uop_rob_idx[6] | _next_rollback_occured_T_14); // @[execute_unit.scala 328:30]
   wire [1:0] _GEN_3 = reset ? 2'h0 : next_state; // @[execute_unit.scala 252:{24,24} 254:11]
-  assign io_o_ex_res_pack_valid = next_ready_to_commit & ~rollback_occured & ~_next_state_T_7; // @[execute_unit.scala 345:73]
+  assign io_o_ex_res_pack_valid = next_ready_to_commit & ~rollback_occured & ~_next_state_T_7; // @[execute_unit.scala 344:73]
   assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 316:26]
   assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 316:26]
   assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 316:26]
@@ -237,7 +238,7 @@ module LSU(
   assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 316:26]
   assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 316:26]
   assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 316:26]
-  assign io_o_available = state ? 1'h0 : 1'h1; // @[execute_unit.scala 346:26]
+  assign io_o_available = state ? 1'h0 : 1'h1; // @[execute_unit.scala 345:26]
   assign io_dcache_io_addr_valid = uop_valid & ~addr_given & next_uop_mem_type == 2'h2 | uop_valid & ~addr_given &
     _next_ready_to_commit_T_2 & io_i_ROB_first_entry == uop_rob_idx; // @[execute_unit.scala 308:90]
   assign io_dcache_io_Mwout = uop_mem_type == 2'h1; // @[execute_unit.scala 311:40]
@@ -245,8 +246,8 @@ module LSU(
   assign io_dcache_io_Men = ~(uop_mem_type == 2'h0); // @[execute_unit.scala 312:25]
   assign io_dcache_io_Mlen = {{28'd0}, _len_T_11}; // @[execute_unit.scala 272:19 273:9]
   assign io_dcache_io_MdataOut = uop_src2_value; // @[execute_unit.scala 314:27]
-  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 348:44]
-  assign io_o_lsu_uop_rob_idx = {{1'd0}, uop_rob_idx}; // @[execute_unit.scala 349:26]
+  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 347:44]
+  assign io_o_lsu_uop_rob_idx = {{1'd0}, uop_rob_idx}; // @[execute_unit.scala 348:26]
   always @(posedge clock) begin
     state <= _GEN_3[0]; // @[execute_unit.scala 252:{24,24} 254:11]
     if (reset) begin // @[execute_unit.scala 256:23]
@@ -426,7 +427,7 @@ module LSU(
     end else if (_T_2) begin // @[Mux.scala 101:16]
       rollback_occured <= 1'h0;
     end else begin
-      rollback_occured <= _next_rollback_occured_T_8 | rollback_occured;
+      rollback_occured <= _next_rollback_occured_T_16 | rollback_occured;
     end
     if (reset) begin // @[execute_unit.scala 264:36]
       exception_occured <= 1'h0; // @[execute_unit.scala 264:36]

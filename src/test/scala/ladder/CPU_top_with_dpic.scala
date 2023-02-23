@@ -35,6 +35,8 @@ class Ladder extends Module {
   io.icache_io.o_wen := front_end.io.icache_io.o_wen 
   io.icache_io.o_addr := front_end.io.icache_io.o_addr
   io.icache_io.o_addr_valid := front_end.io.icache_io.o_addr_valid
+  io.icache_io.o_stall1 := front_end.io.icache_io.o_stall1
+  io.icache_io.o_stall2 := front_end.io.icache_io.o_stall2
   front_end.io.icache_io.i_data := io.icache_io.i_data
 
   //connect back end input

@@ -351,13 +351,15 @@ int main(int argc, char** argv, char** env){
         cout<<"\ncycle "<<time<<" passed\n";
     }
     //instruction fetch
-    addr_if3 = addr_if2;
-    addr_if2 = addr_if1;
-    addr_if1=(int)(top->io_icache_io_o_addr);
+	bool stall1 = (bool)(top->io_icache_io_o_stall1);
+	bool stall2 = (bool)(top->io_icache_io_o_stall2);
+    addr_if3 = stall2? addr_if3 : addr_if2;
+    addr_if2 = stall1? addr_if2 : addr_if1;
+    addr_if1 = (int)(top->io_icache_io_o_addr);
     uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);
     uint32_t cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
-    data_if3 = data_if2;
-    data_if2 = data_if1;
+    data_if3 = stall2? data_if3 : data_if2;
+    data_if2 = stall1? data_if2 : data_if1;
     data_if1 = (uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
     top->io_icache_io_i_data_valid = (svBit)1;
     top->io_icache_io_i_data = data_if3;

@@ -20058,7 +20058,7 @@ module Reservation_Station(
   assign reservation_station_0_clock = clock;
   assign reservation_station_0_reset = reset;
   assign reservation_station_0_io_i_allocated_idx = write_idx2 == 6'h0; // @[reservation_station.scala 212:65]
-  assign reservation_station_0_io_i_issue_granted = (_issue1_func_code_T | _issued_age_pack_issued_ages_1_T) & (
+  assign reservation_station_0_io_i_issue_granted = (_issue1_func_code_T | _issued_age_pack_issued_ages_1_T) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_0_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_0_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20138,7 +20138,7 @@ module Reservation_Station(
   assign reservation_station_1_clock = clock;
   assign reservation_station_1_reset = reset;
   assign reservation_station_1_io_i_allocated_idx = write_idx2 == 6'h1; // @[reservation_station.scala 212:65]
-  assign reservation_station_1_io_i_issue_granted = (_issue1_func_code_T_1 | _issued_age_pack_issued_ages_1_T_1) & (
+  assign reservation_station_1_io_i_issue_granted = (_issue1_func_code_T_1 | _issued_age_pack_issued_ages_1_T_1) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_1_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_1_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20218,7 +20218,7 @@ module Reservation_Station(
   assign reservation_station_2_clock = clock;
   assign reservation_station_2_reset = reset;
   assign reservation_station_2_io_i_allocated_idx = write_idx2 == 6'h2; // @[reservation_station.scala 212:65]
-  assign reservation_station_2_io_i_issue_granted = (_issue1_func_code_T_2 | _issued_age_pack_issued_ages_1_T_2) & (
+  assign reservation_station_2_io_i_issue_granted = (_issue1_func_code_T_2 | _issued_age_pack_issued_ages_1_T_2) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_2_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_2_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20298,7 +20298,7 @@ module Reservation_Station(
   assign reservation_station_3_clock = clock;
   assign reservation_station_3_reset = reset;
   assign reservation_station_3_io_i_allocated_idx = write_idx2 == 6'h3; // @[reservation_station.scala 212:65]
-  assign reservation_station_3_io_i_issue_granted = (_issue1_func_code_T_3 | _issued_age_pack_issued_ages_1_T_3) & (
+  assign reservation_station_3_io_i_issue_granted = (_issue1_func_code_T_3 | _issued_age_pack_issued_ages_1_T_3) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_3_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_3_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20378,7 +20378,7 @@ module Reservation_Station(
   assign reservation_station_4_clock = clock;
   assign reservation_station_4_reset = reset;
   assign reservation_station_4_io_i_allocated_idx = write_idx2 == 6'h4; // @[reservation_station.scala 212:65]
-  assign reservation_station_4_io_i_issue_granted = (_issue1_func_code_T_4 | _issued_age_pack_issued_ages_1_T_4) & (
+  assign reservation_station_4_io_i_issue_granted = (_issue1_func_code_T_4 | _issued_age_pack_issued_ages_1_T_4) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_4_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_4_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20458,7 +20458,7 @@ module Reservation_Station(
   assign reservation_station_5_clock = clock;
   assign reservation_station_5_reset = reset;
   assign reservation_station_5_io_i_allocated_idx = write_idx2 == 6'h5; // @[reservation_station.scala 212:65]
-  assign reservation_station_5_io_i_issue_granted = (_issue1_func_code_T_5 | _issued_age_pack_issued_ages_1_T_5) & (
+  assign reservation_station_5_io_i_issue_granted = (_issue1_func_code_T_5 | _issued_age_pack_issued_ages_1_T_5) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_5_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_5_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20538,7 +20538,7 @@ module Reservation_Station(
   assign reservation_station_6_clock = clock;
   assign reservation_station_6_reset = reset;
   assign reservation_station_6_io_i_allocated_idx = write_idx2 == 6'h6; // @[reservation_station.scala 212:65]
-  assign reservation_station_6_io_i_issue_granted = (_issue1_func_code_T_6 | _issued_age_pack_issued_ages_1_T_6) & (
+  assign reservation_station_6_io_i_issue_granted = (_issue1_func_code_T_6 | _issued_age_pack_issued_ages_1_T_6) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_6_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_6_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20618,7 +20618,7 @@ module Reservation_Station(
   assign reservation_station_7_clock = clock;
   assign reservation_station_7_reset = reset;
   assign reservation_station_7_io_i_allocated_idx = write_idx2 == 6'h7; // @[reservation_station.scala 212:65]
-  assign reservation_station_7_io_i_issue_granted = (_issue1_func_code_T_7 | _issued_age_pack_issued_ages_1_T_7) & (
+  assign reservation_station_7_io_i_issue_granted = (_issue1_func_code_T_7 | _issued_age_pack_issued_ages_1_T_7) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_7_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_7_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20698,7 +20698,7 @@ module Reservation_Station(
   assign reservation_station_8_clock = clock;
   assign reservation_station_8_reset = reset;
   assign reservation_station_8_io_i_allocated_idx = write_idx2 == 6'h8; // @[reservation_station.scala 212:65]
-  assign reservation_station_8_io_i_issue_granted = (_issue1_func_code_T_8 | _issued_age_pack_issued_ages_1_T_8) & (
+  assign reservation_station_8_io_i_issue_granted = (_issue1_func_code_T_8 | _issued_age_pack_issued_ages_1_T_8) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_8_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_8_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20778,7 +20778,7 @@ module Reservation_Station(
   assign reservation_station_9_clock = clock;
   assign reservation_station_9_reset = reset;
   assign reservation_station_9_io_i_allocated_idx = write_idx2 == 6'h9; // @[reservation_station.scala 212:65]
-  assign reservation_station_9_io_i_issue_granted = (_issue1_func_code_T_9 | _issued_age_pack_issued_ages_1_T_9) & (
+  assign reservation_station_9_io_i_issue_granted = (_issue1_func_code_T_9 | _issued_age_pack_issued_ages_1_T_9) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_9_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_9_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20858,7 +20858,7 @@ module Reservation_Station(
   assign reservation_station_10_clock = clock;
   assign reservation_station_10_reset = reset;
   assign reservation_station_10_io_i_allocated_idx = write_idx2 == 6'ha; // @[reservation_station.scala 212:65]
-  assign reservation_station_10_io_i_issue_granted = (_issue1_func_code_T_10 | _issued_age_pack_issued_ages_1_T_10) & (
+  assign reservation_station_10_io_i_issue_granted = (_issue1_func_code_T_10 | _issued_age_pack_issued_ages_1_T_10) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_10_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_10_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -20938,7 +20938,7 @@ module Reservation_Station(
   assign reservation_station_11_clock = clock;
   assign reservation_station_11_reset = reset;
   assign reservation_station_11_io_i_allocated_idx = write_idx2 == 6'hb; // @[reservation_station.scala 212:65]
-  assign reservation_station_11_io_i_issue_granted = (_issue1_func_code_T_11 | _issued_age_pack_issued_ages_1_T_11) & (
+  assign reservation_station_11_io_i_issue_granted = (_issue1_func_code_T_11 | _issued_age_pack_issued_ages_1_T_11) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_11_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_11_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21018,7 +21018,7 @@ module Reservation_Station(
   assign reservation_station_12_clock = clock;
   assign reservation_station_12_reset = reset;
   assign reservation_station_12_io_i_allocated_idx = write_idx2 == 6'hc; // @[reservation_station.scala 212:65]
-  assign reservation_station_12_io_i_issue_granted = (_issue1_func_code_T_12 | _issued_age_pack_issued_ages_1_T_12) & (
+  assign reservation_station_12_io_i_issue_granted = (_issue1_func_code_T_12 | _issued_age_pack_issued_ages_1_T_12) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_12_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_12_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21098,7 +21098,7 @@ module Reservation_Station(
   assign reservation_station_13_clock = clock;
   assign reservation_station_13_reset = reset;
   assign reservation_station_13_io_i_allocated_idx = write_idx2 == 6'hd; // @[reservation_station.scala 212:65]
-  assign reservation_station_13_io_i_issue_granted = (_issue1_func_code_T_13 | _issued_age_pack_issued_ages_1_T_13) & (
+  assign reservation_station_13_io_i_issue_granted = (_issue1_func_code_T_13 | _issued_age_pack_issued_ages_1_T_13) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_13_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_13_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21178,7 +21178,7 @@ module Reservation_Station(
   assign reservation_station_14_clock = clock;
   assign reservation_station_14_reset = reset;
   assign reservation_station_14_io_i_allocated_idx = write_idx2 == 6'he; // @[reservation_station.scala 212:65]
-  assign reservation_station_14_io_i_issue_granted = (_issue1_func_code_T_14 | _issued_age_pack_issued_ages_1_T_14) & (
+  assign reservation_station_14_io_i_issue_granted = (_issue1_func_code_T_14 | _issued_age_pack_issued_ages_1_T_14) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_14_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_14_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21258,7 +21258,7 @@ module Reservation_Station(
   assign reservation_station_15_clock = clock;
   assign reservation_station_15_reset = reset;
   assign reservation_station_15_io_i_allocated_idx = write_idx2 == 6'hf; // @[reservation_station.scala 212:65]
-  assign reservation_station_15_io_i_issue_granted = (_issue1_func_code_T_15 | _issued_age_pack_issued_ages_1_T_15) & (
+  assign reservation_station_15_io_i_issue_granted = (_issue1_func_code_T_15 | _issued_age_pack_issued_ages_1_T_15) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_15_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_15_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21338,7 +21338,7 @@ module Reservation_Station(
   assign reservation_station_16_clock = clock;
   assign reservation_station_16_reset = reset;
   assign reservation_station_16_io_i_allocated_idx = write_idx2 == 6'h10; // @[reservation_station.scala 212:65]
-  assign reservation_station_16_io_i_issue_granted = (_issue1_func_code_T_16 | _issued_age_pack_issued_ages_1_T_16) & (
+  assign reservation_station_16_io_i_issue_granted = (_issue1_func_code_T_16 | _issued_age_pack_issued_ages_1_T_16) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_16_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_16_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21418,7 +21418,7 @@ module Reservation_Station(
   assign reservation_station_17_clock = clock;
   assign reservation_station_17_reset = reset;
   assign reservation_station_17_io_i_allocated_idx = write_idx2 == 6'h11; // @[reservation_station.scala 212:65]
-  assign reservation_station_17_io_i_issue_granted = (_issue1_func_code_T_17 | _issued_age_pack_issued_ages_1_T_17) & (
+  assign reservation_station_17_io_i_issue_granted = (_issue1_func_code_T_17 | _issued_age_pack_issued_ages_1_T_17) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_17_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_17_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21498,7 +21498,7 @@ module Reservation_Station(
   assign reservation_station_18_clock = clock;
   assign reservation_station_18_reset = reset;
   assign reservation_station_18_io_i_allocated_idx = write_idx2 == 6'h12; // @[reservation_station.scala 212:65]
-  assign reservation_station_18_io_i_issue_granted = (_issue1_func_code_T_18 | _issued_age_pack_issued_ages_1_T_18) & (
+  assign reservation_station_18_io_i_issue_granted = (_issue1_func_code_T_18 | _issued_age_pack_issued_ages_1_T_18) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_18_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_18_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21578,7 +21578,7 @@ module Reservation_Station(
   assign reservation_station_19_clock = clock;
   assign reservation_station_19_reset = reset;
   assign reservation_station_19_io_i_allocated_idx = write_idx2 == 6'h13; // @[reservation_station.scala 212:65]
-  assign reservation_station_19_io_i_issue_granted = (_issue1_func_code_T_19 | _issued_age_pack_issued_ages_1_T_19) & (
+  assign reservation_station_19_io_i_issue_granted = (_issue1_func_code_T_19 | _issued_age_pack_issued_ages_1_T_19) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_19_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_19_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21658,7 +21658,7 @@ module Reservation_Station(
   assign reservation_station_20_clock = clock;
   assign reservation_station_20_reset = reset;
   assign reservation_station_20_io_i_allocated_idx = write_idx2 == 6'h14; // @[reservation_station.scala 212:65]
-  assign reservation_station_20_io_i_issue_granted = (_issue1_func_code_T_20 | _issued_age_pack_issued_ages_1_T_20) & (
+  assign reservation_station_20_io_i_issue_granted = (_issue1_func_code_T_20 | _issued_age_pack_issued_ages_1_T_20) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_20_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_20_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21738,7 +21738,7 @@ module Reservation_Station(
   assign reservation_station_21_clock = clock;
   assign reservation_station_21_reset = reset;
   assign reservation_station_21_io_i_allocated_idx = write_idx2 == 6'h15; // @[reservation_station.scala 212:65]
-  assign reservation_station_21_io_i_issue_granted = (_issue1_func_code_T_21 | _issued_age_pack_issued_ages_1_T_21) & (
+  assign reservation_station_21_io_i_issue_granted = (_issue1_func_code_T_21 | _issued_age_pack_issued_ages_1_T_21) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_21_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_21_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21818,7 +21818,7 @@ module Reservation_Station(
   assign reservation_station_22_clock = clock;
   assign reservation_station_22_reset = reset;
   assign reservation_station_22_io_i_allocated_idx = write_idx2 == 6'h16; // @[reservation_station.scala 212:65]
-  assign reservation_station_22_io_i_issue_granted = (_issue1_func_code_T_22 | _issued_age_pack_issued_ages_1_T_22) & (
+  assign reservation_station_22_io_i_issue_granted = (_issue1_func_code_T_22 | _issued_age_pack_issued_ages_1_T_22) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_22_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_22_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21898,7 +21898,7 @@ module Reservation_Station(
   assign reservation_station_23_clock = clock;
   assign reservation_station_23_reset = reset;
   assign reservation_station_23_io_i_allocated_idx = write_idx2 == 6'h17; // @[reservation_station.scala 212:65]
-  assign reservation_station_23_io_i_issue_granted = (_issue1_func_code_T_23 | _issued_age_pack_issued_ages_1_T_23) & (
+  assign reservation_station_23_io_i_issue_granted = (_issue1_func_code_T_23 | _issued_age_pack_issued_ages_1_T_23) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_23_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_23_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -21978,7 +21978,7 @@ module Reservation_Station(
   assign reservation_station_24_clock = clock;
   assign reservation_station_24_reset = reset;
   assign reservation_station_24_io_i_allocated_idx = write_idx2 == 6'h18; // @[reservation_station.scala 212:65]
-  assign reservation_station_24_io_i_issue_granted = (_issue1_func_code_T_24 | _issued_age_pack_issued_ages_1_T_24) & (
+  assign reservation_station_24_io_i_issue_granted = (_issue1_func_code_T_24 | _issued_age_pack_issued_ages_1_T_24) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_24_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_24_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22058,7 +22058,7 @@ module Reservation_Station(
   assign reservation_station_25_clock = clock;
   assign reservation_station_25_reset = reset;
   assign reservation_station_25_io_i_allocated_idx = write_idx2 == 6'h19; // @[reservation_station.scala 212:65]
-  assign reservation_station_25_io_i_issue_granted = (_issue1_func_code_T_25 | _issued_age_pack_issued_ages_1_T_25) & (
+  assign reservation_station_25_io_i_issue_granted = (_issue1_func_code_T_25 | _issued_age_pack_issued_ages_1_T_25) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_25_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_25_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22138,7 +22138,7 @@ module Reservation_Station(
   assign reservation_station_26_clock = clock;
   assign reservation_station_26_reset = reset;
   assign reservation_station_26_io_i_allocated_idx = write_idx2 == 6'h1a; // @[reservation_station.scala 212:65]
-  assign reservation_station_26_io_i_issue_granted = (_issue1_func_code_T_26 | _issued_age_pack_issued_ages_1_T_26) & (
+  assign reservation_station_26_io_i_issue_granted = (_issue1_func_code_T_26 | _issued_age_pack_issued_ages_1_T_26) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_26_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_26_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22218,7 +22218,7 @@ module Reservation_Station(
   assign reservation_station_27_clock = clock;
   assign reservation_station_27_reset = reset;
   assign reservation_station_27_io_i_allocated_idx = write_idx2 == 6'h1b; // @[reservation_station.scala 212:65]
-  assign reservation_station_27_io_i_issue_granted = (_issue1_func_code_T_27 | _issued_age_pack_issued_ages_1_T_27) & (
+  assign reservation_station_27_io_i_issue_granted = (_issue1_func_code_T_27 | _issued_age_pack_issued_ages_1_T_27) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_27_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_27_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22298,7 +22298,7 @@ module Reservation_Station(
   assign reservation_station_28_clock = clock;
   assign reservation_station_28_reset = reset;
   assign reservation_station_28_io_i_allocated_idx = write_idx2 == 6'h1c; // @[reservation_station.scala 212:65]
-  assign reservation_station_28_io_i_issue_granted = (_issue1_func_code_T_28 | _issued_age_pack_issued_ages_1_T_28) & (
+  assign reservation_station_28_io_i_issue_granted = (_issue1_func_code_T_28 | _issued_age_pack_issued_ages_1_T_28) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_28_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_28_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22378,7 +22378,7 @@ module Reservation_Station(
   assign reservation_station_29_clock = clock;
   assign reservation_station_29_reset = reset;
   assign reservation_station_29_io_i_allocated_idx = write_idx2 == 6'h1d; // @[reservation_station.scala 212:65]
-  assign reservation_station_29_io_i_issue_granted = (_issue1_func_code_T_29 | _issued_age_pack_issued_ages_1_T_29) & (
+  assign reservation_station_29_io_i_issue_granted = (_issue1_func_code_T_29 | _issued_age_pack_issued_ages_1_T_29) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_29_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_29_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22458,7 +22458,7 @@ module Reservation_Station(
   assign reservation_station_30_clock = clock;
   assign reservation_station_30_reset = reset;
   assign reservation_station_30_io_i_allocated_idx = write_idx2 == 6'h1e; // @[reservation_station.scala 212:65]
-  assign reservation_station_30_io_i_issue_granted = (_issue1_func_code_T_30 | _issued_age_pack_issued_ages_1_T_30) & (
+  assign reservation_station_30_io_i_issue_granted = (_issue1_func_code_T_30 | _issued_age_pack_issued_ages_1_T_30) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_30_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_30_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22538,7 +22538,7 @@ module Reservation_Station(
   assign reservation_station_31_clock = clock;
   assign reservation_station_31_reset = reset;
   assign reservation_station_31_io_i_allocated_idx = write_idx2 == 6'h1f; // @[reservation_station.scala 212:65]
-  assign reservation_station_31_io_i_issue_granted = (_issue1_func_code_T_31 | _issued_age_pack_issued_ages_1_T_31) & (
+  assign reservation_station_31_io_i_issue_granted = (_issue1_func_code_T_31 | _issued_age_pack_issued_ages_1_T_31) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_31_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_31_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22618,7 +22618,7 @@ module Reservation_Station(
   assign reservation_station_32_clock = clock;
   assign reservation_station_32_reset = reset;
   assign reservation_station_32_io_i_allocated_idx = write_idx2 == 6'h20; // @[reservation_station.scala 212:65]
-  assign reservation_station_32_io_i_issue_granted = (_issue1_func_code_T_32 | _issued_age_pack_issued_ages_1_T_32) & (
+  assign reservation_station_32_io_i_issue_granted = (_issue1_func_code_T_32 | _issued_age_pack_issued_ages_1_T_32) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_32_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_32_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22698,7 +22698,7 @@ module Reservation_Station(
   assign reservation_station_33_clock = clock;
   assign reservation_station_33_reset = reset;
   assign reservation_station_33_io_i_allocated_idx = write_idx2 == 6'h21; // @[reservation_station.scala 212:65]
-  assign reservation_station_33_io_i_issue_granted = (_issue1_func_code_T_33 | _issued_age_pack_issued_ages_1_T_33) & (
+  assign reservation_station_33_io_i_issue_granted = (_issue1_func_code_T_33 | _issued_age_pack_issued_ages_1_T_33) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_33_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_33_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22778,7 +22778,7 @@ module Reservation_Station(
   assign reservation_station_34_clock = clock;
   assign reservation_station_34_reset = reset;
   assign reservation_station_34_io_i_allocated_idx = write_idx2 == 6'h22; // @[reservation_station.scala 212:65]
-  assign reservation_station_34_io_i_issue_granted = (_issue1_func_code_T_34 | _issued_age_pack_issued_ages_1_T_34) & (
+  assign reservation_station_34_io_i_issue_granted = (_issue1_func_code_T_34 | _issued_age_pack_issued_ages_1_T_34) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_34_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_34_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22858,7 +22858,7 @@ module Reservation_Station(
   assign reservation_station_35_clock = clock;
   assign reservation_station_35_reset = reset;
   assign reservation_station_35_io_i_allocated_idx = write_idx2 == 6'h23; // @[reservation_station.scala 212:65]
-  assign reservation_station_35_io_i_issue_granted = (_issue1_func_code_T_35 | _issued_age_pack_issued_ages_1_T_35) & (
+  assign reservation_station_35_io_i_issue_granted = (_issue1_func_code_T_35 | _issued_age_pack_issued_ages_1_T_35) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_35_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_35_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -22938,7 +22938,7 @@ module Reservation_Station(
   assign reservation_station_36_clock = clock;
   assign reservation_station_36_reset = reset;
   assign reservation_station_36_io_i_allocated_idx = write_idx2 == 6'h24; // @[reservation_station.scala 212:65]
-  assign reservation_station_36_io_i_issue_granted = (_issue1_func_code_T_36 | _issued_age_pack_issued_ages_1_T_36) & (
+  assign reservation_station_36_io_i_issue_granted = (_issue1_func_code_T_36 | _issued_age_pack_issued_ages_1_T_36) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_36_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_36_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23018,7 +23018,7 @@ module Reservation_Station(
   assign reservation_station_37_clock = clock;
   assign reservation_station_37_reset = reset;
   assign reservation_station_37_io_i_allocated_idx = write_idx2 == 6'h25; // @[reservation_station.scala 212:65]
-  assign reservation_station_37_io_i_issue_granted = (_issue1_func_code_T_37 | _issued_age_pack_issued_ages_1_T_37) & (
+  assign reservation_station_37_io_i_issue_granted = (_issue1_func_code_T_37 | _issued_age_pack_issued_ages_1_T_37) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_37_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_37_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23098,7 +23098,7 @@ module Reservation_Station(
   assign reservation_station_38_clock = clock;
   assign reservation_station_38_reset = reset;
   assign reservation_station_38_io_i_allocated_idx = write_idx2 == 6'h26; // @[reservation_station.scala 212:65]
-  assign reservation_station_38_io_i_issue_granted = (_issue1_func_code_T_38 | _issued_age_pack_issued_ages_1_T_38) & (
+  assign reservation_station_38_io_i_issue_granted = (_issue1_func_code_T_38 | _issued_age_pack_issued_ages_1_T_38) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_38_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_38_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23178,7 +23178,7 @@ module Reservation_Station(
   assign reservation_station_39_clock = clock;
   assign reservation_station_39_reset = reset;
   assign reservation_station_39_io_i_allocated_idx = write_idx2 == 6'h27; // @[reservation_station.scala 212:65]
-  assign reservation_station_39_io_i_issue_granted = (_issue1_func_code_T_39 | _issued_age_pack_issued_ages_1_T_39) & (
+  assign reservation_station_39_io_i_issue_granted = (_issue1_func_code_T_39 | _issued_age_pack_issued_ages_1_T_39) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_39_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_39_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23258,7 +23258,7 @@ module Reservation_Station(
   assign reservation_station_40_clock = clock;
   assign reservation_station_40_reset = reset;
   assign reservation_station_40_io_i_allocated_idx = write_idx2 == 6'h28; // @[reservation_station.scala 212:65]
-  assign reservation_station_40_io_i_issue_granted = (_issue1_func_code_T_40 | _issued_age_pack_issued_ages_1_T_40) & (
+  assign reservation_station_40_io_i_issue_granted = (_issue1_func_code_T_40 | _issued_age_pack_issued_ages_1_T_40) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_40_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_40_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23338,7 +23338,7 @@ module Reservation_Station(
   assign reservation_station_41_clock = clock;
   assign reservation_station_41_reset = reset;
   assign reservation_station_41_io_i_allocated_idx = write_idx2 == 6'h29; // @[reservation_station.scala 212:65]
-  assign reservation_station_41_io_i_issue_granted = (_issue1_func_code_T_41 | _issued_age_pack_issued_ages_1_T_41) & (
+  assign reservation_station_41_io_i_issue_granted = (_issue1_func_code_T_41 | _issued_age_pack_issued_ages_1_T_41) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_41_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_41_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23418,7 +23418,7 @@ module Reservation_Station(
   assign reservation_station_42_clock = clock;
   assign reservation_station_42_reset = reset;
   assign reservation_station_42_io_i_allocated_idx = write_idx2 == 6'h2a; // @[reservation_station.scala 212:65]
-  assign reservation_station_42_io_i_issue_granted = (_issue1_func_code_T_42 | _issued_age_pack_issued_ages_1_T_42) & (
+  assign reservation_station_42_io_i_issue_granted = (_issue1_func_code_T_42 | _issued_age_pack_issued_ages_1_T_42) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_42_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_42_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23498,7 +23498,7 @@ module Reservation_Station(
   assign reservation_station_43_clock = clock;
   assign reservation_station_43_reset = reset;
   assign reservation_station_43_io_i_allocated_idx = write_idx2 == 6'h2b; // @[reservation_station.scala 212:65]
-  assign reservation_station_43_io_i_issue_granted = (_issue1_func_code_T_43 | _issued_age_pack_issued_ages_1_T_43) & (
+  assign reservation_station_43_io_i_issue_granted = (_issue1_func_code_T_43 | _issued_age_pack_issued_ages_1_T_43) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_43_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_43_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23578,7 +23578,7 @@ module Reservation_Station(
   assign reservation_station_44_clock = clock;
   assign reservation_station_44_reset = reset;
   assign reservation_station_44_io_i_allocated_idx = write_idx2 == 6'h2c; // @[reservation_station.scala 212:65]
-  assign reservation_station_44_io_i_issue_granted = (_issue1_func_code_T_44 | _issued_age_pack_issued_ages_1_T_44) & (
+  assign reservation_station_44_io_i_issue_granted = (_issue1_func_code_T_44 | _issued_age_pack_issued_ages_1_T_44) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_44_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_44_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23658,7 +23658,7 @@ module Reservation_Station(
   assign reservation_station_45_clock = clock;
   assign reservation_station_45_reset = reset;
   assign reservation_station_45_io_i_allocated_idx = write_idx2 == 6'h2d; // @[reservation_station.scala 212:65]
-  assign reservation_station_45_io_i_issue_granted = (_issue1_func_code_T_45 | _issued_age_pack_issued_ages_1_T_45) & (
+  assign reservation_station_45_io_i_issue_granted = (_issue1_func_code_T_45 | _issued_age_pack_issued_ages_1_T_45) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_45_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_45_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23738,7 +23738,7 @@ module Reservation_Station(
   assign reservation_station_46_clock = clock;
   assign reservation_station_46_reset = reset;
   assign reservation_station_46_io_i_allocated_idx = write_idx2 == 6'h2e; // @[reservation_station.scala 212:65]
-  assign reservation_station_46_io_i_issue_granted = (_issue1_func_code_T_46 | _issued_age_pack_issued_ages_1_T_46) & (
+  assign reservation_station_46_io_i_issue_granted = (_issue1_func_code_T_46 | _issued_age_pack_issued_ages_1_T_46) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_46_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_46_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23818,7 +23818,7 @@ module Reservation_Station(
   assign reservation_station_47_clock = clock;
   assign reservation_station_47_reset = reset;
   assign reservation_station_47_io_i_allocated_idx = write_idx2 == 6'h2f; // @[reservation_station.scala 212:65]
-  assign reservation_station_47_io_i_issue_granted = (_issue1_func_code_T_47 | _issued_age_pack_issued_ages_1_T_47) & (
+  assign reservation_station_47_io_i_issue_granted = (_issue1_func_code_T_47 | _issued_age_pack_issued_ages_1_T_47) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_47_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_47_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23898,7 +23898,7 @@ module Reservation_Station(
   assign reservation_station_48_clock = clock;
   assign reservation_station_48_reset = reset;
   assign reservation_station_48_io_i_allocated_idx = write_idx2 == 6'h30; // @[reservation_station.scala 212:65]
-  assign reservation_station_48_io_i_issue_granted = (_issue1_func_code_T_48 | _issued_age_pack_issued_ages_1_T_48) & (
+  assign reservation_station_48_io_i_issue_granted = (_issue1_func_code_T_48 | _issued_age_pack_issued_ages_1_T_48) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_48_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_48_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -23978,7 +23978,7 @@ module Reservation_Station(
   assign reservation_station_49_clock = clock;
   assign reservation_station_49_reset = reset;
   assign reservation_station_49_io_i_allocated_idx = write_idx2 == 6'h31; // @[reservation_station.scala 212:65]
-  assign reservation_station_49_io_i_issue_granted = (_issue1_func_code_T_49 | _issued_age_pack_issued_ages_1_T_49) & (
+  assign reservation_station_49_io_i_issue_granted = (_issue1_func_code_T_49 | _issued_age_pack_issued_ages_1_T_49) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_49_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_49_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24058,7 +24058,7 @@ module Reservation_Station(
   assign reservation_station_50_clock = clock;
   assign reservation_station_50_reset = reset;
   assign reservation_station_50_io_i_allocated_idx = write_idx2 == 6'h32; // @[reservation_station.scala 212:65]
-  assign reservation_station_50_io_i_issue_granted = (_issue1_func_code_T_50 | _issued_age_pack_issued_ages_1_T_50) & (
+  assign reservation_station_50_io_i_issue_granted = (_issue1_func_code_T_50 | _issued_age_pack_issued_ages_1_T_50) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_50_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_50_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24138,7 +24138,7 @@ module Reservation_Station(
   assign reservation_station_51_clock = clock;
   assign reservation_station_51_reset = reset;
   assign reservation_station_51_io_i_allocated_idx = write_idx2 == 6'h33; // @[reservation_station.scala 212:65]
-  assign reservation_station_51_io_i_issue_granted = (_issue1_func_code_T_51 | _issued_age_pack_issued_ages_1_T_51) & (
+  assign reservation_station_51_io_i_issue_granted = (_issue1_func_code_T_51 | _issued_age_pack_issued_ages_1_T_51) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_51_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_51_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24218,7 +24218,7 @@ module Reservation_Station(
   assign reservation_station_52_clock = clock;
   assign reservation_station_52_reset = reset;
   assign reservation_station_52_io_i_allocated_idx = write_idx2 == 6'h34; // @[reservation_station.scala 212:65]
-  assign reservation_station_52_io_i_issue_granted = (_issue1_func_code_T_52 | _issued_age_pack_issued_ages_1_T_52) & (
+  assign reservation_station_52_io_i_issue_granted = (_issue1_func_code_T_52 | _issued_age_pack_issued_ages_1_T_52) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_52_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_52_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24298,7 +24298,7 @@ module Reservation_Station(
   assign reservation_station_53_clock = clock;
   assign reservation_station_53_reset = reset;
   assign reservation_station_53_io_i_allocated_idx = write_idx2 == 6'h35; // @[reservation_station.scala 212:65]
-  assign reservation_station_53_io_i_issue_granted = (_issue1_func_code_T_53 | _issued_age_pack_issued_ages_1_T_53) & (
+  assign reservation_station_53_io_i_issue_granted = (_issue1_func_code_T_53 | _issued_age_pack_issued_ages_1_T_53) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_53_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_53_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24378,7 +24378,7 @@ module Reservation_Station(
   assign reservation_station_54_clock = clock;
   assign reservation_station_54_reset = reset;
   assign reservation_station_54_io_i_allocated_idx = write_idx2 == 6'h36; // @[reservation_station.scala 212:65]
-  assign reservation_station_54_io_i_issue_granted = (_issue1_func_code_T_54 | _issued_age_pack_issued_ages_1_T_54) & (
+  assign reservation_station_54_io_i_issue_granted = (_issue1_func_code_T_54 | _issued_age_pack_issued_ages_1_T_54) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_54_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_54_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24458,7 +24458,7 @@ module Reservation_Station(
   assign reservation_station_55_clock = clock;
   assign reservation_station_55_reset = reset;
   assign reservation_station_55_io_i_allocated_idx = write_idx2 == 6'h37; // @[reservation_station.scala 212:65]
-  assign reservation_station_55_io_i_issue_granted = (_issue1_func_code_T_55 | _issued_age_pack_issued_ages_1_T_55) & (
+  assign reservation_station_55_io_i_issue_granted = (_issue1_func_code_T_55 | _issued_age_pack_issued_ages_1_T_55) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_55_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_55_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24538,7 +24538,7 @@ module Reservation_Station(
   assign reservation_station_56_clock = clock;
   assign reservation_station_56_reset = reset;
   assign reservation_station_56_io_i_allocated_idx = write_idx2 == 6'h38; // @[reservation_station.scala 212:65]
-  assign reservation_station_56_io_i_issue_granted = (_issue1_func_code_T_56 | _issued_age_pack_issued_ages_1_T_56) & (
+  assign reservation_station_56_io_i_issue_granted = (_issue1_func_code_T_56 | _issued_age_pack_issued_ages_1_T_56) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_56_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_56_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24618,7 +24618,7 @@ module Reservation_Station(
   assign reservation_station_57_clock = clock;
   assign reservation_station_57_reset = reset;
   assign reservation_station_57_io_i_allocated_idx = write_idx2 == 6'h39; // @[reservation_station.scala 212:65]
-  assign reservation_station_57_io_i_issue_granted = (_issue1_func_code_T_57 | _issued_age_pack_issued_ages_1_T_57) & (
+  assign reservation_station_57_io_i_issue_granted = (_issue1_func_code_T_57 | _issued_age_pack_issued_ages_1_T_57) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_57_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_57_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24698,7 +24698,7 @@ module Reservation_Station(
   assign reservation_station_58_clock = clock;
   assign reservation_station_58_reset = reset;
   assign reservation_station_58_io_i_allocated_idx = write_idx2 == 6'h3a; // @[reservation_station.scala 212:65]
-  assign reservation_station_58_io_i_issue_granted = (_issue1_func_code_T_58 | _issued_age_pack_issued_ages_1_T_58) & (
+  assign reservation_station_58_io_i_issue_granted = (_issue1_func_code_T_58 | _issued_age_pack_issued_ages_1_T_58) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_58_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_58_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24778,7 +24778,7 @@ module Reservation_Station(
   assign reservation_station_59_clock = clock;
   assign reservation_station_59_reset = reset;
   assign reservation_station_59_io_i_allocated_idx = write_idx2 == 6'h3b; // @[reservation_station.scala 212:65]
-  assign reservation_station_59_io_i_issue_granted = (_issue1_func_code_T_59 | _issued_age_pack_issued_ages_1_T_59) & (
+  assign reservation_station_59_io_i_issue_granted = (_issue1_func_code_T_59 | _issued_age_pack_issued_ages_1_T_59) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_59_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_59_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24858,7 +24858,7 @@ module Reservation_Station(
   assign reservation_station_60_clock = clock;
   assign reservation_station_60_reset = reset;
   assign reservation_station_60_io_i_allocated_idx = write_idx2 == 6'h3c; // @[reservation_station.scala 212:65]
-  assign reservation_station_60_io_i_issue_granted = (_issue1_func_code_T_60 | _issued_age_pack_issued_ages_1_T_60) & (
+  assign reservation_station_60_io_i_issue_granted = (_issue1_func_code_T_60 | _issued_age_pack_issued_ages_1_T_60) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_60_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_60_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -24938,7 +24938,7 @@ module Reservation_Station(
   assign reservation_station_61_clock = clock;
   assign reservation_station_61_reset = reset;
   assign reservation_station_61_io_i_allocated_idx = write_idx2 == 6'h3d; // @[reservation_station.scala 212:65]
-  assign reservation_station_61_io_i_issue_granted = (_issue1_func_code_T_61 | _issued_age_pack_issued_ages_1_T_61) & (
+  assign reservation_station_61_io_i_issue_granted = (_issue1_func_code_T_61 | _issued_age_pack_issued_ages_1_T_61) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_61_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_61_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -25018,7 +25018,7 @@ module Reservation_Station(
   assign reservation_station_62_clock = clock;
   assign reservation_station_62_reset = reset;
   assign reservation_station_62_io_i_allocated_idx = write_idx2 == 6'h3e; // @[reservation_station.scala 212:65]
-  assign reservation_station_62_io_i_issue_granted = (_issue1_func_code_T_62 | _issued_age_pack_issued_ages_1_T_62) & (
+  assign reservation_station_62_io_i_issue_granted = (_issue1_func_code_T_62 | _issued_age_pack_issued_ages_1_T_62) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_62_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_62_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]
@@ -25098,7 +25098,7 @@ module Reservation_Station(
   assign reservation_station_63_clock = clock;
   assign reservation_station_63_reset = reset;
   assign reservation_station_63_io_i_allocated_idx = write_idx2 == 6'h3f; // @[reservation_station.scala 212:65]
-  assign reservation_station_63_io_i_issue_granted = (_issue1_func_code_T_63 | _issued_age_pack_issued_ages_1_T_63) & (
+  assign reservation_station_63_io_i_issue_granted = (_issue1_func_code_T_63 | _issued_age_pack_issued_ages_1_T_63) & ~(
     io_i_exception | io_i_rollback_valid); // @[reservation_station.scala 207:94]
   assign reservation_station_63_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[reservation_station.scala 208:54]
   assign reservation_station_63_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[reservation_station.scala 208:54]

@@ -50,30 +50,38 @@ module IF1_IF2(
     end
     if (reset) begin // @[if1_if2.scala 27:38]
       branch_predict_pack_valid <= 1'h0; // @[if1_if2.scala 27:38]
-    end else if (io_i_flush) begin // @[if1_if2.scala 29:37]
+    end else if (io_i_flush) begin // @[if1_if2.scala 28:31]
       branch_predict_pack_valid <= 1'h0;
-    end else if (!(io_i_stall)) begin // @[if1_if2.scala 29:62]
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 28:88]
       branch_predict_pack_valid <= io_i_branch_predict_pack_valid;
     end
     if (reset) begin // @[if1_if2.scala 27:38]
       branch_predict_pack_target <= 64'h0; // @[if1_if2.scala 27:38]
-    end else begin
-      branch_predict_pack_target <= io_i_branch_predict_pack_target; // @[if1_if2.scala 28:25]
+    end else if (io_i_flush) begin // @[if1_if2.scala 28:31]
+      branch_predict_pack_target <= 64'h0;
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 28:88]
+      branch_predict_pack_target <= io_i_branch_predict_pack_target;
     end
     if (reset) begin // @[if1_if2.scala 27:38]
       branch_predict_pack_branch_type <= 4'h0; // @[if1_if2.scala 27:38]
-    end else begin
-      branch_predict_pack_branch_type <= io_i_branch_predict_pack_branch_type; // @[if1_if2.scala 28:25]
+    end else if (io_i_flush) begin // @[if1_if2.scala 28:31]
+      branch_predict_pack_branch_type <= 4'h0;
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 28:88]
+      branch_predict_pack_branch_type <= io_i_branch_predict_pack_branch_type;
     end
     if (reset) begin // @[if1_if2.scala 27:38]
       branch_predict_pack_select <= 1'h0; // @[if1_if2.scala 27:38]
-    end else begin
-      branch_predict_pack_select <= io_i_branch_predict_pack_select; // @[if1_if2.scala 28:25]
+    end else if (io_i_flush) begin // @[if1_if2.scala 28:31]
+      branch_predict_pack_select <= 1'h0;
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 28:88]
+      branch_predict_pack_select <= io_i_branch_predict_pack_select;
     end
     if (reset) begin // @[if1_if2.scala 27:38]
       branch_predict_pack_taken <= 1'h0; // @[if1_if2.scala 27:38]
-    end else begin
-      branch_predict_pack_taken <= io_i_branch_predict_pack_taken; // @[if1_if2.scala 28:25]
+    end else if (io_i_flush) begin // @[if1_if2.scala 28:31]
+      branch_predict_pack_taken <= 1'h0;
+    end else if (!(io_i_stall)) begin // @[if1_if2.scala 28:88]
+      branch_predict_pack_taken <= io_i_branch_predict_pack_taken;
     end
     if (reset) begin // @[if1_if2.scala 32:30]
       fetch_valid <= 1'h0; // @[if1_if2.scala 32:30]

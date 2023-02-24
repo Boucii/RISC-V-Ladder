@@ -23,6 +23,7 @@ class Reservation_Station extends Module with consts{
 
      val o_full = Output(Bool())//
      val i_exception = Input(Bool())
+     val i_rollback_valid = Input(Bool())
      val i_available_funcs = Input(Vec(7, UInt(2.W)))
 
      //used to make sure issue loads and stores only when they are the first of ROB,
@@ -203,7 +204,7 @@ class Reservation_Station extends Module with consts{
      io.o_issue_packs(1).valid := issue1_valid
 
      for (i <- 0 until 64){//connect input ports
-     reservation_station(i).io.i_issue_granted := Mux((i.U===issue1_idx || i.U===issue2_idx),true.B,false.B)
+     reservation_station(i).io.i_issue_granted := Mux((i.U===issue1_idx || i.U===issue2_idx) && (io.i_exception || io.i_rollback_valid),true.B,false.B)
      reservation_station(i).io.i_branch_resolve_pack := io.i_branch_resolve_pack
      reservation_station(i).io.i_exception := io.i_exception
      reservation_station(i).io.i_wakeup_port := io.i_wakeup_port

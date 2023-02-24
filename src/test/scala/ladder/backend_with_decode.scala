@@ -79,6 +79,7 @@ class Back_End_With_Decode extends Module with consts{
     reservation_station.io.i_available_funcs := execute.io.o_available_funcs//???
     reservation_station.io.i_ex_res_packs := execute.io.o_ex_res_packs
     reservation_station.io.i_ROB_first_entry := rob.io.o_rob_head
+    reservation_station.io.i_rollback_valid := rob.io.o_rollback_packs(0).valid || rob.io.o_rollback_packs(1).valid
 
     //connect execute input //??regfileread
     //this increses the critical path, i suppose

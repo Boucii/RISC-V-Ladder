@@ -123,6 +123,13 @@ void init_difftest() {
 void diff_check_regs(){
 	diff_pass=1;
 	//cout<<hex<< pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
+	  if(*last_ref_pc!=*pc){
+	      //cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[32]<<dec<<RESET<<endl;
+	      cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
+	      diff_pass=0;
+	      return;
+	  }
+	
 	for(int i=0;i<32;i++){
 	  if(ref_gpr[i]!=cpu_gpr[i]){
 	      cout<<hex<<"\nError:Difftest failed at pc=0x"<< *pc<<"	"<<dec<<"in reg["<<i<<"]\n";
@@ -131,14 +138,6 @@ void diff_check_regs(){
 	      return;
 	  }
 	}
-
-	  if(*last_ref_pc!=*pc){
-	      //cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[32]<<dec<<RESET<<endl;
-	      cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
-	      diff_pass=0;
-	      return;
-	  }
-
 }
 
 void difftest_exec_once(){

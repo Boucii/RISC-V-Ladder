@@ -36,7 +36,8 @@ class PC_Gen extends Module
         npc := io.i_branch_presolve_pack.pc + 4.U
     }.elsewhen(io.i_stall){
         npc := pc
-    }.elsewhen(io.i_branch_predict_pack.valid && io.i_branch_predict_pack.taken){
+    //when made prediction about the first of a fetch pack, but pc is the second one, ignore prediction
+    }.elsewhen(io.i_branch_predict_pack.valid && io.i_branch_predict_pack.taken && !(io.i_branch_predict_pack.select === 0.U && pc(2) === 1.U)){
         npc := io.i_branch_predict_pack.target
     }.otherwise{
         npc := pc + Mux(pc(2),4.U(64.W),8.U(64.W))

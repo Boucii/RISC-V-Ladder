@@ -899,209 +899,210 @@ module Decoder(
     inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,inst_valid_0_andMatrixInput_7,
     io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_13 = &_io_o_decode_packs_0_alu_sel_T_12; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_7 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2,
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_8 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2,
     inst_valid_0_andMatrixInput_9,inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,
     inst_valid_0_andMatrixInput_12,inst_valid_0_andMatrixInput_13,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_14 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_16 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
-    io_o_decode_packs_0_alu_sel_lo_7}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_15 = &_io_o_decode_packs_0_alu_sel_T_14; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_16 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    io_o_decode_packs_0_alu_sel_lo_8}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_17 = &_io_o_decode_packs_0_alu_sel_T_16; // @[pla.scala 98:74]
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_18 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_7,
     io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_17 = &_io_o_decode_packs_0_alu_sel_T_16; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_11 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2,
+  wire  _io_o_decode_packs_0_alu_sel_T_19 = &_io_o_decode_packs_0_alu_sel_T_18; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_12 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,inst_valid_0_andMatrixInput_11_1,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_22 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_24 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    io_o_decode_packs_0_alu_sel_lo_11}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_23 = &_io_o_decode_packs_0_alu_sel_T_22; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_0_alu_sel_T_28 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    io_o_decode_packs_0_alu_sel_lo_12}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_25 = &_io_o_decode_packs_0_alu_sel_T_24; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_0_alu_sel_T_30 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_3,inst_valid_0_andMatrixInput_4_5,
     inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,inst_valid_0_andMatrixInput_7,inst_valid_0_lo_lo_6}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_29 = &_io_o_decode_packs_0_alu_sel_T_28; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_30 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
-    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
-    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    io_o_decode_packs_0_inst_type_lo_11}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_31 = &_io_o_decode_packs_0_alu_sel_T_30; // @[pla.scala 98:74]
   wire [15:0] _io_o_decode_packs_0_alu_sel_T_32 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
+    io_o_decode_packs_0_inst_type_lo_11}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_33 = &_io_o_decode_packs_0_alu_sel_T_32; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_34 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_34 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
+    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
+    io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_35 = &_io_o_decode_packs_0_alu_sel_T_34; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_36 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
     inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_35 = &_io_o_decode_packs_0_alu_sel_T_34; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_0_alu_sel_T_36 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
-    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
-    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5_8,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_37 = &_io_o_decode_packs_0_alu_sel_T_36; // @[pla.scala 98:74]
   wire [9:0] _io_o_decode_packs_0_alu_sel_T_38 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
+    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5_8,inst_valid_0_andMatrixInput_6_10,
+    inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_6_2}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_39 = &_io_o_decode_packs_0_alu_sel_T_38; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_0_alu_sel_T_40 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
     inst_valid_0_andMatrixInput_7_10,inst_valid_0_andMatrixInput_6_2}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_39 = &_io_o_decode_packs_0_alu_sel_T_38; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_0_alu_sel_T_40 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_41 = &_io_o_decode_packs_0_alu_sel_T_40; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_0_alu_sel_T_42 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_7_10,inst_valid_0_lo_lo_6}
     ; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_41 = &_io_o_decode_packs_0_alu_sel_T_40; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_21 = {inst_valid_0_andMatrixInput_7_10,inst_valid_0_andMatrixInput_9,
+  wire  _io_o_decode_packs_0_alu_sel_T_43 = &_io_o_decode_packs_0_alu_sel_T_42; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_22 = {inst_valid_0_andMatrixInput_7_10,inst_valid_0_andMatrixInput_9,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,inst_valid_0_andMatrixInput_11_1,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_42 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_44 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
-    io_o_decode_packs_0_alu_sel_lo_21}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_43 = &_io_o_decode_packs_0_alu_sel_T_42; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_44 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    io_o_decode_packs_0_alu_sel_lo_22}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_45 = &_io_o_decode_packs_0_alu_sel_T_44; // @[pla.scala 98:74]
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_46 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_7_10,
     io_o_decode_packs_0_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_45 = &_io_o_decode_packs_0_alu_sel_T_44; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_0_alu_sel_T_48 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_47 = &_io_o_decode_packs_0_alu_sel_T_46; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_0_alu_sel_T_50 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5_8,inst_valid_0_andMatrixInput_6,
     inst_valid_0_andMatrixInput_7_10,inst_valid_0_andMatrixInput_6_2}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_49 = &_io_o_decode_packs_0_alu_sel_T_48; // @[pla.scala 98:74]
-  wire [8:0] _io_o_decode_packs_0_alu_sel_T_50 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
-    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
-    inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7_10}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_51 = &_io_o_decode_packs_0_alu_sel_T_50; // @[pla.scala 98:74]
   wire [8:0] _io_o_decode_packs_0_alu_sel_T_52 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
+    inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
+    inst_valid_0_andMatrixInput_7_10}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_53 = &_io_o_decode_packs_0_alu_sel_T_52; // @[pla.scala 98:74]
+  wire [8:0] _io_o_decode_packs_0_alu_sel_T_54 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
     inst_valid_0_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_53 = &_io_o_decode_packs_0_alu_sel_T_52; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_0_alu_sel_T_54 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_55 = &_io_o_decode_packs_0_alu_sel_T_54; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_0_alu_sel_T_56 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
     inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_55 = &_io_o_decode_packs_0_alu_sel_T_54; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_0_alu_sel_T_56 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_57 = &_io_o_decode_packs_0_alu_sel_T_56; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_0_alu_sel_T_58 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_7_12,inst_valid_0_lo_lo_6}
     ; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_57 = &_io_o_decode_packs_0_alu_sel_T_56; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_29 = {inst_valid_0_andMatrixInput_7_12,inst_valid_0_andMatrixInput_9,
+  wire  _io_o_decode_packs_0_alu_sel_T_59 = &_io_o_decode_packs_0_alu_sel_T_58; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_30 = {inst_valid_0_andMatrixInput_7_12,inst_valid_0_andMatrixInput_9,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,inst_valid_0_andMatrixInput_11_1,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_58 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_60 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
-    io_o_decode_packs_0_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_59 = &_io_o_decode_packs_0_alu_sel_T_58; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_64 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    io_o_decode_packs_0_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_61 = &_io_o_decode_packs_0_alu_sel_T_60; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_66 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_65 = &_io_o_decode_packs_0_alu_sel_T_64; // @[pla.scala 98:74]
-  wire [8:0] _io_o_decode_packs_0_alu_sel_T_68 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_67 = &_io_o_decode_packs_0_alu_sel_T_66; // @[pla.scala 98:74]
+  wire [8:0] _io_o_decode_packs_0_alu_sel_T_70 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_7_10,
     inst_valid_0_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_69 = &_io_o_decode_packs_0_alu_sel_T_68; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_70 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_71 = &_io_o_decode_packs_0_alu_sel_T_70; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_72 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
-    inst_valid_0_andMatrixInput_7_10,io_o_decode_packs_0_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_71 = &_io_o_decode_packs_0_alu_sel_T_70; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_0_alu_sel_T_72 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_7_10,io_o_decode_packs_0_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_73 = &_io_o_decode_packs_0_alu_sel_T_72; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_0_alu_sel_T_74 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
     inst_valid_0_andMatrixInput_7_10,inst_valid_0_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_73 = &_io_o_decode_packs_0_alu_sel_T_72; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_74 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire  _io_o_decode_packs_0_alu_sel_T_75 = &_io_o_decode_packs_0_alu_sel_T_74; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_76 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7_10,io_o_decode_packs_0_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_75 = &_io_o_decode_packs_0_alu_sel_T_74; // @[pla.scala 98:74]
+    inst_valid_0_andMatrixInput_7_10,io_o_decode_packs_0_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_77 = &_io_o_decode_packs_0_alu_sel_T_76; // @[pla.scala 98:74]
   wire  io_o_decode_packs_0_alu_sel_andMatrixInput_16_5 = inst_valid_0_plaInput[20]; // @[pla.scala 90:45]
-  wire [13:0] io_o_decode_packs_0_alu_sel_lo_38 = {inst_valid_0_andMatrixInput_18,inst_valid_0_andMatrixInput_19,
+  wire [13:0] io_o_decode_packs_0_alu_sel_lo_39 = {inst_valid_0_andMatrixInput_18,inst_valid_0_andMatrixInput_19,
     io_o_decode_packs_0_alu_sel_andMatrixInput_16_5,inst_valid_0_andMatrixInput_20,inst_valid_0_andMatrixInput_21,
     inst_valid_0_andMatrixInput_22,inst_valid_0_andMatrixInput_23,inst_valid_0_lo_lo_6}; // @[Cat.scala 33:92]
-  wire [27:0] _io_o_decode_packs_0_alu_sel_T_76 = {inst_valid_0_andMatrixInput_3_3,inst_valid_0_andMatrixInput_4_5,
+  wire [27:0] _io_o_decode_packs_0_alu_sel_T_78 = {inst_valid_0_andMatrixInput_3_3,inst_valid_0_andMatrixInput_4_5,
     inst_valid_0_andMatrixInput_5_8,inst_valid_0_andMatrixInput_7_6,inst_valid_0_andMatrixInput_8_5,
     inst_valid_0_andMatrixInput_9_3,inst_valid_0_andMatrixInput_10_3,io_o_decode_packs_0_func_code_hi_lo_23,
-    io_o_decode_packs_0_alu_sel_lo_38}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_77 = &_io_o_decode_packs_0_alu_sel_T_76; // @[pla.scala 98:74]
+    io_o_decode_packs_0_alu_sel_lo_39}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_79 = &_io_o_decode_packs_0_alu_sel_T_78; // @[pla.scala 98:74]
   wire  io_o_decode_packs_0_alu_sel_andMatrixInput_14_28 = inst_valid_0_plaInput[30]; // @[pla.scala 90:45]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_40 = {inst_valid_0_andMatrixInput_6_2,inst_valid_0_andMatrixInput_9,
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_41 = {inst_valid_0_andMatrixInput_6_2,inst_valid_0_andMatrixInput_9,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,io_o_decode_packs_0_alu_sel_andMatrixInput_14_28,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_80 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_82 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_3,inst_valid_0_andMatrixInput_4_5,
     inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,inst_valid_0_andMatrixInput_7,
-    io_o_decode_packs_0_alu_sel_lo_40}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_81 = &_io_o_decode_packs_0_alu_sel_T_80; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_82 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    io_o_decode_packs_0_alu_sel_lo_41}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_83 = &_io_o_decode_packs_0_alu_sel_T_82; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_84 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6,
-    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_40}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_83 = &_io_o_decode_packs_0_alu_sel_T_82; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_42 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_7_12,
+    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_41}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_85 = &_io_o_decode_packs_0_alu_sel_T_84; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_43 = {inst_valid_0_andMatrixInput_7,inst_valid_0_andMatrixInput_7_12,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,io_o_decode_packs_0_alu_sel_andMatrixInput_14_28,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_0_alu_sel_T_84 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_0_alu_sel_T_86 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    io_o_decode_packs_0_alu_sel_lo_42}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_85 = &_io_o_decode_packs_0_alu_sel_T_84; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_0_alu_sel_lo_43 = {inst_valid_0_andMatrixInput_7_12,inst_valid_0_andMatrixInput_9,
+    io_o_decode_packs_0_alu_sel_lo_43}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_87 = &_io_o_decode_packs_0_alu_sel_T_86; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_0_alu_sel_lo_44 = {inst_valid_0_andMatrixInput_7_12,inst_valid_0_andMatrixInput_9,
     inst_valid_0_andMatrixInput_10,inst_valid_0_andMatrixInput_11,inst_valid_0_andMatrixInput_12,
     inst_valid_0_andMatrixInput_13,io_o_decode_packs_0_alu_sel_andMatrixInput_14_28,inst_valid_0_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_86 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_88 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_43}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_87 = &_io_o_decode_packs_0_alu_sel_T_86; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_0_alu_sel_T_88 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
-    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
-    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_43}; // @[Cat.scala 33:92]
+    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_44}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_T_89 = &_io_o_decode_packs_0_alu_sel_T_88; // @[pla.scala 98:74]
   wire [16:0] _io_o_decode_packs_0_alu_sel_T_90 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
+    inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3,inst_valid_0_andMatrixInput_3_3,
+    inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
+    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_44}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_91 = &_io_o_decode_packs_0_alu_sel_T_90; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_0_alu_sel_T_92 = {inst_valid_0_andMatrixInput_0,inst_valid_0_andMatrixInput_1,
     inst_valid_0_andMatrixInput_2,inst_valid_0_andMatrixInput_3_9,inst_valid_0_andMatrixInput_3_3,
     inst_valid_0_andMatrixInput_4_5,inst_valid_0_andMatrixInput_5,inst_valid_0_andMatrixInput_6_10,
-    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_43}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_0_alu_sel_T_91 = &_io_o_decode_packs_0_alu_sel_T_90; // @[pla.scala 98:74]
-  wire [6:0] io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo = {_io_o_decode_packs_0_alu_sel_T_55,
-    _io_o_decode_packs_0_alu_sel_T_65,_io_o_decode_packs_0_alu_sel_T_71,_io_o_decode_packs_0_alu_sel_T_73,
-    _io_o_decode_packs_0_func_code_T_49,_io_o_decode_packs_0_alu_sel_T_85,_io_o_decode_packs_0_alu_sel_T_91}; // @[Cat.scala 33:92]
+    inst_valid_0_andMatrixInput_7,io_o_decode_packs_0_alu_sel_lo_44}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_0_alu_sel_T_93 = &_io_o_decode_packs_0_alu_sel_T_92; // @[pla.scala 98:74]
+  wire [6:0] io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo = {_io_o_decode_packs_0_alu_sel_T_57,
+    _io_o_decode_packs_0_alu_sel_T_67,_io_o_decode_packs_0_alu_sel_T_73,_io_o_decode_packs_0_alu_sel_T_75,
+    _io_o_decode_packs_0_func_code_T_49,_io_o_decode_packs_0_alu_sel_T_87,_io_o_decode_packs_0_alu_sel_T_93}; // @[Cat.scala 33:92]
   wire [13:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T = {_io_o_decode_packs_0_op2_sel_T_9,
-    _io_o_decode_packs_0_alu_sel_T_11,_io_o_decode_packs_0_alu_sel_T_23,_io_o_decode_packs_0_alu_sel_T_31,
-    _io_o_decode_packs_0_alu_sel_T_33,_io_o_decode_packs_0_alu_sel_T_39,_inst_valid_0_T_31,
+    _io_o_decode_packs_0_alu_sel_T_11,_io_o_decode_packs_0_alu_sel_T_25,_io_o_decode_packs_0_alu_sel_T_33,
+    _io_o_decode_packs_0_alu_sel_T_35,_io_o_decode_packs_0_alu_sel_T_41,_inst_valid_0_T_31,
     io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_1 = |_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T; // @[pla.scala 114:39]
-  wire [5:0] io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo_1 = {_inst_valid_0_T_35,_io_o_decode_packs_0_alu_sel_T_69,
-    _io_o_decode_packs_0_alu_sel_T_77,_io_o_decode_packs_0_alu_sel_T_83,_io_o_decode_packs_0_alu_sel_T_87,
-    _io_o_decode_packs_0_alu_sel_T_89}; // @[Cat.scala 33:92]
-  wire [12:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_2 = {_io_o_decode_packs_0_alu_sel_T_1,
-    _io_o_decode_packs_0_alu_sel_T_9,_io_o_decode_packs_0_alu_sel_T_35,_io_o_decode_packs_0_alu_sel_T_37,
-    _io_o_decode_packs_0_alu_sel_T_43,_io_o_decode_packs_0_alu_sel_T_45,_io_o_decode_packs_0_alu_sel_T_49,
+  wire [6:0] io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo_1 = {_io_o_decode_packs_0_alu_sel_T_51,_inst_valid_0_T_35,
+    _io_o_decode_packs_0_alu_sel_T_71,_io_o_decode_packs_0_alu_sel_T_79,_io_o_decode_packs_0_alu_sel_T_85,
+    _io_o_decode_packs_0_alu_sel_T_89,_io_o_decode_packs_0_alu_sel_T_91}; // @[Cat.scala 33:92]
+  wire [13:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_2 = {_io_o_decode_packs_0_alu_sel_T_1,
+    _io_o_decode_packs_0_alu_sel_T_9,_io_o_decode_packs_0_op2_sel_T_11,_io_o_decode_packs_0_alu_sel_T_37,
+    _io_o_decode_packs_0_alu_sel_T_39,_io_o_decode_packs_0_alu_sel_T_45,_io_o_decode_packs_0_alu_sel_T_47,
     io_o_decode_packs_0_alu_sel_orMatrixOutputs_lo_1}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_3 = |_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_2; // @[pla.scala 114:39]
-  wire [8:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_4 = {_io_o_decode_packs_0_alu_sel_T_7,
-    _io_o_decode_packs_0_func_code_T_23,_io_o_decode_packs_0_inst_type_T_23,_io_o_decode_packs_0_alu_sel_T_51,
-    _io_o_decode_packs_0_alu_sel_T_53,_io_o_decode_packs_0_alu_sel_T_59,_inst_valid_0_T_37,_inst_valid_0_T_39,
-    _io_o_decode_packs_0_func_code_T_49}; // @[Cat.scala 33:92]
+  wire [9:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_4 = {_io_o_decode_packs_0_alu_sel_T_7,
+    _io_o_decode_packs_0_op2_sel_T_11,_io_o_decode_packs_0_func_code_T_23,_io_o_decode_packs_0_inst_type_T_23,
+    _io_o_decode_packs_0_alu_sel_T_53,_io_o_decode_packs_0_alu_sel_T_55,_io_o_decode_packs_0_alu_sel_T_61,
+    _inst_valid_0_T_37,_inst_valid_0_T_39,_io_o_decode_packs_0_func_code_T_49}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_5 = |_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_4; // @[pla.scala 114:39]
-  wire [7:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_6 = {_io_o_decode_packs_0_alu_sel_T_5,
-    _io_o_decode_packs_0_alu_sel_T_13,_io_o_decode_packs_0_alu_sel_T_15,_io_o_decode_packs_0_func_code_T_25,
-    _inst_valid_0_T_25,_inst_valid_0_T_35,_inst_valid_0_T_37,_io_o_decode_packs_0_alu_sel_T_75}; // @[Cat.scala 33:92]
+  wire [8:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_6 = {_io_o_decode_packs_0_alu_sel_T_5,
+    _io_o_decode_packs_0_alu_sel_T_13,_io_o_decode_packs_0_op2_sel_T_11,_io_o_decode_packs_0_alu_sel_T_17,
+    _io_o_decode_packs_0_func_code_T_25,_inst_valid_0_T_25,_inst_valid_0_T_35,_inst_valid_0_T_37,
+    _io_o_decode_packs_0_alu_sel_T_77}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_7 = |_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_6; // @[pla.scala 114:39]
-  wire [5:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_8 = {_io_o_decode_packs_0_alu_sel_T_17,
-    _io_o_decode_packs_0_alu_sel_T_29,_io_o_decode_packs_0_alu_sel_T_41,_io_o_decode_packs_0_alu_sel_T_57,
-    _inst_valid_0_T_39,_io_o_decode_packs_0_alu_sel_T_81}; // @[Cat.scala 33:92]
+  wire [6:0] _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_8 = {_io_o_decode_packs_0_op2_sel_T_11,
+    _io_o_decode_packs_0_alu_sel_T_19,_io_o_decode_packs_0_alu_sel_T_31,_io_o_decode_packs_0_alu_sel_T_43,
+    _io_o_decode_packs_0_alu_sel_T_59,_inst_valid_0_T_39,_io_o_decode_packs_0_alu_sel_T_83}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_9 = |_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_8; // @[pla.scala 114:39]
   wire [4:0] io_o_decode_packs_0_alu_sel_orMatrixOutputs = {_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_9,
     _io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_7,_io_o_decode_packs_0_alu_sel_orMatrixOutputs_T_5,
@@ -1142,209 +1143,210 @@ module Decoder(
     inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,inst_valid_1_andMatrixInput_7,
     io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_13 = &_io_o_decode_packs_1_alu_sel_T_12; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_7 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2,
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_8 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2,
     inst_valid_1_andMatrixInput_9,inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,
     inst_valid_1_andMatrixInput_12,inst_valid_1_andMatrixInput_13,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_14 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_16 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
-    io_o_decode_packs_1_alu_sel_lo_7}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_15 = &_io_o_decode_packs_1_alu_sel_T_14; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_16 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    io_o_decode_packs_1_alu_sel_lo_8}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_17 = &_io_o_decode_packs_1_alu_sel_T_16; // @[pla.scala 98:74]
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_18 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_7,
     io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_17 = &_io_o_decode_packs_1_alu_sel_T_16; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_11 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2,
+  wire  _io_o_decode_packs_1_alu_sel_T_19 = &_io_o_decode_packs_1_alu_sel_T_18; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_12 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,inst_valid_1_andMatrixInput_11_1,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_22 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_24 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    io_o_decode_packs_1_alu_sel_lo_11}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_23 = &_io_o_decode_packs_1_alu_sel_T_22; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_1_alu_sel_T_28 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    io_o_decode_packs_1_alu_sel_lo_12}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_25 = &_io_o_decode_packs_1_alu_sel_T_24; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_1_alu_sel_T_30 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_3,inst_valid_1_andMatrixInput_4_5,
     inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,inst_valid_1_andMatrixInput_7,inst_valid_1_lo_lo_6}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_29 = &_io_o_decode_packs_1_alu_sel_T_28; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_30 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
-    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
-    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    io_o_decode_packs_1_inst_type_lo_11}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_31 = &_io_o_decode_packs_1_alu_sel_T_30; // @[pla.scala 98:74]
   wire [15:0] _io_o_decode_packs_1_alu_sel_T_32 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
+    io_o_decode_packs_1_inst_type_lo_11}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_33 = &_io_o_decode_packs_1_alu_sel_T_32; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_34 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_34 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
+    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
+    io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_35 = &_io_o_decode_packs_1_alu_sel_T_34; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_36 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
     inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_35 = &_io_o_decode_packs_1_alu_sel_T_34; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_1_alu_sel_T_36 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
-    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
-    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5_8,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_37 = &_io_o_decode_packs_1_alu_sel_T_36; // @[pla.scala 98:74]
   wire [9:0] _io_o_decode_packs_1_alu_sel_T_38 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
+    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5_8,inst_valid_1_andMatrixInput_6_10,
+    inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_6_2}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_39 = &_io_o_decode_packs_1_alu_sel_T_38; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_1_alu_sel_T_40 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
     inst_valid_1_andMatrixInput_7_10,inst_valid_1_andMatrixInput_6_2}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_39 = &_io_o_decode_packs_1_alu_sel_T_38; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_1_alu_sel_T_40 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_41 = &_io_o_decode_packs_1_alu_sel_T_40; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_1_alu_sel_T_42 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_7_10,inst_valid_1_lo_lo_6}
     ; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_41 = &_io_o_decode_packs_1_alu_sel_T_40; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_21 = {inst_valid_1_andMatrixInput_7_10,inst_valid_1_andMatrixInput_9,
+  wire  _io_o_decode_packs_1_alu_sel_T_43 = &_io_o_decode_packs_1_alu_sel_T_42; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_22 = {inst_valid_1_andMatrixInput_7_10,inst_valid_1_andMatrixInput_9,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,inst_valid_1_andMatrixInput_11_1,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_42 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_44 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
-    io_o_decode_packs_1_alu_sel_lo_21}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_43 = &_io_o_decode_packs_1_alu_sel_T_42; // @[pla.scala 98:74]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_44 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    io_o_decode_packs_1_alu_sel_lo_22}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_45 = &_io_o_decode_packs_1_alu_sel_T_44; // @[pla.scala 98:74]
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_46 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_7_10,
     io_o_decode_packs_1_alu_sel_lo_4}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_45 = &_io_o_decode_packs_1_alu_sel_T_44; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_1_alu_sel_T_48 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_47 = &_io_o_decode_packs_1_alu_sel_T_46; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_1_alu_sel_T_50 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5_8,inst_valid_1_andMatrixInput_6,
     inst_valid_1_andMatrixInput_7_10,inst_valid_1_andMatrixInput_6_2}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_49 = &_io_o_decode_packs_1_alu_sel_T_48; // @[pla.scala 98:74]
-  wire [8:0] _io_o_decode_packs_1_alu_sel_T_50 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
-    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
-    inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7_10}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_51 = &_io_o_decode_packs_1_alu_sel_T_50; // @[pla.scala 98:74]
   wire [8:0] _io_o_decode_packs_1_alu_sel_T_52 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
+    inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
+    inst_valid_1_andMatrixInput_7_10}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_53 = &_io_o_decode_packs_1_alu_sel_T_52; // @[pla.scala 98:74]
+  wire [8:0] _io_o_decode_packs_1_alu_sel_T_54 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
     inst_valid_1_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_53 = &_io_o_decode_packs_1_alu_sel_T_52; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_1_alu_sel_T_54 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_55 = &_io_o_decode_packs_1_alu_sel_T_54; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_1_alu_sel_T_56 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
     inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_55 = &_io_o_decode_packs_1_alu_sel_T_54; // @[pla.scala 98:74]
-  wire [14:0] _io_o_decode_packs_1_alu_sel_T_56 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_57 = &_io_o_decode_packs_1_alu_sel_T_56; // @[pla.scala 98:74]
+  wire [14:0] _io_o_decode_packs_1_alu_sel_T_58 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_7_12,inst_valid_1_lo_lo_6}
     ; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_57 = &_io_o_decode_packs_1_alu_sel_T_56; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_29 = {inst_valid_1_andMatrixInput_7_12,inst_valid_1_andMatrixInput_9,
+  wire  _io_o_decode_packs_1_alu_sel_T_59 = &_io_o_decode_packs_1_alu_sel_T_58; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_30 = {inst_valid_1_andMatrixInput_7_12,inst_valid_1_andMatrixInput_9,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,inst_valid_1_andMatrixInput_11_1,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_58 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_60 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
-    io_o_decode_packs_1_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_59 = &_io_o_decode_packs_1_alu_sel_T_58; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_64 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    io_o_decode_packs_1_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_61 = &_io_o_decode_packs_1_alu_sel_T_60; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_66 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_65 = &_io_o_decode_packs_1_alu_sel_T_64; // @[pla.scala 98:74]
-  wire [8:0] _io_o_decode_packs_1_alu_sel_T_68 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_67 = &_io_o_decode_packs_1_alu_sel_T_66; // @[pla.scala 98:74]
+  wire [8:0] _io_o_decode_packs_1_alu_sel_T_70 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_7_10,
     inst_valid_1_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_69 = &_io_o_decode_packs_1_alu_sel_T_68; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_70 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_71 = &_io_o_decode_packs_1_alu_sel_T_70; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_72 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
-    inst_valid_1_andMatrixInput_7_10,io_o_decode_packs_1_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_71 = &_io_o_decode_packs_1_alu_sel_T_70; // @[pla.scala 98:74]
-  wire [9:0] _io_o_decode_packs_1_alu_sel_T_72 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_7_10,io_o_decode_packs_1_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_73 = &_io_o_decode_packs_1_alu_sel_T_72; // @[pla.scala 98:74]
+  wire [9:0] _io_o_decode_packs_1_alu_sel_T_74 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
     inst_valid_1_andMatrixInput_7_10,inst_valid_1_andMatrixInput_7_12}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_73 = &_io_o_decode_packs_1_alu_sel_T_72; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_74 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire  _io_o_decode_packs_1_alu_sel_T_75 = &_io_o_decode_packs_1_alu_sel_T_74; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_76 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7_10,io_o_decode_packs_1_alu_sel_lo_29}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_75 = &_io_o_decode_packs_1_alu_sel_T_74; // @[pla.scala 98:74]
+    inst_valid_1_andMatrixInput_7_10,io_o_decode_packs_1_alu_sel_lo_30}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_77 = &_io_o_decode_packs_1_alu_sel_T_76; // @[pla.scala 98:74]
   wire  io_o_decode_packs_1_alu_sel_andMatrixInput_16_5 = inst_valid_1_plaInput[20]; // @[pla.scala 90:45]
-  wire [13:0] io_o_decode_packs_1_alu_sel_lo_38 = {inst_valid_1_andMatrixInput_18,inst_valid_1_andMatrixInput_19,
+  wire [13:0] io_o_decode_packs_1_alu_sel_lo_39 = {inst_valid_1_andMatrixInput_18,inst_valid_1_andMatrixInput_19,
     io_o_decode_packs_1_alu_sel_andMatrixInput_16_5,inst_valid_1_andMatrixInput_20,inst_valid_1_andMatrixInput_21,
     inst_valid_1_andMatrixInput_22,inst_valid_1_andMatrixInput_23,inst_valid_1_lo_lo_6}; // @[Cat.scala 33:92]
-  wire [27:0] _io_o_decode_packs_1_alu_sel_T_76 = {inst_valid_1_andMatrixInput_3_3,inst_valid_1_andMatrixInput_4_5,
+  wire [27:0] _io_o_decode_packs_1_alu_sel_T_78 = {inst_valid_1_andMatrixInput_3_3,inst_valid_1_andMatrixInput_4_5,
     inst_valid_1_andMatrixInput_5_8,inst_valid_1_andMatrixInput_7_6,inst_valid_1_andMatrixInput_8_5,
     inst_valid_1_andMatrixInput_9_3,inst_valid_1_andMatrixInput_10_3,io_o_decode_packs_1_func_code_hi_lo_23,
-    io_o_decode_packs_1_alu_sel_lo_38}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_77 = &_io_o_decode_packs_1_alu_sel_T_76; // @[pla.scala 98:74]
+    io_o_decode_packs_1_alu_sel_lo_39}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_79 = &_io_o_decode_packs_1_alu_sel_T_78; // @[pla.scala 98:74]
   wire  io_o_decode_packs_1_alu_sel_andMatrixInput_14_28 = inst_valid_1_plaInput[30]; // @[pla.scala 90:45]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_40 = {inst_valid_1_andMatrixInput_6_2,inst_valid_1_andMatrixInput_9,
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_41 = {inst_valid_1_andMatrixInput_6_2,inst_valid_1_andMatrixInput_9,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,io_o_decode_packs_1_alu_sel_andMatrixInput_14_28,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_80 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_82 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_3,inst_valid_1_andMatrixInput_4_5,
     inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,inst_valid_1_andMatrixInput_7,
-    io_o_decode_packs_1_alu_sel_lo_40}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_81 = &_io_o_decode_packs_1_alu_sel_T_80; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_82 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    io_o_decode_packs_1_alu_sel_lo_41}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_83 = &_io_o_decode_packs_1_alu_sel_T_82; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_84 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6,
-    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_40}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_83 = &_io_o_decode_packs_1_alu_sel_T_82; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_42 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_7_12,
+    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_41}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_85 = &_io_o_decode_packs_1_alu_sel_T_84; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_43 = {inst_valid_1_andMatrixInput_7,inst_valid_1_andMatrixInput_7_12,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,io_o_decode_packs_1_alu_sel_andMatrixInput_14_28,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [15:0] _io_o_decode_packs_1_alu_sel_T_84 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [15:0] _io_o_decode_packs_1_alu_sel_T_86 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    io_o_decode_packs_1_alu_sel_lo_42}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_85 = &_io_o_decode_packs_1_alu_sel_T_84; // @[pla.scala 98:74]
-  wire [7:0] io_o_decode_packs_1_alu_sel_lo_43 = {inst_valid_1_andMatrixInput_7_12,inst_valid_1_andMatrixInput_9,
+    io_o_decode_packs_1_alu_sel_lo_43}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_87 = &_io_o_decode_packs_1_alu_sel_T_86; // @[pla.scala 98:74]
+  wire [7:0] io_o_decode_packs_1_alu_sel_lo_44 = {inst_valid_1_andMatrixInput_7_12,inst_valid_1_andMatrixInput_9,
     inst_valid_1_andMatrixInput_10,inst_valid_1_andMatrixInput_11,inst_valid_1_andMatrixInput_12,
     inst_valid_1_andMatrixInput_13,io_o_decode_packs_1_alu_sel_andMatrixInput_14_28,inst_valid_1_andMatrixInput_14}; // @[Cat.scala 33:92]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_86 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_88 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_43}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_87 = &_io_o_decode_packs_1_alu_sel_T_86; // @[pla.scala 98:74]
-  wire [16:0] _io_o_decode_packs_1_alu_sel_T_88 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
-    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
-    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_43}; // @[Cat.scala 33:92]
+    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_44}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_T_89 = &_io_o_decode_packs_1_alu_sel_T_88; // @[pla.scala 98:74]
   wire [16:0] _io_o_decode_packs_1_alu_sel_T_90 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
+    inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3,inst_valid_1_andMatrixInput_3_3,
+    inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
+    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_44}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_91 = &_io_o_decode_packs_1_alu_sel_T_90; // @[pla.scala 98:74]
+  wire [16:0] _io_o_decode_packs_1_alu_sel_T_92 = {inst_valid_1_andMatrixInput_0,inst_valid_1_andMatrixInput_1,
     inst_valid_1_andMatrixInput_2,inst_valid_1_andMatrixInput_3_9,inst_valid_1_andMatrixInput_3_3,
     inst_valid_1_andMatrixInput_4_5,inst_valid_1_andMatrixInput_5,inst_valid_1_andMatrixInput_6_10,
-    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_43}; // @[Cat.scala 33:92]
-  wire  _io_o_decode_packs_1_alu_sel_T_91 = &_io_o_decode_packs_1_alu_sel_T_90; // @[pla.scala 98:74]
-  wire [6:0] io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo = {_io_o_decode_packs_1_alu_sel_T_55,
-    _io_o_decode_packs_1_alu_sel_T_65,_io_o_decode_packs_1_alu_sel_T_71,_io_o_decode_packs_1_alu_sel_T_73,
-    _io_o_decode_packs_1_func_code_T_49,_io_o_decode_packs_1_alu_sel_T_85,_io_o_decode_packs_1_alu_sel_T_91}; // @[Cat.scala 33:92]
+    inst_valid_1_andMatrixInput_7,io_o_decode_packs_1_alu_sel_lo_44}; // @[Cat.scala 33:92]
+  wire  _io_o_decode_packs_1_alu_sel_T_93 = &_io_o_decode_packs_1_alu_sel_T_92; // @[pla.scala 98:74]
+  wire [6:0] io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo = {_io_o_decode_packs_1_alu_sel_T_57,
+    _io_o_decode_packs_1_alu_sel_T_67,_io_o_decode_packs_1_alu_sel_T_73,_io_o_decode_packs_1_alu_sel_T_75,
+    _io_o_decode_packs_1_func_code_T_49,_io_o_decode_packs_1_alu_sel_T_87,_io_o_decode_packs_1_alu_sel_T_93}; // @[Cat.scala 33:92]
   wire [13:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T = {_io_o_decode_packs_1_op2_sel_T_9,
-    _io_o_decode_packs_1_alu_sel_T_11,_io_o_decode_packs_1_alu_sel_T_23,_io_o_decode_packs_1_alu_sel_T_31,
-    _io_o_decode_packs_1_alu_sel_T_33,_io_o_decode_packs_1_alu_sel_T_39,_inst_valid_1_T_31,
+    _io_o_decode_packs_1_alu_sel_T_11,_io_o_decode_packs_1_alu_sel_T_25,_io_o_decode_packs_1_alu_sel_T_33,
+    _io_o_decode_packs_1_alu_sel_T_35,_io_o_decode_packs_1_alu_sel_T_41,_inst_valid_1_T_31,
     io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_1 = |_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T; // @[pla.scala 114:39]
-  wire [5:0] io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo_1 = {_inst_valid_1_T_35,_io_o_decode_packs_1_alu_sel_T_69,
-    _io_o_decode_packs_1_alu_sel_T_77,_io_o_decode_packs_1_alu_sel_T_83,_io_o_decode_packs_1_alu_sel_T_87,
-    _io_o_decode_packs_1_alu_sel_T_89}; // @[Cat.scala 33:92]
-  wire [12:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_2 = {_io_o_decode_packs_1_alu_sel_T_1,
-    _io_o_decode_packs_1_alu_sel_T_9,_io_o_decode_packs_1_alu_sel_T_35,_io_o_decode_packs_1_alu_sel_T_37,
-    _io_o_decode_packs_1_alu_sel_T_43,_io_o_decode_packs_1_alu_sel_T_45,_io_o_decode_packs_1_alu_sel_T_49,
+  wire [6:0] io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo_1 = {_io_o_decode_packs_1_alu_sel_T_51,_inst_valid_1_T_35,
+    _io_o_decode_packs_1_alu_sel_T_71,_io_o_decode_packs_1_alu_sel_T_79,_io_o_decode_packs_1_alu_sel_T_85,
+    _io_o_decode_packs_1_alu_sel_T_89,_io_o_decode_packs_1_alu_sel_T_91}; // @[Cat.scala 33:92]
+  wire [13:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_2 = {_io_o_decode_packs_1_alu_sel_T_1,
+    _io_o_decode_packs_1_alu_sel_T_9,_io_o_decode_packs_1_op2_sel_T_11,_io_o_decode_packs_1_alu_sel_T_37,
+    _io_o_decode_packs_1_alu_sel_T_39,_io_o_decode_packs_1_alu_sel_T_45,_io_o_decode_packs_1_alu_sel_T_47,
     io_o_decode_packs_1_alu_sel_orMatrixOutputs_lo_1}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_3 = |_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_2; // @[pla.scala 114:39]
-  wire [8:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_4 = {_io_o_decode_packs_1_alu_sel_T_7,
-    _io_o_decode_packs_1_func_code_T_23,_io_o_decode_packs_1_inst_type_T_23,_io_o_decode_packs_1_alu_sel_T_51,
-    _io_o_decode_packs_1_alu_sel_T_53,_io_o_decode_packs_1_alu_sel_T_59,_inst_valid_1_T_37,_inst_valid_1_T_39,
-    _io_o_decode_packs_1_func_code_T_49}; // @[Cat.scala 33:92]
+  wire [9:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_4 = {_io_o_decode_packs_1_alu_sel_T_7,
+    _io_o_decode_packs_1_op2_sel_T_11,_io_o_decode_packs_1_func_code_T_23,_io_o_decode_packs_1_inst_type_T_23,
+    _io_o_decode_packs_1_alu_sel_T_53,_io_o_decode_packs_1_alu_sel_T_55,_io_o_decode_packs_1_alu_sel_T_61,
+    _inst_valid_1_T_37,_inst_valid_1_T_39,_io_o_decode_packs_1_func_code_T_49}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_5 = |_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_4; // @[pla.scala 114:39]
-  wire [7:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_6 = {_io_o_decode_packs_1_alu_sel_T_5,
-    _io_o_decode_packs_1_alu_sel_T_13,_io_o_decode_packs_1_alu_sel_T_15,_io_o_decode_packs_1_func_code_T_25,
-    _inst_valid_1_T_25,_inst_valid_1_T_35,_inst_valid_1_T_37,_io_o_decode_packs_1_alu_sel_T_75}; // @[Cat.scala 33:92]
+  wire [8:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_6 = {_io_o_decode_packs_1_alu_sel_T_5,
+    _io_o_decode_packs_1_alu_sel_T_13,_io_o_decode_packs_1_op2_sel_T_11,_io_o_decode_packs_1_alu_sel_T_17,
+    _io_o_decode_packs_1_func_code_T_25,_inst_valid_1_T_25,_inst_valid_1_T_35,_inst_valid_1_T_37,
+    _io_o_decode_packs_1_alu_sel_T_77}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_7 = |_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_6; // @[pla.scala 114:39]
-  wire [5:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_8 = {_io_o_decode_packs_1_alu_sel_T_17,
-    _io_o_decode_packs_1_alu_sel_T_29,_io_o_decode_packs_1_alu_sel_T_41,_io_o_decode_packs_1_alu_sel_T_57,
-    _inst_valid_1_T_39,_io_o_decode_packs_1_alu_sel_T_81}; // @[Cat.scala 33:92]
+  wire [6:0] _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_8 = {_io_o_decode_packs_1_op2_sel_T_11,
+    _io_o_decode_packs_1_alu_sel_T_19,_io_o_decode_packs_1_alu_sel_T_31,_io_o_decode_packs_1_alu_sel_T_43,
+    _io_o_decode_packs_1_alu_sel_T_59,_inst_valid_1_T_39,_io_o_decode_packs_1_alu_sel_T_83}; // @[Cat.scala 33:92]
   wire  _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_9 = |_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_8; // @[pla.scala 114:39]
   wire [4:0] io_o_decode_packs_1_alu_sel_orMatrixOutputs = {_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_9,
     _io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_7,_io_o_decode_packs_1_alu_sel_orMatrixOutputs_T_5,

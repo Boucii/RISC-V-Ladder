@@ -24,7 +24,7 @@ class Fetch_Res extends Module{
     //when prediction is valid and the prediction is on the first one inst of the fetchpack
     //the second inst should be invalified
     io.o_fetch_pack.bits.valids(1) := !io.i_stall && !io.i_flush && 
-        !(io.i_branch_predict_pack.valid && io.i_branch_predict_pack.taken && io.i_branch_predict_pack.select==0.U)
+        !(io.i_branch_predict_pack.valid && io.i_branch_predict_pack.taken && io.i_branch_predict_pack.select === 0.U)
     io.o_fetch_pack.bits.pc := Cat(io.i_pc(63,3),0.U(3.W))
     io.o_fetch_pack.bits.insts(0) := io.i_fetch_res(31,0)
     io.o_fetch_pack.bits.insts(1) := io.i_fetch_res(63,32)

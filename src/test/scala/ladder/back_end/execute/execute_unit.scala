@@ -204,10 +204,12 @@ mispred scenarios:
 2.predict vallid, and predict taken, actually taken, but the predicted address is wrong
 3.predict not valid, but taken
 */
+  val valid_prediction = Wire(Bool())
+  valid_prediction := uop.pc(2) === uop.branch_predict_pack.select && uop.branch_predict_pack.valid
   val mispredict = Wire(Bool())
-  mispredict := ((uop.branch_predict_pack.valid) && (is_taken^uop.branch_predict_pack.taken)) || 
-                (uop.branch_predict_pack.valid) && (is_taken && uop.branch_predict_pack.taken && (target_address =/= uop.branch_predict_pack.target)) ||
-                (!uop.branch_predict_pack.valid && is_taken)
+  mispredict := ((valid_prediction) && (is_taken^uop.branch_predict_pack.taken)) || 
+                (valid_prediction) && (is_taken && uop.branch_predict_pack.taken && (target_address =/= uop.branch_predict_pack.target)) ||
+                (!valid_prediction && is_taken)
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
 
@@ -218,6 +220,7 @@ mispred scenarios:
   branch_resolve_pack.target            := target_address
   branch_resolve_pack.rob_idx           := uop.rob_idx
   branch_resolve_pack.branch_type       := uop.branch_type
+  //if the btb tag has the idx inside fetchpack, modify this
   branch_resolve_pack.prediction_valid  := uop.branch_predict_pack.valid
   io.o_branch_resolve_pack := branch_resolve_pack
 

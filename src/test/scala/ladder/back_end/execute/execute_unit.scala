@@ -205,11 +205,18 @@ mispred scenarios:
 3.predict not valid, but taken
 */
   val valid_prediction = Wire(Bool())
-  valid_prediction := uop.pc(2) === uop.branch_predict_pack.select && uop.branch_predict_pack.valid
+  valid_prediction := (uop.pc(2) === uop.branch_predict_pack.select) && uop.branch_predict_pack.valid
   val mispredict = Wire(Bool())
+
   mispredict := ((valid_prediction) && (is_taken^uop.branch_predict_pack.taken)) || 
                 (valid_prediction) && (is_taken && uop.branch_predict_pack.taken && (target_address =/= uop.branch_predict_pack.target)) ||
                 (!valid_prediction && is_taken)
+
+/*
+  mispredict := ((uop.branch_predict_pack.valid) && (is_taken^uop.branch_predict_pack.taken)) || 
+                (uop.branch_predict_pack.valid) && (is_taken && uop.branch_predict_pack.taken && (target_address =/= uop.branch_predict_pack.target)) ||
+                (!uop.branch_predict_pack.valid && is_taken)
+*/
 
   val branch_resolve_pack = Wire(new branch_resolve_pack())
 
@@ -288,10 +295,12 @@ class LSU extends Function_Unit(
 
     //dcache io
     io.o_ex_res_pack.uop.dst_value := MuxCase(uop.dst_value,Seq(
+      
         (loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
         (loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
         (loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
         (loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
+        
         (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
         (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
         (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
@@ -299,10 +308,12 @@ class LSU extends Function_Unit(
     ))
     //this is incorrect if the inst can be issued the cycle data_valid turns true
     uop.dst_value := MuxCase(uop.dst_value,Seq(
+      
         (loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
         (loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
         (loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
         (loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
+        
         (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
         (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
         (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),

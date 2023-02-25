@@ -105,8 +105,6 @@ class Reservation_Station extends Module with consts{
      reservation_station_valid_withmask:= reservation_station_valid |(UIntToOH(write_idx1))
      write_idx2:=PriorityEncoder(~(reservation_station_valid_withmask))//TODO:这个可以改成反向寻找的优先编码器
 
-     //printf("rsvalid=%x\n",reservation_station_valid)
-
 
      //Issue Logic
      //val idx1 = indexes.minBy(age_considering_issue(_))//????wtf is this???
@@ -185,8 +183,12 @@ class Reservation_Station extends Module with consts{
          (!(write_idx1===63.U || write_idx2===63.U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
       ))//需要考虑 writeidx到底能不能等于63呢,得把这个选项排除掉,得额外考虑满的情况
 
-    //what about rollbacks????this is a BUG
-     next_max_age := issued_age_pack.max_age- issue_num + write_num
+    //what about rollbacks????this is a BUG,A GODDAMN BIG BUG!
+    //NO WAY 2 FIX IT!!
+    //this is NOT a fix but just a get-by
+    val max_age_temp =issued_age_pack.max_age- issue_num + write_num  
+     //next_max_age := issued_age_pack.max_age- issue_num + write_num
+     next_max_age := Mux(io.o_full,max_age_temp,59.U)
 
      issued_age_pack.issue_valid(0) := issue0_valid
      issued_age_pack.issue_valid(1) := issue1_valid
@@ -197,7 +199,7 @@ class Reservation_Station extends Module with consts{
         issued_age_pack := 0.U.asTypeOf(new age_pack())
      }     
 
-     io.o_full := issued_age_pack.max_age>60.U
+     io.o_full := issued_age_pack.max_age>60.U && (write_idx1===63.U || write_idx2 ===63.U)
 
      io.o_issue_packs(0):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to 63)yield(i.U===issue1_idx)->reservation_station(i).io.o_uop))
      io.o_issue_packs(1):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to 63)yield(i.U===issue2_idx)->reservation_station(i).io.o_uop))

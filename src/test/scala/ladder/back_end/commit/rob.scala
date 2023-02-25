@@ -122,11 +122,11 @@ class Reorder_Buffer extends Module with consts{
       io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0).valid
       io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1).valid && io.i_rob_allocation_reqs(0).valid //dispatch 会req1 而不req0吗
       
-      io.o_rollback_packs(0).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback, true.B, io.i_rob_allocation_reqs(0).valid)
-      io.o_rollback_packs(1).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback,(this_num_to_roll_back === 2.U), io.i_rob_allocation_reqs(1).valid)
+      io.o_rollback_packs(0).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback, true.B, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(0).valid))
+      io.o_rollback_packs(1).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback,(this_num_to_roll_back === 2.U), io.i_rob_allocation_reqs(0).valid)
       
-      io.o_rollback_packs(0).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(0).uop, rob_uop(allocate_ptr-1.U))
-      io.o_rollback_packs(1).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(1).uop, rob_uop(allocate_ptr-2.U))
+      io.o_rollback_packs(0).uop:= Mux(rob_state=/=s_rollback, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).uop, io.i_rob_allocation_reqs(0).uop), rob_uop(allocate_ptr-1.U))
+      io.o_rollback_packs(1).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(0).uop, rob_uop(allocate_ptr-2.U))
 
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U

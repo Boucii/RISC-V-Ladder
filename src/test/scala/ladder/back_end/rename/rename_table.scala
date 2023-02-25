@@ -47,15 +47,18 @@ class Rename_Table extends Module{
     when(io.i_commit_packs(1).valid){
         commit_rename_table(io.i_commit_packs(1).uop.arch_dst):=io.i_commit_packs(1).uop.phy_dst
     }
-    //must rollback in this order: rollback_packs(1) first, then rollback_packs(0)
+    //rollback_packs(0)=rob(allocate-1) and rollback(1) = rob(allocate-2)
+    //must rollback in this order: rollback_packs(0) first, then rollback_packs(1)
     //or else when of the same arch dst, rollback res might be wrong
     //the same reason why allocation and commit should use the default order
-    when(io.i_rollback_packs(1).valid){
-        rename_table(io.i_rollback_packs(1).uop.arch_dst):=io.i_rollback_packs(1).uop.stale_dst
-    }
     when(io.i_rollback_packs(0).valid){
         rename_table(io.i_rollback_packs(0).uop.arch_dst):=io.i_rollback_packs(0).uop.stale_dst
     }
+
+when(io.i_rollback_packs(1).valid){
+    rename_table(io.i_rollback_packs(1).uop.arch_dst):=io.i_rollback_packs(1).uop.stale_dst
+}
+
     when(io.i_allocation_pack(0).valid && io.i_allocation_pack(0).arch_dst =/= 0.U){
         rename_table(io.i_allocation_pack(0).arch_dst):=io.i_allocation_pack(0).phy_dst
     }

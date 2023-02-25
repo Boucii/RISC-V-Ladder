@@ -357,12 +357,13 @@ int main(int argc, char** argv, char** env){
     addr_if3 = stall2? addr_if3 : addr_if2;
     addr_if2 = stall1? addr_if2 : addr_if1;
     addr_if1 = (int)(top->io_icache_io_o_addr);
-
+/*
 	//4 debug
 	if(addr_if1 == 0x13b8)
 	{
 		goto end;
 	}
+*/
 
 
     uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);

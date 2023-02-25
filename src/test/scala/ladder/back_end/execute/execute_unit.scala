@@ -260,6 +260,7 @@ class LSU extends Function_Unit(
         next_uop.valid:=false.B
     }
     uop:=next_uop
+    io.o_ex_res_pack.uop := uop
 
     val exception_occured = RegInit(false.B)
     when(io.i_exception && state === s_BUSY){
@@ -313,7 +314,6 @@ class LSU extends Function_Unit(
     io.dcache_io.Mlen := len
     io.dcache_io.MdataOut := uop.src2_value
     //----------------------------------
-    io.o_ex_res_pack.uop := uop
 
     val ready_to_commit = RegInit(false.B)
     val next_ready_to_commit = Wire(Bool())
@@ -427,6 +427,7 @@ class DIV extends Function_Unit(){
     val next_uop = Wire(new uop())
     next_uop := Mux(io.i_select,io.i_uop,uop)
     uop:=next_uop
+    io.o_ex_res_pack.uop := uop
     when(next_state === s_FREE){
         next_uop.valid:=false.B
     }
@@ -449,7 +450,6 @@ class DIV extends Function_Unit(){
 
     divider.io.i_div_signed := next_uop.inst(14,12)=/="b101".U
 
-    io.o_ex_res_pack.uop := uop
     io.o_ex_res_pack.uop.dst_value := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
 
     io.o_ex_res_pack.valid := divider.io.o_out_valid 

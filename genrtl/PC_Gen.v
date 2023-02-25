@@ -6,6 +6,7 @@ module PC_Gen(
   input  [63:0] io_i_pc_redirect_target,
   input         io_i_branch_predict_pack_valid,
   input  [63:0] io_i_branch_predict_pack_target,
+  input         io_i_branch_predict_pack_select,
   input         io_i_branch_predict_pack_taken,
   input         io_i_branch_presolve_pack_valid,
   input         io_i_branch_presolve_pack_taken,
@@ -20,10 +21,10 @@ module PC_Gen(
 `endif // RANDOMIZE_REG_INIT
   reg [63:0] pc; // @[pc_gen.scala 23:21]
   wire [63:0] _npc_T_1 = io_i_branch_presolve_pack_pc + 64'h4; // @[pc_gen.scala 36:45]
-  wire [63:0] _npc_T_3 = pc[2] ? 64'h4 : 64'h8; // @[pc_gen.scala 42:24]
-  wire [63:0] _npc_T_5 = pc + _npc_T_3; // @[pc_gen.scala 42:19]
-  wire [63:0] _GEN_0 = io_i_branch_predict_pack_valid & io_i_branch_predict_pack_taken ? io_i_branch_predict_pack_target
-     : _npc_T_5; // @[pc_gen.scala 39:81 40:13 42:13]
+  wire [63:0] _npc_T_3 = pc[2] ? 64'h4 : 64'h8; // @[pc_gen.scala 43:24]
+  wire [63:0] _npc_T_5 = pc + _npc_T_3; // @[pc_gen.scala 43:19]
+  wire [63:0] _GEN_0 = io_i_branch_predict_pack_valid & io_i_branch_predict_pack_taken & ~(~
+    io_i_branch_predict_pack_select & pc[2]) ? io_i_branch_predict_pack_target : _npc_T_5; // @[pc_gen.scala 40:144 41:13 43:13]
   wire [63:0] _GEN_1 = io_i_stall ? pc : _GEN_0; // @[pc_gen.scala 37:27 38:13]
   assign io_o_pc = pc; // @[pc_gen.scala 30:13]
   always @(posedge clock) begin

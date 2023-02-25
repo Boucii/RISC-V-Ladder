@@ -38,6 +38,7 @@ module Front_End(
   wire [63:0] pc_gen_io_i_pc_redirect_target; // @[front_end.scala 26:24]
   wire  pc_gen_io_i_branch_predict_pack_valid; // @[front_end.scala 26:24]
   wire [63:0] pc_gen_io_i_branch_predict_pack_target; // @[front_end.scala 26:24]
+  wire  pc_gen_io_i_branch_predict_pack_select; // @[front_end.scala 26:24]
   wire  pc_gen_io_i_branch_predict_pack_taken; // @[front_end.scala 26:24]
   wire  pc_gen_io_i_branch_presolve_pack_valid; // @[front_end.scala 26:24]
   wire  pc_gen_io_i_branch_presolve_pack_taken; // @[front_end.scala 26:24]
@@ -192,6 +193,7 @@ module Front_End(
     .io_i_pc_redirect_target(pc_gen_io_i_pc_redirect_target),
     .io_i_branch_predict_pack_valid(pc_gen_io_i_branch_predict_pack_valid),
     .io_i_branch_predict_pack_target(pc_gen_io_i_branch_predict_pack_target),
+    .io_i_branch_predict_pack_select(pc_gen_io_i_branch_predict_pack_select),
     .io_i_branch_predict_pack_taken(pc_gen_io_i_branch_predict_pack_taken),
     .io_i_branch_presolve_pack_valid(pc_gen_io_i_branch_presolve_pack_valid),
     .io_i_branch_presolve_pack_taken(pc_gen_io_i_branch_presolve_pack_taken),
@@ -381,6 +383,7 @@ module Front_End(
   assign pc_gen_io_i_pc_redirect_target = io_i_pc_redirect_target; // @[front_end.scala 47:36]
   assign pc_gen_io_i_branch_predict_pack_valid = bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 48:37]
   assign pc_gen_io_i_branch_predict_pack_target = bpu_io_o_branch_predict_pack_target; // @[front_end.scala 48:37]
+  assign pc_gen_io_i_branch_predict_pack_select = bpu_io_o_branch_predict_pack_select; // @[front_end.scala 48:37]
   assign pc_gen_io_i_branch_predict_pack_taken = bpu_io_o_branch_predict_pack_taken; // @[front_end.scala 48:37]
   assign pc_gen_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 49:38]
   assign pc_gen_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 49:38]

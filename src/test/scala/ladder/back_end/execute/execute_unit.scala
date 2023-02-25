@@ -274,7 +274,7 @@ class LSU extends Function_Unit(
         (uop.inst(13,12) === "b00".U) -> 1.U,
         (uop.inst(13,12) === "b01".U) -> 2.U,
         (uop.inst(13,12) === "b10".U) -> 4.U,
-        (uop.inst(13,12) === "b00".U) -> 8.U,
+        (uop.inst(13,12) === "b11".U) -> 8.U,
     ))
     val loadu = Wire(Bool())
     loadu := (uop.inst(14)=== "b1".U)

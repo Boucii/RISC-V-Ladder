@@ -34,13 +34,14 @@ module Fetch_Res(
   output        io_o_fetch_pack_with_presolve_bits_branch_predict_pack_taken
 );
   wire  _io_o_fetch_pack_bits_valids_0_T = ~io_i_stall; // @[fetchres.scala 23:39]
+  wire  _io_o_fetch_pack_bits_valids_0_T_2 = ~io_i_pc[2]; // @[fetchres.scala 23:54]
   wire  _io_o_fetch_pack_bits_valids_0_T_4 = ~io_i_flush; // @[fetchres.scala 23:69]
-  wire  _io_o_fetch_pack_bits_valids_1_T_6 = ~(io_i_branch_predict_pack_valid & io_i_branch_predict_pack_taken & ~
-    io_i_branch_predict_pack_select); // @[fetchres.scala 27:9]
+  wire  _io_o_fetch_pack_bits_valids_1_T_9 = ~(io_i_branch_predict_pack_valid & io_i_branch_predict_pack_taken & ~
+    io_i_branch_predict_pack_select & _io_o_fetch_pack_bits_valids_0_T_2); // @[fetchres.scala 27:9]
   assign io_o_fetch_pack_valid = io_o_fetch_pack_bits_valids_0 | io_o_fetch_pack_bits_valids_1; // @[fetchres.scala 22:62]
   assign io_o_fetch_pack_bits_valids_0 = ~io_i_stall & ~io_i_pc[2] & ~io_i_flush; // @[fetchres.scala 23:66]
   assign io_o_fetch_pack_bits_valids_1 = _io_o_fetch_pack_bits_valids_0_T & _io_o_fetch_pack_bits_valids_0_T_4 &
-    _io_o_fetch_pack_bits_valids_1_T_6; // @[fetchres.scala 26:66]
+    _io_o_fetch_pack_bits_valids_1_T_9; // @[fetchres.scala 26:66]
   assign io_o_fetch_pack_bits_pc = {io_i_pc[63:3],3'h0}; // @[Cat.scala 33:92]
   assign io_o_fetch_pack_bits_insts_0 = io_i_fetch_res[31:0]; // @[fetchres.scala 29:52]
   assign io_o_fetch_pack_bits_insts_1 = io_i_fetch_res[63:32]; // @[fetchres.scala 30:52]

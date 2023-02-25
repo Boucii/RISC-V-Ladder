@@ -185,6 +185,7 @@ class Reservation_Station extends Module with consts{
          (!(write_idx1===63.U || write_idx2===63.U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
       ))//需要考虑 writeidx到底能不能等于63呢,得把这个选项排除掉,得额外考虑满的情况
 
+    //what about rollbacks????this is a BUG
      next_max_age := issued_age_pack.max_age- issue_num + write_num
 
      issued_age_pack.issue_valid(0) := issue0_valid

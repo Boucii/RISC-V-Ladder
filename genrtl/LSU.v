@@ -229,6 +229,7 @@ module LSU(
     uop_rob_idx[6]); // @[execute_unit.scala 351:60]
   wire  _next_rollback_occured_T_16 = io_i_rollback_valid & (io_i_rollback_rob_idx[5:0] < uop_rob_idx[5:0] &
     io_i_rollback_rob_idx[6] == uop_rob_idx[6] | _next_rollback_occured_T_14); // @[execute_unit.scala 350:30]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 368:26]
   wire [1:0] _GEN_3 = reset ? 2'h0 : next_state; // @[execute_unit.scala 262:{24,24} 264:11]
   assign io_o_ex_res_pack_valid = next_ready_to_commit & ~rollback_occured & ~_next_state_T_7; // @[execute_unit.scala 366:73]
   assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 273:26]
@@ -262,7 +263,7 @@ module LSU(
   assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 273:26]
   assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 273:26]
   assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 273:26]
-  assign io_o_available = state ? 1'h0 : 1'h1; // @[execute_unit.scala 367:26]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 368:61]
   assign io_dcache_io_addr_valid = uop_valid & ~addr_given & next_uop_mem_type == 2'h2 | uop_valid & ~addr_given &
     _next_ready_to_commit_T_2 & io_i_ROB_first_entry == uop_rob_idx; // @[execute_unit.scala 331:90]
   assign io_dcache_io_Mwout = uop_mem_type == 2'h1; // @[execute_unit.scala 334:40]
@@ -270,8 +271,8 @@ module LSU(
   assign io_dcache_io_Men = ~(uop_mem_type == 2'h0); // @[execute_unit.scala 335:25]
   assign io_dcache_io_Mlen = {{28'd0}, _len_T_11}; // @[execute_unit.scala 283:19 284:9]
   assign io_dcache_io_MdataOut = uop_src2_value; // @[execute_unit.scala 337:27]
-  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 369:44]
-  assign io_o_lsu_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 370:26]
+  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 370:44]
+  assign io_o_lsu_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 371:26]
   always @(posedge clock) begin
     state <= _GEN_3[0]; // @[execute_unit.scala 262:{24,24} 264:11]
     if (reset) begin // @[execute_unit.scala 266:23]

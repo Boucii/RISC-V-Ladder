@@ -364,7 +364,8 @@ class LSU extends Function_Unit(
         (state===s_FREE) ->false.B 
     ))
     io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured && !(exception_occured && uop.mem_type === MEM_R)
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    //io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
 
     io.o_lsu_uop_valid := state === s_BUSY &&  uop.mem_type === MEM_W
     io.o_lsu_uop_rob_idx := uop.rob_idx
@@ -427,7 +428,8 @@ class MUL extends Function_Unit(){
     multiplier.io.i_multiplicand := next_uop.src1_value
     multiplier.io.i_multiplier := next_uop.src2_value
 
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    //io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
     io.o_func_idx:=FU_MUL //useless
 }
 class DIV extends Function_Unit(){
@@ -475,7 +477,8 @@ class DIV extends Function_Unit(){
     io.o_ex_res_pack.uop.dst_value := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
 
     io.o_ex_res_pack.valid := divider.io.o_out_valid 
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    //io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
     io.o_func_idx:=FU_DIV //useless
 }
 //a buffer for csr insts, actually does nothing but buffering, and wil not be bypassed to reservation station
@@ -512,7 +515,8 @@ class CSR_BF() extends Function_Unit(
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    io.o_available := Mux(next_state === s_BUSY, false.B,true.B)
+    //io.o_available := Mux(next_state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
     val available = RegInit(false.B)
     available := io.o_available
     io.o_this_available := available

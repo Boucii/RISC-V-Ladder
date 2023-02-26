@@ -13,7 +13,7 @@ module Front_End(
   input         io_i_branch_resolve_pack_taken,
   input  [63:0] io_i_branch_resolve_pack_pc,
   input  [63:0] io_i_branch_resolve_pack_target,
-  input  [7:0]  io_i_branch_resolve_pack_rob_idx,
+  input  [6:0]  io_i_branch_resolve_pack_rob_idx,
   input         io_i_branch_resolve_pack_prediction_valid,
   input  [2:0]  io_i_branch_resolve_pack_branch_type,
   input         io_i_pc_redirect_valid,
@@ -55,7 +55,7 @@ module Front_End(
   wire  bpu_io_i_branch_resolve_pack_taken; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_branch_resolve_pack_pc; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_branch_resolve_pack_target; // @[front_end.scala 27:21]
-  wire [7:0] bpu_io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 27:21]
+  wire [6:0] bpu_io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_resolve_pack_prediction_valid; // @[front_end.scala 27:21]
   wire [2:0] bpu_io_i_branch_resolve_pack_branch_type; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_presolve_pack_valid; // @[front_end.scala 27:21]

@@ -18,7 +18,7 @@ module Back_End_With_Decode(
   output        io_o_branch_resolve_pack_taken,
   output [63:0] io_o_branch_resolve_pack_pc,
   output [63:0] io_o_branch_resolve_pack_target,
-  output [7:0]  io_o_branch_resolve_pack_rob_idx,
+  output [6:0]  io_o_branch_resolve_pack_rob_idx,
   output        io_o_branch_resolve_pack_prediction_valid,
   output [2:0]  io_o_branch_resolve_pack_branch_type,
   output        io_o_stall,
@@ -662,7 +662,7 @@ module Back_End_With_Decode(
   wire [63:0] reservation_station_io_i_ex_res_packs_1_uop_dst_value; // @[backend_with_decode.scala 41:37]
   wire  reservation_station_io_i_branch_resolve_pack_valid; // @[backend_with_decode.scala 41:37]
   wire  reservation_station_io_i_branch_resolve_pack_mispred; // @[backend_with_decode.scala 41:37]
-  wire [7:0] reservation_station_io_i_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 41:37]
+  wire [6:0] reservation_station_io_i_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 41:37]
   wire  reservation_station_io_o_full; // @[backend_with_decode.scala 41:37]
   wire  reservation_station_io_i_exception; // @[backend_with_decode.scala 41:37]
   wire  reservation_station_io_i_rollback_valid; // @[backend_with_decode.scala 41:37]
@@ -960,13 +960,13 @@ module Back_End_With_Decode(
   wire  execute_io_o_branch_resolve_pack_taken; // @[backend_with_decode.scala 43:24]
   wire [63:0] execute_io_o_branch_resolve_pack_pc; // @[backend_with_decode.scala 43:24]
   wire [63:0] execute_io_o_branch_resolve_pack_target; // @[backend_with_decode.scala 43:24]
-  wire [7:0] execute_io_o_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 43:24]
+  wire [6:0] execute_io_o_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 43:24]
   wire  execute_io_o_branch_resolve_pack_prediction_valid; // @[backend_with_decode.scala 43:24]
   wire [2:0] execute_io_o_branch_resolve_pack_branch_type; // @[backend_with_decode.scala 43:24]
   wire  execute_io_i_exception; // @[backend_with_decode.scala 43:24]
   wire  execute_io_i_rollback_valid; // @[backend_with_decode.scala 43:24]
   wire  execute_io_o_lsu_uop_valid; // @[backend_with_decode.scala 43:24]
-  wire [7:0] execute_io_o_lsu_uop_rob_idx; // @[backend_with_decode.scala 43:24]
+  wire [6:0] execute_io_o_lsu_uop_rob_idx; // @[backend_with_decode.scala 43:24]
   wire  rob_clock; // @[backend_with_decode.scala 44:21]
   wire  rob_reset; // @[backend_with_decode.scala 44:21]
   wire  rob_io_o_full; // @[backend_with_decode.scala 44:21]
@@ -1102,7 +1102,7 @@ module Back_End_With_Decode(
   wire [1:0] rob_io_i_ex_res_packs_1_uop_mem_type; // @[backend_with_decode.scala 44:21]
   wire  rob_io_i_branch_resolve_pack_valid; // @[backend_with_decode.scala 44:21]
   wire  rob_io_i_branch_resolve_pack_mispred; // @[backend_with_decode.scala 44:21]
-  wire [7:0] rob_io_i_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 44:21]
+  wire [6:0] rob_io_i_branch_resolve_pack_rob_idx; // @[backend_with_decode.scala 44:21]
   wire  rob_io_o_commit_packs_0_valid; // @[backend_with_decode.scala 44:21]
   wire  rob_io_o_commit_packs_0_uop_valid; // @[backend_with_decode.scala 44:21]
   wire [31:0] rob_io_o_commit_packs_0_uop_pc; // @[backend_with_decode.scala 44:21]
@@ -1301,8 +1301,8 @@ module Back_End_With_Decode(
   wire  interrupt_mask_clock; // @[backend_with_decode.scala 46:32]
   wire  interrupt_mask_reset; // @[backend_with_decode.scala 46:32]
   wire  interrupt_mask_io_i_lsu_uop_valid; // @[backend_with_decode.scala 46:32]
-  wire [7:0] interrupt_mask_io_i_rob_idx; // @[backend_with_decode.scala 46:32]
-  wire [7:0] interrupt_mask_io_i_lsu_uop_rob_idx; // @[backend_with_decode.scala 46:32]
+  wire [6:0] interrupt_mask_io_i_rob_idx; // @[backend_with_decode.scala 46:32]
+  wire [6:0] interrupt_mask_io_i_lsu_uop_rob_idx; // @[backend_with_decode.scala 46:32]
   wire  interrupt_mask_io_i_interrupt; // @[backend_with_decode.scala 46:32]
   wire  interrupt_mask_io_o_interrupt_with_mask; // @[backend_with_decode.scala 46:32]
   wire [63:0] arch_regs_io_i_pregs_0; // @[backend_with_decode.scala 157:27]
@@ -3677,7 +3677,7 @@ module Back_End_With_Decode(
   assign interrupt_mask_clock = clock;
   assign interrupt_mask_reset = reset;
   assign interrupt_mask_io_i_lsu_uop_valid = execute_io_o_lsu_uop_valid; // @[backend_with_decode.scala 131:39]
-  assign interrupt_mask_io_i_rob_idx = {{1'd0}, rob_io_o_rob_head}; // @[backend_with_decode.scala 132:33]
+  assign interrupt_mask_io_i_rob_idx = rob_io_o_rob_head; // @[backend_with_decode.scala 132:33]
   assign interrupt_mask_io_i_lsu_uop_rob_idx = execute_io_o_lsu_uop_rob_idx; // @[backend_with_decode.scala 133:41]
   assign interrupt_mask_io_i_interrupt = io_i_interrupt; // @[backend_with_decode.scala 134:35]
   assign arch_regs_io_i_pregs_0 = regfile_io_o_pregs_0; // @[backend_with_decode.scala 159:26]

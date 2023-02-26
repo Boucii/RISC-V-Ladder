@@ -142,13 +142,13 @@ module Execute(
   output        io_o_branch_resolve_pack_taken,
   output [63:0] io_o_branch_resolve_pack_pc,
   output [63:0] io_o_branch_resolve_pack_target,
-  output [7:0]  io_o_branch_resolve_pack_rob_idx,
+  output [6:0]  io_o_branch_resolve_pack_rob_idx,
   output        io_o_branch_resolve_pack_prediction_valid,
   output [2:0]  io_o_branch_resolve_pack_branch_type,
   input         io_i_exception,
   input         io_i_rollback_valid,
   output        io_o_lsu_uop_valid,
-  output [7:0]  io_o_lsu_uop_rob_idx
+  output [6:0]  io_o_lsu_uop_rob_idx
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -303,7 +303,7 @@ module Execute(
   wire  bru_io_o_branch_resolve_pack_taken; // @[execute.scala 42:21]
   wire [63:0] bru_io_o_branch_resolve_pack_pc; // @[execute.scala 42:21]
   wire [63:0] bru_io_o_branch_resolve_pack_target; // @[execute.scala 42:21]
-  wire [7:0] bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 42:21]
+  wire [6:0] bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 42:21]
   wire  bru_io_o_branch_resolve_pack_prediction_valid; // @[execute.scala 42:21]
   wire [2:0] bru_io_o_branch_resolve_pack_branch_type; // @[execute.scala 42:21]
   wire  bru_io_i_uop_valid; // @[execute.scala 42:21]
@@ -446,7 +446,7 @@ module Execute(
   wire [63:0] func_units_3_io_dcache_io_MdataIn; // @[execute.scala 43:21]
   wire [63:0] func_units_3_io_dcache_io_MdataOut; // @[execute.scala 43:21]
   wire  func_units_3_io_o_lsu_uop_valid; // @[execute.scala 43:21]
-  wire [7:0] func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 43:21]
+  wire [6:0] func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 43:21]
   wire  func_units_3_io_i_exception; // @[execute.scala 43:21]
   wire  func_units_3_io_i_rollback_valid; // @[execute.scala 43:21]
   wire [6:0] func_units_3_io_i_rollback_rob_idx; // @[execute.scala 43:21]
@@ -658,13 +658,13 @@ module Execute(
   reg  last_branch_resolve_pack_taken; // @[execute.scala 51:43]
   reg [63:0] last_branch_resolve_pack_pc; // @[execute.scala 51:43]
   reg [63:0] last_branch_resolve_pack_target; // @[execute.scala 51:43]
-  reg [7:0] last_branch_resolve_pack_rob_idx; // @[execute.scala 51:43]
+  reg [6:0] last_branch_resolve_pack_rob_idx; // @[execute.scala 51:43]
   reg  last_branch_resolve_pack_prediction_valid; // @[execute.scala 51:43]
   reg [2:0] last_branch_resolve_pack_branch_type; // @[execute.scala 51:43]
-  wire [142:0] _new_br_resolve_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
+  wire [141:0] _new_br_resolve_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
     last_branch_resolve_pack_taken,last_branch_resolve_pack_pc,last_branch_resolve_pack_target,
     last_branch_resolve_pack_rob_idx,last_branch_resolve_pack_prediction_valid,last_branch_resolve_pack_branch_type}; // @[execute.scala 54:48]
-  wire [142:0] _new_br_resolve_T_1 = {io_o_branch_resolve_pack_valid,io_o_branch_resolve_pack_mispred,
+  wire [141:0] _new_br_resolve_T_1 = {io_o_branch_resolve_pack_valid,io_o_branch_resolve_pack_mispred,
     io_o_branch_resolve_pack_taken,io_o_branch_resolve_pack_pc,io_o_branch_resolve_pack_target,
     io_o_branch_resolve_pack_rob_idx,io_o_branch_resolve_pack_prediction_valid,io_o_branch_resolve_pack_branch_type}; // @[execute.scala 54:84]
   wire  new_br_resolve = _new_br_resolve_T != _new_br_resolve_T_1 & (io_o_branch_resolve_pack_valid &
@@ -2228,7 +2228,7 @@ module Execute(
     _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 180:155]
   assign alu1_io_i_exception = io_i_exception; // @[execute.scala 128:28]
   assign alu1_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 136:30]
-  assign alu1_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 144:32]
+  assign alu1_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 144:32]
   assign alu2_clock = clock;
   assign alu2_reset = reset;
   assign alu2_io_i_uop_valid = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
@@ -2299,7 +2299,7 @@ module Execute(
     _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 180:155]
   assign alu2_io_i_exception = io_i_exception; // @[execute.scala 129:28]
   assign alu2_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 137:30]
-  assign alu2_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 145:32]
+  assign alu2_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 145:32]
   assign bru_clock = clock;
   assign bru_reset = reset;
   assign bru_io_i_uop_valid = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 122:24]
@@ -2418,7 +2418,7 @@ module Execute(
   assign func_units_3_io_dcache_io_MdataIn = io_dcache_io_MdataIn; // @[execute.scala 66:38]
   assign func_units_3_io_i_exception = io_i_exception; // @[execute.scala 131:28]
   assign func_units_3_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 139:30]
-  assign func_units_3_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 147:31]
+  assign func_units_3_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 147:31]
   assign func_units_4_clock = clock;
   assign func_units_4_reset = reset;
   assign func_units_4_io_i_uop_valid = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_valid :
@@ -2481,7 +2481,7 @@ module Execute(
     func_units_4_io_o_ex_res_pack_valid & _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 180:155]
   assign func_units_4_io_i_exception = io_i_exception; // @[execute.scala 132:28]
   assign func_units_4_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 140:30]
-  assign func_units_4_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 148:31]
+  assign func_units_4_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 148:31]
   assign div_clock = clock;
   assign div_reset = reset;
   assign div_io_i_uop_valid = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 125:24]
@@ -2535,7 +2535,7 @@ module Execute(
     _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 180:155]
   assign div_io_i_exception = io_i_exception; // @[execute.scala 133:28]
   assign div_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 141:30]
-  assign div_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 149:31]
+  assign div_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 149:31]
   assign csr_bf_clock = clock;
   assign csr_bf_reset = reset;
   assign csr_bf_io_i_uop_valid = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 126:27]
@@ -2598,7 +2598,7 @@ module Execute(
     _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 180:155]
   assign csr_bf_io_i_exception = io_i_exception; // @[execute.scala 134:31]
   assign csr_bf_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 142:33]
-  assign csr_bf_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx[6:0]; // @[execute.scala 150:34]
+  assign csr_bf_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 150:34]
   always @(posedge clock) begin
     if (reset) begin // @[execute.scala 51:43]
       last_branch_resolve_pack_valid <= 1'h0; // @[execute.scala 51:43]
@@ -2626,7 +2626,7 @@ module Execute(
       last_branch_resolve_pack_target <= io_o_branch_resolve_pack_target; // @[execute.scala 52:30]
     end
     if (reset) begin // @[execute.scala 51:43]
-      last_branch_resolve_pack_rob_idx <= 8'h0; // @[execute.scala 51:43]
+      last_branch_resolve_pack_rob_idx <= 7'h0; // @[execute.scala 51:43]
     end else begin
       last_branch_resolve_pack_rob_idx <= io_o_branch_resolve_pack_rob_idx; // @[execute.scala 52:30]
     end
@@ -2736,7 +2736,7 @@ initial begin
   _RAND_4 = {2{`RANDOM}};
   last_branch_resolve_pack_target = _RAND_4[63:0];
   _RAND_5 = {1{`RANDOM}};
-  last_branch_resolve_pack_rob_idx = _RAND_5[7:0];
+  last_branch_resolve_pack_rob_idx = _RAND_5[6:0];
   _RAND_6 = {1{`RANDOM}};
   last_branch_resolve_pack_prediction_valid = _RAND_6[0:0];
   _RAND_7 = {1{`RANDOM}};

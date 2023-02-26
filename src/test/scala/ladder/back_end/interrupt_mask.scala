@@ -15,8 +15,8 @@ import chisel3.experimental.BundleLiterals._
 class Interrupt_Mask extends Module{
     val io = IO(new Bundle{
     	val i_lsu_uop_valid = Input(Bool())
-    	val i_rob_idx  = Input(UInt(8.W))
-        val i_lsu_uop_rob_idx = Input(UInt(8.W))
+    	val i_rob_idx  = Input(UInt(7.W))
+        val i_lsu_uop_rob_idx = Input(UInt(7.W))
 
         val i_interrupt = Input(Bool())
         val o_interrupt_with_mask = Output(Bool())

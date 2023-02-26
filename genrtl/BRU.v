@@ -6,7 +6,7 @@ module BRU(
   output        io_o_branch_resolve_pack_taken,
   output [63:0] io_o_branch_resolve_pack_pc,
   output [63:0] io_o_branch_resolve_pack_target,
-  output [7:0]  io_o_branch_resolve_pack_rob_idx,
+  output [6:0]  io_o_branch_resolve_pack_rob_idx,
   output        io_o_branch_resolve_pack_prediction_valid,
   output [2:0]  io_o_branch_resolve_pack_branch_type,
   input         io_i_uop_valid,
@@ -196,7 +196,7 @@ module BRU(
   assign io_o_branch_resolve_pack_taken = pc_sel != 2'h0; // @[execute_unit.scala 193:23]
   assign io_o_branch_resolve_pack_pc = {{32'd0}, uop_pc}; // @[execute_unit.scala 221:33 224:41]
   assign io_o_branch_resolve_pack_target = {{32'd0}, target_address}; // @[execute_unit.scala 221:33 227:41]
-  assign io_o_branch_resolve_pack_rob_idx = {{1'd0}, uop_rob_idx}; // @[execute_unit.scala 221:33 228:41]
+  assign io_o_branch_resolve_pack_rob_idx = uop_rob_idx; // @[execute_unit.scala 221:33 228:41]
   assign io_o_branch_resolve_pack_prediction_valid = uop_branch_predict_pack_valid; // @[execute_unit.scala 221:33 231:41]
   assign io_o_branch_resolve_pack_branch_type = uop_branch_type[2:0]; // @[execute_unit.scala 221:33 229:41]
   assign io_o_ex_res_pack_valid = uop_valid; // @[execute_unit.scala 249:28]

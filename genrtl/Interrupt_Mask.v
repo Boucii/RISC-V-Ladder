@@ -2,8 +2,8 @@ module Interrupt_Mask(
   input        clock,
   input        reset,
   input        io_i_lsu_uop_valid,
-  input  [7:0] io_i_rob_idx,
-  input  [7:0] io_i_lsu_uop_rob_idx,
+  input  [6:0] io_i_rob_idx,
+  input  [6:0] io_i_lsu_uop_rob_idx,
   input        io_i_interrupt,
   output       io_o_interrupt_with_mask
 );
@@ -14,12 +14,13 @@ module Interrupt_Mask(
   reg  mask; // @[interrupt_mask.scala 24:23]
   reg [7:0] cmt_ptr; // @[interrupt_mask.scala 27:26]
   wire  _GEN_0 = io_i_lsu_uop_valid & io_i_lsu_uop_rob_idx == io_i_rob_idx | mask; // @[interrupt_mask.scala 28:15 29:68 30:19]
-  wire  next_mask = mask & io_i_rob_idx != cmt_ptr ? 1'h0 : _GEN_0; // @[interrupt_mask.scala 33:52 34:19]
+  wire [7:0] _GEN_3 = {{1'd0}, io_i_rob_idx}; // @[interrupt_mask.scala 33:40]
+  wire  next_mask = mask & _GEN_3 != cmt_ptr ? 1'h0 : _GEN_0; // @[interrupt_mask.scala 33:52 34:19]
   assign io_o_interrupt_with_mask = next_mask ? 1'h0 : io_i_interrupt; // @[interrupt_mask.scala 36:36]
   always @(posedge clock) begin
     if (reset) begin // @[interrupt_mask.scala 24:23]
       mask <= 1'h0; // @[interrupt_mask.scala 24:23]
-    end else if (mask & io_i_rob_idx != cmt_ptr) begin // @[interrupt_mask.scala 33:52]
+    end else if (mask & _GEN_3 != cmt_ptr) begin // @[interrupt_mask.scala 33:52]
       mask <= 1'h0; // @[interrupt_mask.scala 34:19]
     end else begin
       mask <= _GEN_0;
@@ -27,7 +28,7 @@ module Interrupt_Mask(
     if (reset) begin // @[interrupt_mask.scala 27:26]
       cmt_ptr <= 8'h0; // @[interrupt_mask.scala 27:26]
     end else if (io_i_lsu_uop_valid & io_i_lsu_uop_rob_idx == io_i_rob_idx) begin // @[interrupt_mask.scala 29:68]
-      cmt_ptr <= io_i_rob_idx; // @[interrupt_mask.scala 31:17]
+      cmt_ptr <= {{1'd0}, io_i_rob_idx}; // @[interrupt_mask.scala 31:17]
     end
   end
 // Register and memory initialization

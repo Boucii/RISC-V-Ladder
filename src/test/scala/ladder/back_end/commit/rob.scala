@@ -66,6 +66,7 @@ class Reorder_Buffer extends Module with consts{
     val this_num_to_roll_back = Wire(UInt(7.W))
 
     last_num_to_roll_back := this_num_to_roll_back
+    val need_to_rbk_dispatch = io.i_rob_allocation_reqs(0).valid || io.i_rob_allocation_reqs(1).valid
 
     //!!!!!!改了branchresolvepakc的结果
     //判定要用下个周期的allocateptr而不是这个周期的
@@ -122,11 +123,11 @@ class Reorder_Buffer extends Module with consts{
       io.o_rob_allocation_ress(0).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(0).valid
       io.o_rob_allocation_ress(1).valid := !(next_rob_state===s_rollback || next_rob_state===s_full ) && io.i_rob_allocation_reqs(1).valid && io.i_rob_allocation_reqs(0).valid //dispatch 会req1 而不req0吗
       
-      io.o_rollback_packs(0).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback, true.B, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(0).valid))
-      io.o_rollback_packs(1).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback,(this_num_to_roll_back === 2.U), io.i_rob_allocation_reqs(0).valid)
+      io.o_rollback_packs(0).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback || !need_to_rbk_dispatch, true.B, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(0).valid))
+      io.o_rollback_packs(1).valid := next_rob_state===s_rollback && Mux(rob_state === s_rollback || !need_to_rbk_dispatch, (this_num_to_roll_back === 2.U), io.i_rob_allocation_reqs(0).valid)
       
-      io.o_rollback_packs(0).uop:= Mux(rob_state=/=s_rollback, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).uop, io.i_rob_allocation_reqs(0).uop), rob_uop(allocate_ptr-1.U))
-      io.o_rollback_packs(1).uop:= Mux(rob_state=/=s_rollback,io.i_rob_allocation_reqs(0).uop, rob_uop(allocate_ptr-2.U))
+      io.o_rollback_packs(0).uop:= Mux(rob_state=/=s_rollback && need_to_rbk_dispatch, Mux(io.i_rob_allocation_reqs(1).valid, io.i_rob_allocation_reqs(1).uop, io.i_rob_allocation_reqs(0).uop), rob_uop(allocate_ptr-1.U))
+      io.o_rollback_packs(1).uop:= Mux(rob_state=/=s_rollback && need_to_rbk_dispatch,io.i_rob_allocation_reqs(0).uop, rob_uop(allocate_ptr-2.U))
 
       io.o_rob_allocation_ress(0).rob_idx := allocate_ptr
       io.o_rob_allocation_ress(1).rob_idx := allocate_ptr+1.U
@@ -202,7 +203,8 @@ class Reorder_Buffer extends Module with consts{
       //since they are not written in the rob yet
       //this is under the assumption that there would not be consecutive s_rbk of 2 different
       //insts. aka.2 con rbk must be seperated by a s_normal.(this is guarenteed by next state logic)
-      when(rob_state === s_rollback){
+      //other corner case: when both insts in dispatch are invalid, rollback immidiately
+      when(rob_state === s_rollback || !need_to_rbk_dispatch){
         allocate_ptr := allocate_ptr - this_num_to_roll_back
         when(this_num_to_roll_back === 2.U){
           rob_valid(allocate_ptr-1.U) := false.B

@@ -32,7 +32,7 @@ class Execute extends Module with consts{
 
         //for interrupt mask
         val o_lsu_uop_valid = Output(Bool()) 
-        val o_lsu_uop_rob_idx = Output(UInt(8.W)) 
+        val o_lsu_uop_rob_idx = Output(UInt(7.W)) 
     })
 
     //lets do this for now. imrove this by adding a virtual exunit class 

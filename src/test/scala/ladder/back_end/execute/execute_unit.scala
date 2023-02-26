@@ -27,7 +27,7 @@ abstract class Function_Unit (
         val i_ROB_first_entry = if(is_lsu) Input(UInt(7.W)) else null
         val dcache_io = if(is_lsu) new DcacheIO() else null
         val o_lsu_uop_valid = if(is_lsu) Output(Bool()) else null
-        val o_lsu_uop_rob_idx = if(is_lsu) Output(UInt(8.W)) else null
+        val o_lsu_uop_rob_idx = if(is_lsu) Output(UInt(7.W)) else null
 
         val i_exception = Input(Bool())
 

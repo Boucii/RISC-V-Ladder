@@ -75,7 +75,7 @@ module LSU(
   input  [63:0] io_dcache_io_MdataIn,
   output [63:0] io_dcache_io_MdataOut,
   output        io_o_lsu_uop_valid,
-  output [7:0]  io_o_lsu_uop_rob_idx,
+  output [6:0]  io_o_lsu_uop_rob_idx,
   input         io_i_exception,
   input         io_i_rollback_valid,
   input  [6:0]  io_i_rollback_rob_idx
@@ -271,7 +271,7 @@ module LSU(
   assign io_dcache_io_Mlen = {{28'd0}, _len_T_11}; // @[execute_unit.scala 283:19 284:9]
   assign io_dcache_io_MdataOut = uop_src2_value; // @[execute_unit.scala 337:27]
   assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 369:44]
-  assign io_o_lsu_uop_rob_idx = {{1'd0}, uop_rob_idx}; // @[execute_unit.scala 370:26]
+  assign io_o_lsu_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 370:26]
   always @(posedge clock) begin
     state <= _GEN_3[0]; // @[execute_unit.scala 262:{24,24} 264:11]
     if (reset) begin // @[execute_unit.scala 266:23]

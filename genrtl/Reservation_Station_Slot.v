@@ -7,7 +7,7 @@ module Reservation_Station_Slot(
   input          io_i_issue_granted,
   input          io_i_branch_resolve_pack_valid,
   input          io_i_branch_resolve_pack_mispred,
-  input  [7:0]   io_i_branch_resolve_pack_rob_idx,
+  input  [6:0]   io_i_branch_resolve_pack_rob_idx,
   input          io_i_exception,
   input          io_i_write_slot,
   input  [127:0] io_i_wakeup_port,

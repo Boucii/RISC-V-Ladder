@@ -111,7 +111,7 @@ module Ladder(
   wire  front_end_io_i_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 21:25]
   wire [63:0] front_end_io_i_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 21:25]
   wire [63:0] front_end_io_i_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 21:25]
-  wire [7:0] front_end_io_i_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 21:25]
+  wire [6:0] front_end_io_i_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 21:25]
   wire  front_end_io_i_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 21:25]
   wire [2:0] front_end_io_i_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 21:25]
   wire  front_end_io_i_pc_redirect_valid; // @[CPU_top_with_dpic.scala 21:25]
@@ -147,7 +147,7 @@ module Ladder(
   wire  back_end_io_o_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 22:24]
   wire [63:0] back_end_io_o_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 22:24]
   wire [63:0] back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 22:24]
-  wire [7:0] back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 22:24]
+  wire [6:0] back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 22:24]
   wire  back_end_io_o_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 22:24]
   wire [2:0] back_end_io_o_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 22:24]
   wire  back_end_io_o_stall; // @[CPU_top_with_dpic.scala 22:24]
@@ -307,13 +307,13 @@ module Ladder(
   reg  last_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 26:41]
   reg [63:0] last_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 26:41]
   reg [63:0] last_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 26:41]
-  reg [7:0] last_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 26:41]
+  reg [6:0] last_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 26:41]
   reg  last_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 26:41]
   reg [2:0] last_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 26:41]
-  wire [142:0] _front_end_io_i_branch_resolve_pack_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
+  wire [141:0] _front_end_io_i_branch_resolve_pack_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
     last_branch_resolve_pack_taken,last_branch_resolve_pack_pc,last_branch_resolve_pack_target,
     last_branch_resolve_pack_rob_idx,last_branch_resolve_pack_prediction_valid,last_branch_resolve_pack_branch_type}; // @[CPU_top_with_dpic.scala 29:70]
-  wire [142:0] _front_end_io_i_branch_resolve_pack_T_1 = {back_end_io_o_branch_resolve_pack_valid,
+  wire [141:0] _front_end_io_i_branch_resolve_pack_T_1 = {back_end_io_o_branch_resolve_pack_valid,
     back_end_io_o_branch_resolve_pack_mispred,back_end_io_o_branch_resolve_pack_taken,
     back_end_io_o_branch_resolve_pack_pc,back_end_io_o_branch_resolve_pack_target,
     back_end_io_o_branch_resolve_pack_rob_idx,back_end_io_o_branch_resolve_pack_prediction_valid,
@@ -643,7 +643,7 @@ module Ladder(
   assign front_end_io_i_branch_resolve_pack_target = _front_end_io_i_branch_resolve_pack_T ==
     _front_end_io_i_branch_resolve_pack_T_1 ? 64'h0 : back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_rob_idx = _front_end_io_i_branch_resolve_pack_T ==
-    _front_end_io_i_branch_resolve_pack_T_1 ? 8'h0 : back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 29:44]
+    _front_end_io_i_branch_resolve_pack_T_1 ? 7'h0 : back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_prediction_valid = _front_end_io_i_branch_resolve_pack_T ==
     _front_end_io_i_branch_resolve_pack_T_1 ? 1'h0 : back_end_io_o_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_branch_type = _front_end_io_i_branch_resolve_pack_T ==
@@ -741,7 +741,7 @@ module Ladder(
       last_branch_resolve_pack_target <= back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 27:28]
     end
     if (reset) begin // @[CPU_top_with_dpic.scala 26:41]
-      last_branch_resolve_pack_rob_idx <= 8'h0; // @[CPU_top_with_dpic.scala 26:41]
+      last_branch_resolve_pack_rob_idx <= 7'h0; // @[CPU_top_with_dpic.scala 26:41]
     end else begin
       last_branch_resolve_pack_rob_idx <= back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 27:28]
     end
@@ -803,7 +803,7 @@ initial begin
   _RAND_4 = {2{`RANDOM}};
   last_branch_resolve_pack_target = _RAND_4[63:0];
   _RAND_5 = {1{`RANDOM}};
-  last_branch_resolve_pack_rob_idx = _RAND_5[7:0];
+  last_branch_resolve_pack_rob_idx = _RAND_5[6:0];
   _RAND_6 = {1{`RANDOM}};
   last_branch_resolve_pack_prediction_valid = _RAND_6[0:0];
   _RAND_7 = {1{`RANDOM}};

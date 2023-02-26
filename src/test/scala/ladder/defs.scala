@@ -79,7 +79,7 @@ class branch_resolve_pack extends Bundle
     val pc = UInt(64.W)
     val target = UInt(64.W)
     //val uop = new uop()
-    val rob_idx = UInt(8.W)
+    val rob_idx = UInt(7.W)
     val prediction_valid = Bool()
     val branch_type = UInt(3.W)
     //val branch_predict_pack = new branch_predict_pack()

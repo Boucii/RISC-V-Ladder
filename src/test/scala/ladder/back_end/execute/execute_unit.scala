@@ -129,7 +129,7 @@ class ALU() extends Function_Unit(
         (!(io.i_exception) && (state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE
     ))
 
-    io.o_available := Mux(state === s_BUSY, false.B,true.B)
+    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
 
     //printf("src1=%d\n",uop.src1_value)
     //printf("src2=%d\n",uop.src2_value)

@@ -265,6 +265,7 @@ module ALU(
   wire  _next_state_T_26 = _next_state_T_25 ? 1'h0 : state; // @[Mux.scala 101:16]
   wire  _next_state_T_28 = _T_18 ? 1'h0 : _next_state_T_21 | _next_state_T_26; // @[Mux.scala 101:16]
   wire  _next_state_T_29 = io_i_exception ? 1'h0 : _next_state_T_28; // @[Mux.scala 101:16]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 132:26]
   wire [1:0] next_state = {{1'd0}, _next_state_T_29}; // @[execute_unit.scala 124:16 46:26]
   wire [1:0] _GEN_1 = reset ? 2'h0 : next_state; // @[execute_unit.scala 45:{24,24} 47:11]
   assign io_o_ex_res_pack_valid = uop_valid; // @[execute_unit.scala 64:28]
@@ -298,7 +299,7 @@ module ALU(
   assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 63:26]
   assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 63:26]
   assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 63:26]
-  assign io_o_available = state ? 1'h0 : 1'h1; // @[execute_unit.scala 132:26]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 132:61]
   always @(posedge clock) begin
     state <= _GEN_1[0]; // @[execute_unit.scala 45:{24,24} 47:11]
     if (reset) begin // @[execute_unit.scala 48:22]

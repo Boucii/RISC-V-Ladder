@@ -172,10 +172,12 @@ module ALU(
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_27 = ~intermediate[31] ? {{32'd0}, intermediate[31:0]} :
     _io_o_ex_res_pack_uop_dst_value_T_26; // @[execute_unit.scala 100:45]
   wire  _io_o_ex_res_pack_uop_dst_value_T_28 = uop_alu_sel == 5'h9; // @[execute_unit.scala 101:22]
+  wire [126:0] _GEN_3 = {{63'd0}, uop_src1_value}; // @[execute_unit.scala 101:53]
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_31 = _GEN_3 << uop_src2_value[5:0]; // @[execute_unit.scala 101:53]
   wire  _io_o_ex_res_pack_uop_dst_value_T_32 = uop_alu_sel == 5'ha; // @[execute_unit.scala 102:22]
-  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_35 = uop_src1_value >> uop_src2_value[4:0]; // @[execute_unit.scala 102:60]
+  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_35 = uop_src1_value >> uop_src2_value[5:0]; // @[execute_unit.scala 102:60]
   wire  _io_o_ex_res_pack_uop_dst_value_T_36 = uop_alu_sel == 5'hb; // @[execute_unit.scala 103:22]
-  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_41 = $signed(uop_src1_value) >>> uop_src2_value[4:0]; // @[execute_unit.scala 103:73]
+  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_41 = $signed(uop_src1_value) >>> uop_src2_value[5:0]; // @[execute_unit.scala 103:73]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_48 = intermediate[31] ? _io_o_ex_res_pack_uop_dst_value_T_26 : {{32
     'd0}, intermediate[31:0]}; // @[execute_unit.scala 104:45]
   wire  _io_o_ex_res_pack_uop_dst_value_T_63 = uop_alu_sel == 5'hf; // @[execute_unit.scala 107:22]
@@ -186,7 +188,9 @@ module ALU(
   wire  _io_o_ex_res_pack_uop_dst_value_T_78 = uop_alu_sel == 5'h13; // @[execute_unit.scala 111:22]
   wire  _io_o_ex_res_pack_uop_dst_value_T_81 = uop_alu_sel == 5'h14; // @[execute_unit.scala 112:22]
   wire  _io_o_ex_res_pack_uop_dst_value_T_83 = uop_alu_sel == 5'h15; // @[execute_unit.scala 113:22]
+  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_85 = uop_src1_value >> uop_src2_value[4:0]; // @[execute_unit.scala 113:54]
   wire  _io_o_ex_res_pack_uop_dst_value_T_86 = uop_alu_sel == 5'h16; // @[execute_unit.scala 114:22]
+  wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_90 = $signed(uop_src1_value) >>> uop_src2_value[4:0]; // @[execute_unit.scala 114:74]
   wire  _io_o_ex_res_pack_uop_dst_value_T_91 = uop_alu_sel == 5'h17; // @[execute_unit.scala 115:22]
   wire  _io_o_ex_res_pack_uop_dst_value_T_93 = uop_alu_sel == 5'h18; // @[execute_unit.scala 116:22]
   wire  _io_o_ex_res_pack_uop_dst_value_T_95 = uop_alu_sel == 5'h19; // @[execute_unit.scala 117:22]
@@ -201,7 +205,7 @@ module ALU(
   wire  _io_o_ex_res_pack_uop_dst_value_T_140 = uop_alu_sel == 5'h1e; // @[execute_unit.scala 122:22]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_141 = _io_o_ex_res_pack_uop_dst_value_T_140 ? uop_src1_value : 64'h0; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_142 = _io_o_ex_res_pack_uop_dst_value_T_135 ?
-    _io_o_ex_res_pack_uop_dst_value_T_41 : _io_o_ex_res_pack_uop_dst_value_T_141; // @[Mux.scala 101:16]
+    _io_o_ex_res_pack_uop_dst_value_T_90 : _io_o_ex_res_pack_uop_dst_value_T_141; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_143 = _intermediate_T_23 ? _io_o_ex_res_pack_uop_dst_value_T_27 :
     _io_o_ex_res_pack_uop_dst_value_T_142; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_144 = _intermediate_T_18 ? _io_o_ex_res_pack_uop_dst_value_T_27 :
@@ -215,9 +219,9 @@ module ALU(
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_148 = _io_o_ex_res_pack_uop_dst_value_T_91 ?
     _io_o_ex_res_pack_uop_dst_value_T_18 : _io_o_ex_res_pack_uop_dst_value_T_147; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_149 = _io_o_ex_res_pack_uop_dst_value_T_86 ?
-    _io_o_ex_res_pack_uop_dst_value_T_41 : _io_o_ex_res_pack_uop_dst_value_T_148; // @[Mux.scala 101:16]
+    _io_o_ex_res_pack_uop_dst_value_T_90 : _io_o_ex_res_pack_uop_dst_value_T_148; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_150 = _io_o_ex_res_pack_uop_dst_value_T_83 ?
-    _io_o_ex_res_pack_uop_dst_value_T_35 : _io_o_ex_res_pack_uop_dst_value_T_149; // @[Mux.scala 101:16]
+    _io_o_ex_res_pack_uop_dst_value_T_85 : _io_o_ex_res_pack_uop_dst_value_T_149; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_151 = _io_o_ex_res_pack_uop_dst_value_T_81 ?
     _io_o_ex_res_pack_uop_dst_value_T_16 : _io_o_ex_res_pack_uop_dst_value_T_150; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_152 = _io_o_ex_res_pack_uop_dst_value_T_78 ? {{63'd0},
@@ -240,25 +244,25 @@ module ALU(
     _io_o_ex_res_pack_uop_dst_value_T_41} : _io_o_ex_res_pack_uop_dst_value_T_159; // @[Mux.scala 101:16]
   wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_161 = _io_o_ex_res_pack_uop_dst_value_T_32 ? {{31'd0},
     _io_o_ex_res_pack_uop_dst_value_T_35} : _io_o_ex_res_pack_uop_dst_value_T_160; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_162 = _io_o_ex_res_pack_uop_dst_value_T_28 ? _intermediate_T_21 :
-    _io_o_ex_res_pack_uop_dst_value_T_161; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_163 = _intermediate_T ? {{31'd0}, _io_o_ex_res_pack_uop_dst_value_T_27}
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_162 = _io_o_ex_res_pack_uop_dst_value_T_28 ?
+    _io_o_ex_res_pack_uop_dst_value_T_31 : {{32'd0}, _io_o_ex_res_pack_uop_dst_value_T_161}; // @[Mux.scala 101:16]
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_163 = _intermediate_T ? {{63'd0}, _io_o_ex_res_pack_uop_dst_value_T_27}
      : _io_o_ex_res_pack_uop_dst_value_T_162; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_164 = _io_o_ex_res_pack_uop_dst_value_T_19 ? {{31'd0},
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_164 = _io_o_ex_res_pack_uop_dst_value_T_19 ? {{63'd0},
     _io_o_ex_res_pack_uop_dst_value_T_20} : _io_o_ex_res_pack_uop_dst_value_T_163; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_165 = _io_o_ex_res_pack_uop_dst_value_T_17 ? {{31'd0},
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_165 = _io_o_ex_res_pack_uop_dst_value_T_17 ? {{63'd0},
     _io_o_ex_res_pack_uop_dst_value_T_18} : _io_o_ex_res_pack_uop_dst_value_T_164; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_166 = _io_o_ex_res_pack_uop_dst_value_T_15 ? {{31'd0},
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_166 = _io_o_ex_res_pack_uop_dst_value_T_15 ? {{63'd0},
     _io_o_ex_res_pack_uop_dst_value_T_16} : _io_o_ex_res_pack_uop_dst_value_T_165; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_167 = _io_o_ex_res_pack_uop_dst_value_T_12 ? {{94'd0},
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_167 = _io_o_ex_res_pack_uop_dst_value_T_12 ? {{126'd0},
     _io_o_ex_res_pack_uop_dst_value_T_14} : _io_o_ex_res_pack_uop_dst_value_T_166; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_168 = _io_o_ex_res_pack_uop_dst_value_T_7 ? {{94'd0},
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_168 = _io_o_ex_res_pack_uop_dst_value_T_7 ? {{126'd0},
     _io_o_ex_res_pack_uop_dst_value_T_11} : _io_o_ex_res_pack_uop_dst_value_T_167; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_169 = _io_o_ex_res_pack_uop_dst_value_T_4 ? {{31'd0}, _intermediate_T_2}
-     : _io_o_ex_res_pack_uop_dst_value_T_168; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_170 = _io_o_ex_res_pack_uop_dst_value_T_1 ? {{31'd0}, _intermediate_T_2}
-     : _io_o_ex_res_pack_uop_dst_value_T_169; // @[Mux.scala 101:16]
-  wire [94:0] _io_o_ex_res_pack_uop_dst_value_T_171 = _io_o_ex_res_pack_uop_dst_value_T ? 95'h0 :
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_169 = _io_o_ex_res_pack_uop_dst_value_T_4 ? {{63'd0}, _intermediate_T_2
+    } : _io_o_ex_res_pack_uop_dst_value_T_168; // @[Mux.scala 101:16]
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_170 = _io_o_ex_res_pack_uop_dst_value_T_1 ? {{63'd0}, _intermediate_T_2
+    } : _io_o_ex_res_pack_uop_dst_value_T_169; // @[Mux.scala 101:16]
+  wire [126:0] _io_o_ex_res_pack_uop_dst_value_T_171 = _io_o_ex_res_pack_uop_dst_value_T ? 127'h0 :
     _io_o_ex_res_pack_uop_dst_value_T_170; // @[Mux.scala 101:16]
   wire  _next_state_T_16 = ~io_i_exception; // @[execute_unit.scala 129:10]
   wire  _next_state_T_21 = ~io_i_exception & ~state & (uop_valid & ~io_i_select_to_commit); // @[execute_unit.scala 129:50]

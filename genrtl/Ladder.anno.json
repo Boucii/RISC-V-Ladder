@@ -17035,6 +17035,38 @@
   },
   {
     "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>temptest2"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>temptest"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd6"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd5"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd4"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd3"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd2"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|LSU>condd"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
     "target":"~Ladder|RegFile>debug_regs_0"
   },
   {

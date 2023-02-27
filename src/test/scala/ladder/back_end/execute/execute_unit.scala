@@ -98,9 +98,9 @@ class ALU() extends Function_Unit(
         (uop.alu_sel === ALU_ORI    ) -> (opr1|opr2 )    ,
         (uop.alu_sel === ALU_ANDI   ) -> (opr1&opr2 )    ,
         (uop.alu_sel === ALU_ADDIW  ) -> Mux(intermediate(31)=/=1.U,intermediate(31,0),Cat(0xffffffffL.U,intermediate(31,0)))    ,
-        (uop.alu_sel === ALU_SLLI   ) -> (opr1(63,0)<<opr2(4,0))   ,
-        (uop.alu_sel === ALU_SRLI   ) -> (opr1(63,0).asUInt>>opr2(4,0)).asUInt    ,
-        (uop.alu_sel === ALU_SRAI   ) -> (opr1(63,0).asSInt>>opr2(4,0)).asUInt    ,
+        (uop.alu_sel === ALU_SLLI   ) -> (opr1(63,0)<<opr2(5,0))   ,
+        (uop.alu_sel === ALU_SRLI   ) -> (opr1(63,0).asUInt>>opr2(5,0)).asUInt    ,
+        (uop.alu_sel === ALU_SRAI   ) -> (opr1(63,0).asSInt>>opr2(5,0)).asUInt    ,
         (uop.alu_sel === ALU_SLLIW  ) -> Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0))   ,
         (uop.alu_sel === ALU_SRLIW  ) -> Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0))   ,
         (uop.alu_sel === ALU_SRAIW  ) -> Mux(intermediate(31)===1.U,Cat(0xffffffffL.U,intermediate(31,0)),intermediate(31,0))   ,
@@ -307,16 +307,56 @@ class LSU extends Function_Unit(
         (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
         (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
     ))
+    val condd = Wire(Bool())
+    condd := (loadu && len===1.U && io.dcache_io.data_valid)
+    dontTouch(condd)
+    val condd2 = Wire(Bool())
+    condd2 := (loadu && io.dcache_io.data_valid)
+    dontTouch(condd2)
+    val condd3 = Wire(Bool())
+    condd3 := (!loadu && io.dcache_io.data_valid)
+    dontTouch(condd3)
+    val condd4 = Wire(Bool())
+    condd4 := (!loadu && len===1.U && io.dcache_io.data_valid)
+    dontTouch(condd4)
+    val condd5 = Wire(Bool())
+    condd5 := (!loadu && len===2.U && io.dcache_io.data_valid)
+    dontTouch(condd5)
+    val condd6 = Wire(Bool())
+    condd6 := (!loadu && len===4.U && io.dcache_io.data_valid)
+    dontTouch(condd6)
+
+    val temptest = RegInit(0.U(64.W))
+    val temptest2 = RegInit(0.U(64.W))
+    when(condd)
+    {
+    //temptest := (io.dcache_io.MdataIn(7,0))
+    temptest := (io.dcache_io.MdataIn)
+    }
+    temptest2 := (io.dcache_io.MdataIn)
+    dontTouch(temptest)
+    dontTouch(temptest2)
+
+
     //this is incorrect if the inst can be issued the cycle data_valid turns true
     uop.dst_value := MuxCase(uop.dst_value,Seq(
-      
-      
-        //(loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
-        //(loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
-        //(loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
-        //(loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
-        (loadu && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
-        
+        //(loadu && (len===1.U) && io.dcache_io.data_valid) -> Cat(0.U(31.W),io.dcache_io.MdataIn(31,0)),
+        //(loadu && (len===2.U) && io.dcache_io.data_valid) -> Cat(0.U(48.W),io.dcache_io.MdataIn(15,0)),
+        //(loadu && (len===4.U) && io.dcache_io.data_valid) -> Cat(0.U(31.W),io.dcache_io.MdataIn(31,0)),
+        //(loadu && (len===8.U) && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
+        /*
+        (loadu && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn & MuxCase(0xffffffffffffffffL.U(64.W),Seq(
+            (len === 1.U) -> 0xffffffffffffff00L.U,
+            (len === 2.U) -> 0xffffffffffff0000L.U,
+            (len === 4.U) -> 0xffffffff00000000L.U,
+          ))),*/
+        (loadu && io.dcache_io.data_valid) -> MuxCase(io.dcache_io.MdataIn,Seq(
+            (len === 1.U) ->  Cat(0.U(56.W),io.dcache_io.MdataIn(7,0)),
+            (len === 2.U) ->  Cat(0.U(48.W),io.dcache_io.MdataIn(15,0)),
+            (len === 4.U) ->  Cat(0.U(31.W),io.dcache_io.MdataIn(31,0)),
+          )),
+
+
         (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
         (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
         (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
@@ -374,153 +414,6 @@ class LSU extends Function_Unit(
     io.o_lsu_uop_rob_idx := uop.rob_idx
 }
 
-
-
-/*
-class LSU extends Function_Unit(
-    is_bru = false,
-    is_lsu = true
-){
-    io.o_this_available := false.B
-
-    io.o_func_idx:=FU_MEM
-
-    val s_FREE :: s_BUSY  :: Nil = Enum(2)
-    val state = RegInit(s_FREE)
-    val next_state = Wire(UInt(2.W))
-    state := next_state
-
-    val uop =  RegInit(0.U.asTypeOf(new uop()))
-    val next_uop = Wire(new uop())
-    next_uop := Mux(io.i_select,io.i_uop,uop)
-    when((io.i_select_to_commit && !io.i_select || next_state === s_FREE)){
-        next_uop.valid:=false.B
-    }
-    uop:=next_uop
-    io.o_ex_res_pack.uop := uop
-
-    val exception_occured = RegInit(false.B)
-    when(io.i_exception && state === s_BUSY){
-        exception_occured := true.B
-    }
-    when(next_state === s_FREE){
-        exception_occured := false.B
-    }
-
-    val len = Wire(UInt(32.W))
-    len := MuxCase(0.U, Seq(
-        (uop.inst(13,12) === "b00".U) -> 1.U,
-        (uop.inst(13,12) === "b01".U) -> 2.U,
-        (uop.inst(13,12) === "b10".U) -> 4.U,
-        (uop.inst(13,12) === "b11".U) -> 8.U,
-    ))
-    val loadu = Wire(Bool())
-    loadu := (uop.inst(14)=== "b1".U)
-
-    val addr = Wire(UInt(64.W))
-    addr := Mux(uop.mem_type === MEM_R,uop.src1_value+uop.src2_value,uop.src1_value+uop.imm)
-
-    //dcache io
-    /*
-    io.o_ex_res_pack.uop.dst_value := MuxCase(uop.dst_value,Seq(
-      
-        (loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
-        (loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
-        (loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
-        (loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
-        
-        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
-        (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
-        (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
-        (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
-    ))*/
-    val temp_dst_value = RegInit(0.U(64.W))
-    val next_temp_dst_value = Wire(UInt(64.W))
-    temp_dst_value := next_temp_dst_value
-    next_temp_dst_value := MuxCase(temp_dst_value,Seq(
-      
-        //(loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
-       // (loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
-        //(loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
-        (loadu  && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
-        
-        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
-        (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
-        (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
-        (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
-    ))
-    io.o_ex_res_pack.uop.dst_value := temp_dst_value
-    temp_dst_value := next_temp_dst_value
-    dontTouch(next_temp_dst_value)
-
-    //this is incorrect if the inst can be issued the cycle data_valid turns true
-    next_uop.dst_value := MuxCase(uop.dst_value,Seq(
-      
-        (loadu && len===1.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(7,0)),
-        (loadu && len===2.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(15,0)),
-        (loadu && len===4.U && io.dcache_io.data_valid) -> (io.dcache_io.MdataIn(31,0)),
-        (loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn,
-        
-        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
-        (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
-        (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
-        (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
-    ))
-    dontTouch(next_uop.dst_value)
-    //io.dcache_io.addr_valid:= (!io.i_exception && ((io.i_select && uop.mem_type===MEM_R)) || (uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx))
-    //use addr_given to limit addr valid in one cycle.
-    //this is under the assumption that cache is always ready. change the logic when adding cache.
-    val addr_given = RegInit(false.B)
-    addr_given := MuxCase(addr_given,Seq(
-      ((io.dcache_io.addr_valid) && !io.i_select_to_commit)->true.B,
-      (next_state === s_FREE)->false.B
-      ))
-    //addr_given := Mux(io.dcache_io.addr_valid && (uop.mem_type===MEM_W), true.B, false.B)
-    io.dcache_io.addr_valid := (uop.valid && !addr_given && next_uop.mem_type === MEM_R) || (uop.valid && !addr_given && uop.mem_type === MEM_W && io.i_ROB_first_entry === uop.rob_idx)
-    io.dcache_io.data_ready := true.B
-    io.dcache_io.Maddr:= addr
-    io.dcache_io.Mwout := uop.mem_type === MEM_W
-    io.dcache_io.Men := !(uop.mem_type === MEM_N)
-    io.dcache_io.Mlen := len
-    io.dcache_io.MdataOut := uop.src2_value
-    //----------------------------------
-
-    val ready_to_commit = RegInit(false.B)
-    val next_ready_to_commit = Wire(Bool())
-    ready_to_commit:=next_ready_to_commit
-
-    val rollback_occured = RegInit(false.B)
-    val next_rollback_occured = Wire(Bool())
-    rollback_occured := next_rollback_occured
-
-    next_rollback_occured := MuxCase(rollback_occured,Seq(
-        (next_state === s_FREE) -> false.B,
-        (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
-            (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6))))) -> true.B,
-    ))
-
-    next_state := MuxCase(state,Seq(
-        ((state === s_FREE) && (io.i_select)) -> s_BUSY,
-        ((state === s_BUSY) && (io.i_select_to_commit)) -> s_FREE,
-        //((state === s_BUSY) && (uop.mem_type === MEM_R) && exception_occured) -> s_FREE,
-        ((state === s_BUSY) && (next_ready_to_commit) && (rollback_occured || (exception_occured && uop.mem_type === MEM_R))) -> s_FREE
-    ))
-
-    next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
-        (state===s_BUSY && io.dcache_io.addr_ready && uop.mem_type===MEM_W && addr_given)->true.B,
-        (state===s_BUSY && io.dcache_io.data_valid && uop.mem_type===MEM_R && addr_given)->true.B,
-        (state===s_FREE) ->false.B 
-    ))
-    io.o_ex_res_pack.valid := next_ready_to_commit && !rollback_occured && !(exception_occured && uop.mem_type === MEM_R)
-    //io.o_available := Mux(state === s_BUSY, false.B,true.B)
-    io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
-
-    io.o_lsu_uop_valid := state === s_BUSY &&  uop.mem_type === MEM_W
-    io.o_lsu_uop_rob_idx := uop.rob_idx
-    
-    uop := next_uop
-}
-*/
 class MUL extends Function_Unit(){
     io.o_this_available := false.B
     val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop

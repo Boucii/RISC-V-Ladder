@@ -413,6 +413,10 @@ int main(int argc, char** argv, char** env){
 	    first_cycle =0;
         }
 	if(diff_pass==0){
+    single_cycleup();
+    single_cycledown();
+    single_cycleup();
+    single_cycledown();
 		uint32_t cur_inst=top->io_o_dbg_commit_packs_1_valid?top->io_o_dbg_commit_packs_1_uop_inst:top->io_o_dbg_commit_packs_0_uop_inst;
 		cout<<"\n\n";
 		cout<<BOLDRED<<"------------DIFF FAILED------------"<<RESET<<endl;

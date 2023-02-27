@@ -427,7 +427,7 @@ int main(int argc, char** argv, char** env){
     time++;
   }
   if(time==MAX_TIME){
-      cout<<"HIT BAD TRAP"<<endl;
+      cout<<"HIT BAD TRAP(Time OUT)"<<endl;
   }
 end:
   dumpwave();

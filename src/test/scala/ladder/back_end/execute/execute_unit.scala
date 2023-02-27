@@ -456,10 +456,10 @@ class MUL extends Function_Unit(){
     
     val mul_finished=RegInit(Bool(),false.B)
 
-    when(multiplier.io.o_out_valid){
-        mul_finished:=true.B
-    }.elsewhen(io.i_select_to_commit){
+    when(io.i_select_to_commit){
         mul_finished:=false.B
+    }.elsewhen(multiplier.io.o_out_valid){
+        mul_finished:=true.B
     }.otherwise{
         mul_finished := mul_finished
     }

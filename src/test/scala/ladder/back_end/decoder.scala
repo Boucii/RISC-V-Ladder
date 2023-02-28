@@ -13,6 +13,12 @@ class Decoder extends Module with consts{
         val o_decode_packs = Output(Vec(2,new uop()))
 
         val i_exception = Input(Bool())
+        //decoder should flush when rollback valid, not only on resolved mispreds
+        //when resolved finished, and rollback not finished, the rename stage would not receive 
+        //any more insts, thus insts out of decoder would go into the void
+        //but we guarenteed resolved brs would not disappear before rbk valid in execute(select_to_commit logic)
+        //so can only use branch_resolve pack to do this. another point to notice is when mispred happens on the end of the rob
+        //this case is explained in rename stage. This results in we should use branch_resolve or both, not only rollback packs.
         val i_branch_resolve_pack = Input(new branch_resolve_pack())
         val i_stall = Input(Bool())
     })

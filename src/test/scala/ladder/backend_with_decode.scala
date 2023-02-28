@@ -52,11 +52,12 @@ class Back_End_With_Decode extends Module with consts{
     decode.io.i_stall := io.o_stall
 
     //connect rename input
-    rename.io.i_decode_packs    := decode.io.o_decode_packs
-    rename.io.i_commit_packs    := csr.io.o_commit_packs_modified
-    rename.io.i_rollback_packs  := rob.io.o_rollback_packs
-    rename.io.i_exception       := csr.io.o_pc_redirect_valid
-    rename.io.i_stall           := rob.io.o_full || reservation_station.io.o_full 
+    rename.io.i_decode_packs      := decode.io.o_decode_packs
+    rename.io.i_commit_packs      := csr.io.o_commit_packs_modified
+    rename.io.i_rollback_packs    := rob.io.o_rollback_packs
+    rename.io.i_flush_for_branch  := execute.io.o_branch_resolve_pack.valid && execute.io.o_branch_resolve_pack.mispred
+    rename.io.i_exception         := csr.io.o_pc_redirect_valid
+    rename.io.i_stall             := rob.io.o_full || reservation_station.io.o_full 
 
     //connect dispatch input
     dispatch.io.i_rename_packs              := rename.io.o_rename_packs

@@ -15,6 +15,7 @@ class Dispatch extends Module{
         //from reservation station
         val i_reservation_station_full=Input(new Bool())//when rs has 0 or 1 free,stall anyway
         //from exection unit
+        //the details of rollback, check rename and decoder io module.
         val i_branch_resolve_pack=Input(new branch_resolve_pack())
         //to rob
         val o_rob_allocation_reqs=Output(Vec(2,new rob_allocation_req_pack()))

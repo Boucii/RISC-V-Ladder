@@ -11,7 +11,12 @@ class Rename extends Module{
     val io=IO(new Bundle{
         val i_decode_packs=Input(Vec(2,new uop()))
         val i_commit_packs=Input(Vec(2,new commit_pack()))
+        //the 2 below are all necessary.
+        //rollback packs is for rename/busy table rbk information
+        //and when the mispred branch is at the end of the rob, rob won't be valid,
+        //but still needs to flush the stage, and that's when flush_for_branch is used
         val i_rollback_packs=Input(Vec(2,new rollback_pack()))
+        val i_flush_for_branch =Input(Bool())
 
         val o_free_list_empty = Output(Bool())
         val o_rename_packs=Output(Vec(2,new uop()))
@@ -27,7 +32,7 @@ class Rename extends Module{
     //val free_list=Module(new Free_List())
     val busy_table=Module(new Busy_Table())
 	val invalidify = Wire(Bool())
-	invalidify := io.i_exception || io.i_stall || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid
+	invalidify := io.i_exception || io.i_stall || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid ||io.i_flush_for_branch
 
     io.o_commit_rename_table := rename_table.io.o_commit_rename_table
 
@@ -35,6 +40,10 @@ class Rename extends Module{
     val uops = RegInit(0.U.asTypeOf(Vec(2,new uop())))
     uops(0) := Mux(io.i_stall, uops(0), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(1), io.i_decode_packs(0)))
     uops(1) := Mux(io.i_stall, uops(1), Mux((!io.i_decode_packs(0).valid && io.i_decode_packs(1).valid), io.i_decode_packs(0), io.i_decode_packs(1)))
+    when(io.i_exception || io.i_rollback_packs(0).valid || io.i_rollback_packs(1).valid || io.i_flush_for_branch){
+        uops(0).valid := false.B
+        uops(1).valid := false.B
+    }
 
     //rename table -------------------
     for(i <- 0 until 2){

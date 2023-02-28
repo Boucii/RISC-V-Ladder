@@ -17,7 +17,7 @@
 
 #define DIFFTEST_EN 1
 #define ITRACE_EN 1
-#define MAX_TIME 10000//10000000
+#define MAX_TIME 1000000//10000000
 #define RESET_VECTOR 0x80000000
 
 #define RESET   "\033[0m"

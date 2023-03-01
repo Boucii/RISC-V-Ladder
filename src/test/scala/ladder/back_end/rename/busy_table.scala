@@ -77,13 +77,16 @@ class Busy_Table extends Module{
     num_cmt_phy := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.phy_dst=/=0.U), 1.U, 0.U) +
                    Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.phy_dst=/=0.U), 1.U, 0.U)
 */
+    //if a and b are the same, num count as 1
+    //we do not bypass insts of the same arch dst the same phy dst
     num_allocate := Mux(io.i_free_list_reqs(0), 1.U(2.W), 0.U(2.W)) + Mux(io.i_free_list_reqs(1), 1.U(2.W), 0.U(2.W))
     num_rbk := Mux((io.i_rollback_packs(0).valid)&&(io.i_rollback_packs(0).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
-               Mux((io.i_rollback_packs(1).valid)&&(io.i_rollback_packs(1).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W))
+               Mux((io.i_rollback_packs(1).valid)&&(io.i_rollback_packs(1).uop.phy_dst=/=0.U) && (io.i_rollback_packs(1).uop.phy_dst=/=io.i_rollback_packs(0).uop.phy_dst || 
+                 !(io.i_rollback_packs(0).valid)), 1.U(2.W), 0.U(2.W))
     num_cmt_stale := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.stale_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
-                     Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.stale_dst=/=0.U), 1.U(2.W), 0.U(2.W))
+                     Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.stale_dst=/=0.U) && (io.i_commit_packs(1).uop.stale_dst=/=io.i_commit_packs(0).uop.stale_dst || !(io.i_commit_packs(0).valid)), 1.U(2.W), 0.U(2.W))
     num_cmt_phy := Mux((io.i_commit_packs(0).valid)&&(io.i_commit_packs(0).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W)) +
-                   Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.phy_dst=/=0.U), 1.U(2.W), 0.U(2.W))
+                   Mux((io.i_commit_packs(1).valid)&&(io.i_commit_packs(1).uop.phy_dst=/=0.U) && (io.i_commit_packs(1).uop.phy_dst=/=io.i_commit_packs(0).uop.phy_dst || !(io.i_commit_packs(0).valid)), 1.U(2.W), 0.U(2.W))
 
     val num_mapped_not_writtenback = RegInit(0.U(7.W))
     val next_num_mapped_not_writtenback = Wire(UInt(7.W))
@@ -104,6 +107,26 @@ class Busy_Table extends Module{
 
     io.o_allocated_pregs(0) := Mux(io.i_free_list_reqs(0),available0,0.U)
     io.o_allocated_pregs(1) := Mux(io.i_free_list_reqs(1),available1,0.U)
+
+    /*
+    //debug
+    var allocate_num_ref = 0
+    var num_mnwb_ref = 0
+    for(i<- 0 until 128){
+      if((mapped(i)).equals(1.U) && (clock.asBool).equals(1.U)){
+        allocate_num_ref += 1
+      }
+      if((mapped).equals(1.U) && (num_mnwb_ref).equals(0.U) && (clock.asBool).equals(1.U)){
+        num_mnwb_ref+=1
+      }
+      if(clock.asBool.equals(0.U)){
+        num_mnwb_ref=0
+        allocate_num_ref=0
+      }
+    }
+    assert(allocated_num===allocate_num_ref.U,"allocated num wrong!(from rename)\n") //mapped=1
+    assert(num_mapped_not_writtenback===num_mnwb_ref.U,"num mapped wrong!(from rename)\n") //mapped=1 && wittenback=0
+*/
 
     //printf("writtenback=%x \n",next_written_back)
     //printf("available1=%d\n\n",available1)

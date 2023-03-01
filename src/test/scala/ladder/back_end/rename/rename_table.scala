@@ -55,9 +55,9 @@ class Rename_Table extends Module{
         rename_table(io.i_rollback_packs(0).uop.arch_dst):=io.i_rollback_packs(0).uop.stale_dst
     }
 
-when(io.i_rollback_packs(1).valid){
-    rename_table(io.i_rollback_packs(1).uop.arch_dst):=io.i_rollback_packs(1).uop.stale_dst
-}
+    when(io.i_rollback_packs(1).valid){
+        rename_table(io.i_rollback_packs(1).uop.arch_dst):=io.i_rollback_packs(1).uop.stale_dst
+    }
 
     when(io.i_allocation_pack(0).valid && io.i_allocation_pack(0).arch_dst =/= 0.U){
         rename_table(io.i_allocation_pack(0).arch_dst):=io.i_allocation_pack(0).phy_dst

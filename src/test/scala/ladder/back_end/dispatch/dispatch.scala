@@ -36,18 +36,26 @@ class Dispatch extends Module{
         uops(0).valid:=false.B
         uops(1).valid:=false.B
     }
-    //we dont have to check if theres a branch mispred,cause when that happens, rob wont allocate for insts
+    //1.we dont have to check if theres a branch mispred,cause when that happens, rob wont allocate for insts
     //and we MUST not mask the allocation req when mispred, the logic is explained in rob the file, the rollback log part.
     //this also implies that the insts in dispatch are always flushed when rbk. since all insts before a certain br must be already at or after rs. 
     //aka. insts are inorder in brfore rs.
-    io.o_rob_allocation_reqs(0).valid:=Mux(io.i_reservation_station_full || io.i_rob_busy ,false.B,uops(0).valid)
-    io.o_rob_allocation_reqs(1).valid:=Mux(io.i_reservation_station_full || io.i_rob_busy ,false.B,uops(1).valid)
+    //2.another case is when stall and rollback happen in the same time,we should manually tuen req=uopvalid in order to let rob rollback those two insts.
+    //stall && (rbk)->uopvalid
+    //!stall && rbk ->uopvalid
+    //stall && !rbk -> false
+    //!stall && !rbk ->uopvalid
+
+    io.o_rob_allocation_reqs(0).valid:=Mux(((io.i_reservation_station_full || io.i_rob_busy) && !(io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) ,false.B,uops(0).valid)
+    io.o_rob_allocation_reqs(1).valid:=Mux(((io.i_reservation_station_full || io.i_rob_busy) && !(io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)) ,false.B,uops(1).valid)
 
     io.o_rob_allocation_reqs(0).uop := uops(0) 
     io.o_rob_allocation_reqs(1).uop := uops(1) 
 
     io.o_dispatch_packs(0) := uops(0)
     io.o_dispatch_packs(1) := uops(1)
+    io.o_dispatch_packs(0).valid := uops(0).valid
+    io.o_dispatch_packs(1).valid := uops(1).valid
     when((io.i_branch_resolve_pack.valid&&io.i_branch_resolve_pack.mispred)||stall){
         io.o_dispatch_packs(0).valid:=false.B
         io.o_dispatch_packs(1).valid:=false.B

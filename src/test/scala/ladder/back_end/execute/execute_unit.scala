@@ -456,6 +456,7 @@ class MUL extends Function_Unit(){
     
     val mul_finished=RegInit(Bool(),false.B)
 
+    //when(next_state === s_FREE){
     when(io.i_select_to_commit){
         mul_finished:=false.B
     }.elsewhen(multiplier.io.o_out_valid){
@@ -475,6 +476,7 @@ class MUL extends Function_Unit(){
     io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
     io.o_func_idx:=FU_MUL //useless
 }
+
 class DIV extends Function_Unit(){
     io.o_this_available := false.B
     val uop =  RegInit(0.U.asTypeOf(new uop()))//null uop//null uop
@@ -501,11 +503,28 @@ class DIV extends Function_Unit(){
 
     val divider = Module(new Divider())
     val div_finished=RegInit(Bool(),false.B)
+    val next_div_finished = Wire(Bool())
+    div_finished := next_div_finished
+
+    next_div_finished := MuxCase(div_finished,Seq(
+      //(divider.io.o_out_valid && !io.i_select_to_commit) -> true.B,
+      (divider.io.o_out_valid) -> true.B,
+      ((io.i_select_to_commit)) -> false.B,
+      (io.i_exception) -> false.B,
+      (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+          (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> false.B
+      ))
+    /*
     when(divider.io.o_out_valid){
         div_finished:=true.B
     }
-    when(io.i_select_to_commit){
+    when(next_state === s_FREE){
         div_finished:=false.B
+    }
+    */
+
+    when(next_div_finished && !div_finished){
+      next_uop.dst_value:=Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
     }
 
     divider.io.i_dividend := next_uop.src1_value
@@ -517,13 +536,16 @@ class DIV extends Function_Unit(){
 
     divider.io.i_div_signed := next_uop.inst(14,12)=/="b101".U
 
-    io.o_ex_res_pack.uop.dst_value := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
-
-    io.o_ex_res_pack.valid := divider.io.o_out_valid 
+    //io.o_ex_res_pack.uop.dst_value := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b111".U, divider.io.o_remainder, divider.io.o_quotient)
+    io.o_ex_res_pack.uop.dst_value := next_uop.dst_value
+    //this logic is freaking ugly↓↓↓
+    //io.o_ex_res_pack.valid := uop.valid && (div_finished || divider.io.o_out_valid) 
+    io.o_ex_res_pack.valid := div_finished
     //io.o_available := Mux(state === s_BUSY, false.B,true.B)
     io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)
     io.o_func_idx:=FU_DIV //useless
 }
+
 //a buffer for csr insts, actually does nothing but buffering, and wil not be bypassed to reservation station
 class CSR_BF() extends Function_Unit(
     is_bru = false,

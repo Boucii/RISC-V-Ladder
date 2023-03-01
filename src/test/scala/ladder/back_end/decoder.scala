@@ -59,7 +59,8 @@ class Decoder extends Module with consts{
        uops(i).inst:=io.i_fetch_pack.bits.insts(i)
        uops(i).branch_predict_pack := io.i_fetch_pack.bits.branch_predict_pack
     }
-  }.elsewhen(io.i_stall && (!io.i_exception)){
+  //when rollback, ignore stall
+  }.elsewhen(io.i_stall && (!io.i_exception) && (!(io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred))){
     for(i <- 0 until 2){
        uops(i) := uops(i)
     }

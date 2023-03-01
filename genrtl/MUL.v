@@ -168,8 +168,8 @@ module MUL(
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_10 = _multiplier_io_i_mul_signed_T_3 ? multiplier_io_o_result_hi :
     _io_o_ex_res_pack_uop_dst_value_T_9; // @[Mux.scala 101:16]
   reg  mul_finished; // @[execute_unit.scala 457:29]
-  wire  _GEN_1 = multiplier_io_o_out_valid | mul_finished; // @[execute_unit.scala 461:42 462:21 464:22]
-  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 475:26]
+  wire  _GEN_1 = multiplier_io_o_out_valid | mul_finished; // @[execute_unit.scala 462:42 463:21 465:22]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 476:26]
   wire [1:0] _GEN_3 = reset ? 2'h0 : next_state; // @[execute_unit.scala 421:{24,24} 423:11]
   Multiplier multiplier ( // @[execute_unit.scala 439:28]
     .clock(multiplier_clock),
@@ -184,7 +184,7 @@ module MUL(
     .io_o_result_hi(multiplier_io_o_result_hi),
     .io_o_result_lo(multiplier_io_o_result_lo)
   );
-  assign io_o_ex_res_pack_valid = mul_finished; // @[execute_unit.scala 469:28]
+  assign io_o_ex_res_pack_valid = mul_finished; // @[execute_unit.scala 470:28]
   assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 449:26]
   assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 449:26]
   assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 449:26]
@@ -216,10 +216,10 @@ module MUL(
   assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 449:26]
   assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 449:26]
   assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 449:26]
-  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 475:61]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 476:61]
   assign multiplier_clock = clock;
   assign multiplier_reset = reset;
-  assign multiplier_io_i_mul_valid = next_state == 2'h1 & ~mul_finished; // @[execute_unit.scala 467:56]
+  assign multiplier_io_i_mul_valid = next_state == 2'h1 & ~mul_finished; // @[execute_unit.scala 468:56]
   assign multiplier_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 440:41]
   assign multiplier_io_i_mulw = next_uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 441:48]
   assign multiplier_io_i_mul_signed = _multiplier_io_i_mul_signed_T_1 ? 2'h3 : _multiplier_io_i_mul_signed_T_10; // @[Mux.scala 101:16]
@@ -376,8 +376,8 @@ module MUL(
     state <= _GEN_3[0]; // @[execute_unit.scala 421:{24,24} 423:11]
     if (reset) begin // @[execute_unit.scala 457:29]
       mul_finished <= 1'h0; // @[execute_unit.scala 457:29]
-    end else if (io_i_select_to_commit) begin // @[execute_unit.scala 459:32]
-      mul_finished <= 1'h0; // @[execute_unit.scala 460:21]
+    end else if (io_i_select_to_commit) begin // @[execute_unit.scala 460:32]
+      mul_finished <= 1'h0; // @[execute_unit.scala 461:21]
     end else begin
       mul_finished <= _GEN_1;
     end

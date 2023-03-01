@@ -1483,8 +1483,12 @@ module Decoder(
   wire [11:0] _immS_T_14 = {insts_1[31:25],insts_1[11:7]}; // @[Cat.scala 33:92]
   wire [43:0] _immS_T_18 = {32'hffffffff,insts_1[31:25],insts_1[11:7]}; // @[Cat.scala 33:92]
   wire [43:0] immS_1 = _immI_T_7 ? {{32'd0}, _immS_T_14} : _immS_T_18; // @[decoder.scala 90:40]
-  wire [31:0] immU_0 = {insts_0[31:12], 12'h0}; // @[decoder.scala 91:52]
-  wire [31:0] immU_1 = {insts_1[31:12], 12'h0}; // @[decoder.scala 91:52]
+  wire [31:0] _immU_T_3 = {insts_0[31:12], 12'h0}; // @[decoder.scala 91:75]
+  wire [63:0] _immU_T_6 = {32'hffffffff,_immU_T_3}; // @[Cat.scala 33:92]
+  wire [63:0] immU_0 = _immI_T_1 ? {{32'd0}, _immU_T_3} : _immU_T_6; // @[decoder.scala 91:40]
+  wire [31:0] _immU_T_11 = {insts_1[31:12], 12'h0}; // @[decoder.scala 91:75]
+  wire [63:0] _immU_T_14 = {32'hffffffff,_immU_T_11}; // @[Cat.scala 33:92]
+  wire [63:0] immU_1 = _immI_T_7 ? {{32'd0}, _immU_T_11} : _immU_T_14; // @[decoder.scala 91:40]
   wire [43:0] _immJ_T_3 = insts_0[31] ? 44'hfffffffffff : {{43'd0}, insts_0[31]}; // @[decoder.scala 92:41]
   wire [63:0] _immJ_T_4 = {_immJ_T_3, 20'h0}; // @[decoder.scala 92:94]
   wire [19:0] _immJ_T_6 = {insts_0[19:12], 12'h0}; // @[decoder.scala 92:123]
@@ -1539,8 +1543,7 @@ module Decoder(
   wire [63:0] _io_o_decode_packs_0_imm_T_8 = _io_o_decode_packs_0_imm_T_3 ? immJ_0 : _io_o_decode_packs_0_imm_T_7; // @[Mux.scala 101:16]
   wire [63:0] _io_o_decode_packs_0_imm_T_9 = _io_o_decode_packs_0_imm_T_2 ? {{20'd0}, immS_0} :
     _io_o_decode_packs_0_imm_T_8; // @[Mux.scala 101:16]
-  wire [63:0] _io_o_decode_packs_0_imm_T_10 = _io_o_decode_packs_0_imm_T_1 ? {{32'd0}, immU_0} :
-    _io_o_decode_packs_0_imm_T_9; // @[Mux.scala 101:16]
+  wire [63:0] _io_o_decode_packs_0_imm_T_10 = _io_o_decode_packs_0_imm_T_1 ? immU_0 : _io_o_decode_packs_0_imm_T_9; // @[Mux.scala 101:16]
   wire  _io_o_decode_packs_0_src1_valid_T = io_o_decode_packs_0_op1_sel == 3'h0; // @[decoder.scala 118:38]
   wire  _io_o_decode_packs_0_src1_valid_T_1 = io_o_decode_packs_0_op1_sel == 3'h3; // @[decoder.scala 119:38]
   wire  _io_o_decode_packs_0_src1_valid_T_2 = io_o_decode_packs_0_op1_sel == 3'h2; // @[decoder.scala 120:38]
@@ -1565,8 +1568,7 @@ module Decoder(
   wire [63:0] _io_o_decode_packs_1_imm_T_8 = _io_o_decode_packs_1_imm_T_3 ? immJ_1 : _io_o_decode_packs_1_imm_T_7; // @[Mux.scala 101:16]
   wire [63:0] _io_o_decode_packs_1_imm_T_9 = _io_o_decode_packs_1_imm_T_2 ? {{20'd0}, immS_1} :
     _io_o_decode_packs_1_imm_T_8; // @[Mux.scala 101:16]
-  wire [63:0] _io_o_decode_packs_1_imm_T_10 = _io_o_decode_packs_1_imm_T_1 ? {{32'd0}, immU_1} :
-    _io_o_decode_packs_1_imm_T_9; // @[Mux.scala 101:16]
+  wire [63:0] _io_o_decode_packs_1_imm_T_10 = _io_o_decode_packs_1_imm_T_1 ? immU_1 : _io_o_decode_packs_1_imm_T_9; // @[Mux.scala 101:16]
   wire  _io_o_decode_packs_1_src1_valid_T = io_o_decode_packs_1_op1_sel == 3'h0; // @[decoder.scala 118:38]
   wire  _io_o_decode_packs_1_src1_valid_T_1 = io_o_decode_packs_1_op1_sel == 3'h3; // @[decoder.scala 119:38]
   wire  _io_o_decode_packs_1_src1_valid_T_2 = io_o_decode_packs_1_op1_sel == 3'h2; // @[decoder.scala 120:38]

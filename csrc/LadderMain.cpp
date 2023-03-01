@@ -17,6 +17,7 @@
 
 #define DIFFTEST_EN 1
 #define ITRACE_EN 1
+#define GTK_EN 1
 #define MAX_TIME 1000000//10000000
 #define RESET_VECTOR 0x80000000
 
@@ -217,8 +218,10 @@ static VLadder* top;
 VerilatedVcdC* tfp=NULL;
 VerilatedContext* contextp=NULL;
 void dumpwave(){
-    tfp->dump(contextp->time()); //dump wav
-    contextp->timeInc(1); //推动仿真时间
+		if(GTK_EN){
+    		tfp->dump(contextp->time()); //dump wav
+    		contextp->timeInc(1); //推动仿真时间
+		}
 }
 void single_cycle() {
     top->clock = 1; top->eval(); 

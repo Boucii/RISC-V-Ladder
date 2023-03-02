@@ -245,7 +245,7 @@ class Reorder_Buffer extends Module with consts{
       //rollback should come first than full.
       //or else the rollback logic(rollback dispatch logic) would be wrong
       ((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx)) -> s_rollback,
-      !((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx))  && (rob_state === s_normal && is_full) -> s_full,
+      (!((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx))  && (rob_state === s_normal && is_full)) -> s_full,
       /*
       (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||
                    (io.i_branch_resolve_pack.rob_idx === allocate_ptr-2.U) )) -> s_normal,

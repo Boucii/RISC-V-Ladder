@@ -73,25 +73,34 @@ class BPU extends Module {
     }
     //update on a mispredicted branch,暗含valid表示是一个branch,mispred代表即使没有pred,也可能会mispred
     //this entry_found logic is so not "a circuit" but a "program", optimize it later
+    /*
+    various cases:
+    ______found the fetchpack entry________________same select field->update everything
+    |                                            |___different select______taken - > update everything
+    |                                                                |_____ntaken - > dont touch
+    |______nfound the fetchpack entry(flushed)- > allocate a new entry
+    */
     val entry_found = Wire(Bool())
     entry_found := false.B
     when(io.i_branch_resolve_pack.valid  && io.i_branch_resolve_pack.prediction_valid){
             for(i <- 0 until btb_size){
                 when(btb(i).tag === io.i_branch_resolve_pack.pc(12,3)){
                     entry_found := true.B
-                    btb(i).target_address := io.i_branch_resolve_pack.target
-                    btb(i).select := io.i_branch_resolve_pack.pc(2) //if it's aligned to fetchpack address
-                    btb(i).bht := MuxCase(DontCare,Seq(
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 1.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 1.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 0.U(2.W),
-                    (io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 2.U(2.W),
+                    when(!(btb(i).select=/=io.i_branch_resolve_pack.pc(2) && !io.i_branch_resolve_pack.taken)){
+                        btb(i).target_address := io.i_branch_resolve_pack.target
+                        btb(i).select := io.i_branch_resolve_pack.pc(2) //if it's aligned to fetchpack address
+                        btb(i).bht := MuxCase(DontCare,Seq(
+                        (io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 1.U(2.W),
+                        (io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 1.U(2.W),
+                        (io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 0.U(2.W),
+                        (io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 2.U(2.W),
 
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 2.U(2.W),
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 0.U(2.W),
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 3.U(2.W),
-                    (!io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 3.U(2.W)
+                        (!io.i_branch_resolve_pack.taken && btb(i).bht === 0.U) -> 2.U(2.W),
+                        (!io.i_branch_resolve_pack.taken && btb(i).bht === 1.U) -> 0.U(2.W),
+                        (!io.i_branch_resolve_pack.taken && btb(i).bht === 2.U) -> 3.U(2.W),
+                        (!io.i_branch_resolve_pack.taken && btb(i).bht === 3.U) -> 3.U(2.W)
                     ))
+                    }
                 }
             }
     } 

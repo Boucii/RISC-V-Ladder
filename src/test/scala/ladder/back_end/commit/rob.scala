@@ -244,7 +244,9 @@ class Reorder_Buffer extends Module with consts{
       (rob_state === s_reset) -> s_normal,
       //rollback should come first than full.
       //or else the rollback logic(rollback dispatch logic) would be wrong
-      ((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx)) -> s_rollback,
+      //when dispatch has something to rollback, even if rob has nothing to rollback, it should go into rollback for one cycle to rollback
+      //the insts in dispatch that have not yet written in rob
+      ((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((need_to_rbk_dispatch) ||((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx))) -> s_rollback,
       (!((rob_state ===s_normal || rob_state === s_full) && (io.i_branch_resolve_pack.mispred && io.i_branch_resolve_pack.valid)&&((allocate_ptr -1.U) =/= io.i_branch_resolve_pack.rob_idx))  && (rob_state === s_normal && is_full)) -> s_full,
       /*
       (rob_state === s_rollback && ((io.i_branch_resolve_pack.rob_idx === allocate_ptr-1.U) ||

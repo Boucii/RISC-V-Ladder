@@ -15,9 +15,11 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
+#define GTK_EN_CYC 10000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 1
 #define GTK_EN 0
+#define LOG_EN 0
 #define MAX_TIME 1000000//10000000
 #define RESET_VECTOR 0x80000000
 
@@ -53,6 +55,7 @@ uint64_t *pc_cmt2 = new uint64_t;
 uint64_t *pc = new uint64_t;
 uint64_t *last_ref_pc = new uint64_t;
 
+int cyc_time=0;
 
 struct timeval timeus;
 
@@ -123,9 +126,7 @@ void init_difftest() {
 
 void diff_check_regs(){
 	diff_pass=1;
-	//cout<<hex<< pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
 	  if(*last_ref_pc!=*pc){
-	      //cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[32]<<dec<<RESET<<endl;
 	      cout<<hex<<RED<<"pc error! pc="<<GREEN<<*pc<<RESET<<"	and ref ="<<BOLDGREEN<<*last_ref_pc<<dec<<RESET<<endl;
 	      diff_pass=0;
 	      return;
@@ -179,12 +180,16 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 		return;
 	}
   *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
-  cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
+  if(ITRACE_EN){
+  	cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
+  }
   	mem_done=1;
   }
 }
 extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
-  cout<<BOLDCYAN<<hex<<endl<<"mem write, waddr is "<<waddr<<endl<<"wdata is "<<wdata<<" mask is"<<(uint8_t)wmask<<RESET<<endl;
+  if(ITRACE_EN){
+  	cout<<BOLDCYAN<<hex<<endl<<"mem write, waddr is "<<waddr<<endl<<"wdata is "<<wdata<<" mask is"<<(uint8_t)wmask<<RESET<<endl;
+  }
   if(mem_done==0){
 	  if(waddr==SERIAL_PORT_BASE){
 		char a=(char)wdata;
@@ -218,7 +223,7 @@ static VLadder* top;
 VerilatedVcdC* tfp=NULL;
 VerilatedContext* contextp=NULL;
 void dumpwave(){
-		if(GTK_EN){
+		if(GTK_EN && cyc_time>GTK_EN_CYC){
     		tfp->dump(contextp->time()); //dump wav
     		contextp->timeInc(1); //推动仿真时间
 		}
@@ -254,9 +259,11 @@ void log_inst_commit(int commit_pack_idx){
       *pc = *pc_cmt1;
       sprintf(hex_string, "%lX", *pc_cmt1); 
       string temp1(hex_string);
-      Log("0x");
-      Log(temp1);
-      Log(":	");
+	  if(LOG_EN){
+      	Log("0x");
+      	Log(temp1);
+      	Log(":	");
+	  }
     uint32_t cur_inst = top->io_o_dbg_commit_packs_0_uop_inst;
     uint8_t *instaddr=(uint8_t *)&cur_inst;
     //uint64_t addrin=(uint64_t)((uint64_t)*pc_cmt1)-(uint64_t)0xffffffff00000000;
@@ -265,8 +272,10 @@ void log_inst_commit(int commit_pack_idx){
         disassemble(logbuf, 50, addrin, instaddr, 4);//50?
     }
     string temp=logbuf;
-    Log(temp);
-    Log("\n");
+    if(LOG_EN){
+    	Log(temp);
+    	Log("\n");
+	}
     if(ITRACE_EN){
         cout<<YELLOW<<"PC=0x"<<hex<<*pc_cmt1<<RESET<<dec<<endl;                                                   
         cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<RESET<<endl;//temp<<RESET<<endl; 
@@ -277,9 +286,11 @@ void log_inst_commit(int commit_pack_idx){
       *pc = *pc_cmt2;
       sprintf(hex_string, "%lX", *pc_cmt2); 
       string temp1(hex_string);
-      Log("0x");
-      Log(temp1);
-      Log(":	");
+    if(LOG_EN){
+      	Log("0x");
+      	Log(temp1);
+      	Log(":	");
+	}
     uint32_t cur_inst = top->io_o_dbg_commit_packs_1_uop_inst;
     uint8_t *instaddr=(uint8_t *)&cur_inst;
     uint64_t addrin=(uint64_t)((uint64_t)*pc_cmt2)-(uint64_t)0xffffffff00000000;
@@ -287,8 +298,10 @@ void log_inst_commit(int commit_pack_idx){
         disassemble(logbuf, 50, addrin, instaddr, 4);//50?
     }
     string temp=logbuf;
-    Log(temp);
-    Log("\n");
+	if(LOG_EN){
+    	Log(temp);
+    	Log("\n");
+	}
     if(ITRACE_EN){
         cout<<YELLOW<<"PC=0x"<<hex<<*pc_cmt2<<RESET<<dec<<endl;                                                   
         cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW<<temp<<RESET<<endl; 
@@ -317,7 +330,7 @@ int main(int argc, char** argv, char** env){
   tfp->open("wave.vcd"); //设置输出的文件wave.vcd
 
 
-  volatile int time=0;
+  //int time=0;
   LogInit();
   mem_init();
   load_img(argv);
@@ -350,10 +363,10 @@ int main(int argc, char** argv, char** env){
   bool stall1 = (bool)(top->io_icache_io_o_stall1);
   bool stall2 = (bool)(top->io_icache_io_o_stall2);
 
-  while (time<MAX_TIME) {
+  while (cyc_time<MAX_TIME) {
   //while (true) {
     if(ITRACE_EN){
-        cout<<"\ncycle "<<time<<" passed\n";
+        cout<<"\ncycle "<<cyc_time<<" passed\n";
     }
     //instruction fetch
 	//must be if3->if2->if1
@@ -427,9 +440,9 @@ int main(int argc, char** argv, char** env){
 		goto end;
 	}
     }
-    time++;
+    cyc_time++;
   }
-  if(time==MAX_TIME){
+  if(cyc_time==MAX_TIME){
       cout<<"HIT BAD TRAP(Time OUT)"<<endl;
   }
 end:

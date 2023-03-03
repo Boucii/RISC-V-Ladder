@@ -17,7 +17,7 @@ int mem_init(){
 
 
 uint64_t pmem_read(int addr){
-  std::cout<<"mem read: 0x"<<std::hex<<addr<< "\n";
+ // std::cout<<"mem read: 0x"<<std::hex<<addr<< "\n";
   int base_addr=addr-0x80000000;
   uint64_t lo0=(uint64_t)mem[base_addr];
   uint64_t lo1=((uint64_t)mem[base_addr+1])<<8;
@@ -32,7 +32,7 @@ uint64_t pmem_read(int addr){
   return lo0+lo1+lo2+lo3+lo4+lo5+lo6+lo7;
 }
 int pmem_write(uint64_t content,uint64_t addr,uint32_t len){
-  std::cout<<"mem write: 0x"<<std::hex<<addr<< "  content: "<<content<<"\n";
+  //std::cout<<"mem write: 0x"<<std::hex<<addr<< "  content: "<<content<<"\n";
   int base_addr=addr-0x80000000;
   if(len){
   mem[addr-0x80000000]=content;

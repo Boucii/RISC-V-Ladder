@@ -51,6 +51,6 @@ class Branch_Presolve extends Module{
             (io.i_fetch_pack.valids(1) && !br1 && io.i_fetch_pack.branch_predict_pack.valid && 
             io.i_fetch_pack.branch_predict_pack.taken && io.i_fetch_pack.branch_predict_pack.select === 1.U)
     io.o_branch_presolve_pack.pc := Cat(io.i_fetch_pack.pc(63,3),0.U(3.W)) + Mux((io.i_fetch_pack.valids(0) && !br0 && io.i_fetch_pack.branch_predict_pack.valid && 
-            io.i_fetch_pack.branch_predict_pack.taken && io.i_fetch_pack.branch_predict_pack.select === 0.U),4.U,8.U)
+            io.i_fetch_pack.branch_predict_pack.taken && io.i_fetch_pack.branch_predict_pack.select === 0.U),0.U,4.U)
     io.o_branch_presolve_pack.taken := io.i_fetch_pack.branch_predict_pack.taken // this field seems to be redundent
 }

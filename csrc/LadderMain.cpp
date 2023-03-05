@@ -15,10 +15,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC 10000
+#define GTK_EN_CYC 0
 #define DIFFTEST_EN 1
 #define ITRACE_EN 1
-#define GTK_EN 0
+#define GTK_EN 1
 #define LOG_EN 0
 #define MAX_TIME 1000000//10000000
 #define RESET_VECTOR 0x80000000
@@ -56,6 +56,7 @@ uint64_t *pc = new uint64_t;
 uint64_t *last_ref_pc = new uint64_t;
 
 int cyc_time=0;
+int last_skip_for_mem = 0;
 
 struct timeval timeus;
 
@@ -168,12 +169,16 @@ void dump_gpr() {
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   if(mem_done==0){
 	if(raddr==RTC_PORT_BASE){
+		printf("reading the rtc\n");
+		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)(timeus.tv_sec*1000000+timeus.tv_usec);
 		mem_done=1;
 		return;
 	}
 	if(raddr==RTC_PORT_BASE+4){
+		printf("reading the rtc+4\n");
+		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)((timeus.tv_sec*1000000+timeus.tv_usec)>>32);
 		mem_done=1;
@@ -319,7 +324,8 @@ int main(int argc, char** argv, char** env){
   top= new VLadder{contextp};
   
   //set scope for dpi-c function  
-  Verilated::scopesDump();
+  //the next line is necessary for dbgging!
+  //Verilated::scopesDump();
   const svScope scope = svGetScopeFromName("TOP.Ladder.dpic");
   assert(scope);  // Check for nullptr if scope not found
   svSetScope(scope);
@@ -373,14 +379,6 @@ int main(int argc, char** argv, char** env){
     addr_if3 = stall2? addr_if3 : addr_if2;
     addr_if2 = stall1? addr_if2 : addr_if1;
     addr_if1 = (int)(top->io_icache_io_o_addr);
-/*
-	//4 debug
-	if(addr_if1 == 0x13b8)
-	{
-		goto end;
-	}
-*/
-
 
     uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);
     uint32_t cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
@@ -412,13 +410,21 @@ int main(int argc, char** argv, char** env){
     if(DIFFTEST_EN){
 	    if(!first_cycle){
       		diff_check_regs();
-	    }
+		}
       char hex_string[20];
       //if commit two
         if(top->io_o_dbg_commit_packs_0_valid && top->io_o_dbg_commit_packs_1_valid){
           log_inst_commit(0);
-	  log_inst_commit(1);
+	  	  log_inst_commit(1);
           difftest_exec_once();
+		  if(last_skip_for_mem){
+			  //for possible cases that 2 commits in a row. the regcpy must finish this cycle.
+			  //aka we must know the write value of a pending regfile write.
+			  cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+			  ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+			  ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
+			  last_skip_for_mem =0;
+		  }
           difftest_exec_once();
 	    first_cycle =0;
         }
@@ -426,6 +432,12 @@ int main(int argc, char** argv, char** env){
         if(top->io_o_dbg_commit_packs_0_valid && !top->io_o_dbg_commit_packs_1_valid ){
           log_inst_commit(0);
           difftest_exec_once();
+		  if(last_skip_for_mem){
+			  cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+			  ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+			  ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
+			  last_skip_for_mem =0;
+		  }
 	    first_cycle =0;
         }
 	if(diff_pass==0){

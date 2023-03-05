@@ -163,7 +163,6 @@ module Front_End(
   wire  fetch_res_io_i_branch_predict_pack_taken; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_presolve_pack_valid; // @[front_end.scala 33:27]
   wire  fetch_res_io_i_branch_presolve_pack_taken; // @[front_end.scala 33:27]
-  wire  fetch_res_io_o_fetch_pack_valid; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_0; // @[front_end.scala 33:27]
   wire  fetch_res_io_o_fetch_pack_bits_valids_1; // @[front_end.scala 33:27]
   wire [63:0] fetch_res_io_o_fetch_pack_bits_pc; // @[front_end.scala 33:27]
@@ -332,7 +331,6 @@ module Front_End(
     .io_i_branch_predict_pack_taken(fetch_res_io_i_branch_predict_pack_taken),
     .io_i_branch_presolve_pack_valid(fetch_res_io_i_branch_presolve_pack_valid),
     .io_i_branch_presolve_pack_taken(fetch_res_io_i_branch_presolve_pack_taken),
-    .io_o_fetch_pack_valid(fetch_res_io_o_fetch_pack_valid),
     .io_o_fetch_pack_bits_valids_0(fetch_res_io_o_fetch_pack_bits_valids_0),
     .io_o_fetch_pack_bits_valids_1(fetch_res_io_o_fetch_pack_bits_valids_1),
     .io_o_fetch_pack_bits_pc(fetch_res_io_o_fetch_pack_bits_pc),

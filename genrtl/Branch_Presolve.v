@@ -102,8 +102,8 @@ module Branch_Presolve(
   wire  _io_o_branch_presolve_pack_valid_T_11 = _io_o_branch_presolve_pack_valid_T_9 &
     io_i_fetch_pack_branch_predict_pack_select; // @[branch_presolve.scala 52:55]
   wire [63:0] _io_o_branch_presolve_pack_pc_T_1 = {io_i_fetch_pack_pc[63:3],3'h0}; // @[Cat.scala 33:92]
-  wire [3:0] _io_o_branch_presolve_pack_pc_T_8 = _io_o_branch_presolve_pack_valid_T_5 ? 4'h4 : 4'h8; // @[branch_presolve.scala 53:81]
-  wire [63:0] _GEN_0 = {{60'd0}, _io_o_branch_presolve_pack_pc_T_8}; // @[branch_presolve.scala 53:76]
+  wire [2:0] _io_o_branch_presolve_pack_pc_T_8 = _io_o_branch_presolve_pack_valid_T_5 ? 3'h0 : 3'h4; // @[branch_presolve.scala 53:81]
+  wire [63:0] _GEN_0 = {{61'd0}, _io_o_branch_presolve_pack_pc_T_8}; // @[branch_presolve.scala 53:76]
   assign io_o_branch_presolve_pack_valid = _io_o_branch_presolve_pack_valid_T_3 & ~
     io_i_fetch_pack_branch_predict_pack_select | _io_o_branch_presolve_pack_valid_T_11; // @[branch_presolve.scala 50:110]
   assign io_o_branch_presolve_pack_taken = io_i_fetch_pack_branch_predict_pack_taken; // @[branch_presolve.scala 55:37]

@@ -22,14 +22,16 @@ class IF1_IF2 extends Module
     })
     val pc = RegInit(0.U(64.W));
     pc := Mux(io.i_flush, 0.U, Mux(io.i_stall, pc, io.i_pc))
-    io.o_pc := pc;
+    //io.o_pc := pc;
+    io.o_pc := Mux(io.i_flush||io.i_stall, 0.U ,pc)
 
     val branch_predict_pack = RegInit(0.U.asTypeOf(new branch_predict_pack()));
     branch_predict_pack := Mux(io.i_flush, 0.U.asTypeOf(new branch_predict_pack()), Mux(io.i_stall, branch_predict_pack, io.i_branch_predict_pack))
     branch_predict_pack.valid := Mux(io.i_flush, false.B, Mux(io.i_stall, branch_predict_pack.valid, io.i_branch_predict_pack.valid))
     io.o_branch_predict_pack :=branch_predict_pack
+    io.o_branch_predict_pack.valid := Mux(io.i_flush||io.i_stall, false.B, branch_predict_pack.valid)
 
     val fetch_valid = RegInit(false.B)
     fetch_valid := Mux(io.i_flush, false.B, Mux(io.i_stall, fetch_valid, true.B))
-    io.o_fetch_valid := fetch_valid
+    io.o_fetch_valid := Mux(io.i_flush||io.i_stall, false.B ,fetch_valid)
 }

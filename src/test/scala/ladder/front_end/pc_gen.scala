@@ -33,7 +33,10 @@ class PC_Gen extends Module
     }.elsewhen(io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred){//branch mispredict
         npc := io.i_branch_resolve_pack.target
     }.elsewhen(io.i_branch_presolve_pack.valid && io.i_branch_presolve_pack.taken){//mispred a non-br as br and tk,redirect
-        npc := io.i_branch_presolve_pack.pc + 4.U
+    //why do we add 8 when pc(2)==1?
+    //when valid mispred on 1st of a fetchpack, it means it mispred a non-br to a br.
+    //the presolver then tells to mark the 2nd inst valid, so the inst after the 1st of the fetch pack is already fetched.
+        npc := io.i_branch_presolve_pack.pc + Mux(io.i_branch_presolve_pack.pc(2),4.U,8.U)
     }.elsewhen(io.i_stall){
         npc := pc
     //when made prediction about the first of a fetch pack, but pc is the second one, ignore prediction

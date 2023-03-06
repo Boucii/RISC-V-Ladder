@@ -157,14 +157,13 @@ module DIV(
   wire [63:0] _next_uop_T_dst_value = io_i_select ? 64'h0 : uop_dst_value; // @[execute_unit.scala 497:20]
   wire [1:0] next_state = {{1'd0}, _next_state_T_27}; // @[execute_unit.scala 485:26 488:16]
   reg  div_finished; // @[execute_unit.scala 505:29]
-  wire  _next_div_finished_T_16 = _next_state_T_15 ? 1'h0 : div_finished; // @[Mux.scala 101:16]
-  wire  _next_div_finished_T_17 = io_i_exception ? 1'h0 : _next_div_finished_T_16; // @[Mux.scala 101:16]
-  wire  _next_div_finished_T_18 = io_i_select_to_commit ? 1'h0 : _next_div_finished_T_17; // @[Mux.scala 101:16]
-  wire  next_div_finished = divider_io_o_out_valid | _next_div_finished_T_18; // @[Mux.scala 101:16]
-  wire  _T_1 = ~div_finished; // @[execute_unit.scala 526:31]
+  wire  _next_div_finished_T_17 = _next_state_T_15 ? 1'h0 : divider_io_o_out_valid | div_finished; // @[Mux.scala 101:16]
+  wire  _next_div_finished_T_18 = io_i_exception ? 1'h0 : _next_div_finished_T_17; // @[Mux.scala 101:16]
+  wire  next_div_finished = io_i_select_to_commit ? 1'h0 : _next_div_finished_T_18; // @[Mux.scala 101:16]
+  wire  _T_1 = ~div_finished; // @[execute_unit.scala 527:31]
   wire [63:0] _next_uop_dst_value_T_5 = next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7 ?
-    divider_io_o_remainder : divider_io_o_quotient; // @[execute_unit.scala 527:30]
-  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 545:26]
+    divider_io_o_remainder : divider_io_o_quotient; // @[execute_unit.scala 528:30]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 546:26]
   wire [1:0] _GEN_2 = reset ? 2'h0 : next_state; // @[execute_unit.scala 484:{24,24} 486:11]
   Divider divider ( // @[execute_unit.scala 504:25]
     .clock(divider_clock),
@@ -179,7 +178,7 @@ module DIV(
     .io_o_quotient(divider_io_o_quotient),
     .io_o_remainder(divider_io_o_remainder)
   );
-  assign io_o_ex_res_pack_valid = div_finished; // @[execute_unit.scala 543:28]
+  assign io_o_ex_res_pack_valid = div_finished; // @[execute_unit.scala 544:28]
   assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 499:26]
@@ -203,7 +202,7 @@ module DIV(
   assign io_o_ex_res_pack_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_imm = uop_imm; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_dst_value = next_div_finished & ~div_finished ? _next_uop_dst_value_T_5 :
-    _next_uop_T_dst_value; // @[execute_unit.scala 497:14 526:45 527:25]
+    _next_uop_T_dst_value; // @[execute_unit.scala 497:14 527:45 528:25]
   assign io_o_ex_res_pack_uop_src1_value = uop_src1_value; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_src2_value = uop_src2_value; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_op1_sel = uop_op1_sel; // @[execute_unit.scala 499:26]
@@ -211,15 +210,15 @@ module DIV(
   assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 499:26]
   assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 499:26]
-  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 545:61]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 546:61]
   assign divider_clock = clock;
   assign divider_reset = reset;
   assign divider_io_i_dividend = io_i_select ? io_i_uop_src1_value : uop_src1_value; // @[execute_unit.scala 497:20]
   assign divider_io_i_divisor = io_i_select ? io_i_uop_src2_value : uop_src2_value; // @[execute_unit.scala 497:20]
-  assign divider_io_i_div_valid = next_state == 2'h1 & _T_1; // @[execute_unit.scala 533:53]
-  assign divider_io_i_divw = uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 535:40]
-  assign divider_io_i_div_signed = next_uop_inst[14:12] != 3'h5; // @[execute_unit.scala 537:52]
-  assign divider_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 534:38]
+  assign divider_io_i_div_valid = next_state == 2'h1 & _T_1; // @[execute_unit.scala 534:53]
+  assign divider_io_i_divw = uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 536:40]
+  assign divider_io_i_div_signed = next_uop_inst[14:12] != 3'h5; // @[execute_unit.scala 538:52]
+  assign divider_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 535:38]
   always @(posedge clock) begin
     if (reset) begin // @[execute_unit.scala 482:23]
       uop_valid <= 1'h0; // @[execute_unit.scala 482:23]
@@ -335,8 +334,8 @@ module DIV(
     end
     if (reset) begin // @[execute_unit.scala 482:23]
       uop_dst_value <= 64'h0; // @[execute_unit.scala 482:23]
-    end else if (next_div_finished & ~div_finished) begin // @[execute_unit.scala 526:45]
-      if (next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7) begin // @[execute_unit.scala 527:30]
+    end else if (next_div_finished & ~div_finished) begin // @[execute_unit.scala 527:45]
+      if (next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7) begin // @[execute_unit.scala 528:30]
         uop_dst_value <= divider_io_o_remainder;
       end else begin
         uop_dst_value <= divider_io_o_quotient;
@@ -382,8 +381,14 @@ module DIV(
     state <= _GEN_2[0]; // @[execute_unit.scala 484:{24,24} 486:11]
     if (reset) begin // @[execute_unit.scala 505:29]
       div_finished <= 1'h0; // @[execute_unit.scala 505:29]
+    end else if (io_i_select_to_commit) begin // @[Mux.scala 101:16]
+      div_finished <= 1'h0;
+    end else if (io_i_exception) begin // @[Mux.scala 101:16]
+      div_finished <= 1'h0;
+    end else if (_next_state_T_15) begin // @[Mux.scala 101:16]
+      div_finished <= 1'h0;
     end else begin
-      div_finished <= next_div_finished; // @[execute_unit.scala 507:18]
+      div_finished <= divider_io_o_out_valid | div_finished;
     end
   end
 // Register and memory initialization

@@ -456,14 +456,14 @@ class MUL extends Function_Unit(){
     
     val mul_finished=RegInit(Bool(),false.B)
 
-    //when(next_state === s_FREE){
-    when(io.i_select_to_commit){
-        mul_finished:=false.B
-    }.elsewhen(multiplier.io.o_out_valid){
-        mul_finished:=true.B
-    }.otherwise{
-        mul_finished := mul_finished
-    }
+    mul_finished := MuxCase(mul_finished,Seq(
+      //(divider.io.o_out_valid && !io.i_select_to_commit) -> true.B,
+      ((io.i_select_to_commit)) -> false.B,
+      (io.i_exception) -> false.B,
+      (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
+      (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> false.B,
+      (multiplier.io.o_out_valid) -> true.B
+      ))
     
     multiplier.io.i_mul_valid := (next_state===s_BUSY) && (!mul_finished) //in case the previous inst is not commited
 
@@ -508,11 +508,12 @@ class DIV extends Function_Unit(){
 
     next_div_finished := MuxCase(div_finished,Seq(
       //(divider.io.o_out_valid && !io.i_select_to_commit) -> true.B,
-      (divider.io.o_out_valid) -> true.B,
-      ((io.i_select_to_commit)) -> false.B,
+      (io.i_select_to_commit) -> false.B,
       (io.i_exception) -> false.B,
       (io.i_rollback_valid && ((io.i_rollback_rob_idx(5,0) < uop.rob_idx(5,0) && io.i_rollback_rob_idx(6)===uop.rob_idx(6))||
-          (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> false.B
+      (io.i_rollback_rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_rollback_rob_idx(6) ^ uop.rob_idx(6)))))-> false.B,
+      (divider.io.o_out_valid) -> true.B
+
       ))
     /*
     when(divider.io.o_out_valid){

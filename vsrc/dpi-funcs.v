@@ -126,10 +126,12 @@ reg [7:0] wmask;
     mem_req1 = mem_req0;
   end
 
-  assign data_valid = mem_req2;
+  //assign data_valid = mem_req2;
+  assign data_valid = mem_req0;
   assign addr_ready = 1'b1;
 
-  assign MdataIn = mem_buf2;
+  //assign MdataIn = mem_buf2;
+  assign MdataIn = mem_buf0;
 
   always @(posedge clk) begin
 	  if(Men && !Mwout && addr_valid) begin

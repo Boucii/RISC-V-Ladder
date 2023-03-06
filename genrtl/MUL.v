@@ -168,9 +168,8 @@ module MUL(
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_10 = _multiplier_io_i_mul_signed_T_3 ? multiplier_io_o_result_hi :
     _io_o_ex_res_pack_uop_dst_value_T_9; // @[Mux.scala 101:16]
   reg  mul_finished; // @[execute_unit.scala 457:29]
-  wire  _GEN_1 = multiplier_io_o_out_valid | mul_finished; // @[execute_unit.scala 462:42 463:21 465:22]
   wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 476:26]
-  wire [1:0] _GEN_3 = reset ? 2'h0 : next_state; // @[execute_unit.scala 421:{24,24} 423:11]
+  wire [1:0] _GEN_1 = reset ? 2'h0 : next_state; // @[execute_unit.scala 421:{24,24} 423:11]
   Multiplier multiplier ( // @[execute_unit.scala 439:28]
     .clock(multiplier_clock),
     .reset(multiplier_reset),
@@ -373,13 +372,17 @@ module MUL(
     end else if (io_i_select) begin // @[execute_unit.scala 434:20]
       uop_mem_type <= io_i_uop_mem_type;
     end
-    state <= _GEN_3[0]; // @[execute_unit.scala 421:{24,24} 423:11]
+    state <= _GEN_1[0]; // @[execute_unit.scala 421:{24,24} 423:11]
     if (reset) begin // @[execute_unit.scala 457:29]
       mul_finished <= 1'h0; // @[execute_unit.scala 457:29]
-    end else if (io_i_select_to_commit) begin // @[execute_unit.scala 460:32]
-      mul_finished <= 1'h0; // @[execute_unit.scala 461:21]
+    end else if (io_i_select_to_commit) begin // @[Mux.scala 101:16]
+      mul_finished <= 1'h0;
+    end else if (io_i_exception) begin // @[Mux.scala 101:16]
+      mul_finished <= 1'h0;
+    end else if (_next_state_T_15) begin // @[Mux.scala 101:16]
+      mul_finished <= 1'h0;
     end else begin
-      mul_finished <= _GEN_1;
+      mul_finished <= multiplier_io_o_out_valid | mul_finished;
     end
   end
 // Register and memory initialization

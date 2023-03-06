@@ -57,6 +57,7 @@ uint64_t *last_ref_pc = new uint64_t;
 
 int cyc_time=0;
 int last_skip_for_mem = 0;
+int cyc_do_not_have_commit =0;
 
 struct timeval timeus;
 
@@ -369,10 +370,15 @@ int main(int argc, char** argv, char** env){
   bool stall1 = (bool)(top->io_icache_io_o_stall1);
   bool stall2 = (bool)(top->io_icache_io_o_stall2);
 
-  while (cyc_time<MAX_TIME) {
-  //while (true) {
+  cyc_do_not_have_commit =0;
+  float IPC=0;
+  int commit_inst_count=0;
+  while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>500)) {
+	if(cyc_time%100000==0){
+        cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
+	}
     if(ITRACE_EN){
-        cout<<"\ncycle "<<cyc_time<<" passed\n";
+        cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
     }
     //instruction fetch
 	//must be if3->if2->if1
@@ -414,6 +420,8 @@ int main(int argc, char** argv, char** env){
       char hex_string[20];
       //if commit two
         if(top->io_o_dbg_commit_packs_0_valid && top->io_o_dbg_commit_packs_1_valid){
+				commit_inst_count+=2;
+				cyc_do_not_have_commit =0;
           log_inst_commit(0);
 	  	  log_inst_commit(1);
           difftest_exec_once();
@@ -430,6 +438,8 @@ int main(int argc, char** argv, char** env){
         }
 	//if commit one
         if(top->io_o_dbg_commit_packs_0_valid && !top->io_o_dbg_commit_packs_1_valid ){
+				commit_inst_count +=1;
+				cyc_do_not_have_commit =0;
           log_inst_commit(0);
           difftest_exec_once();
 		  if(last_skip_for_mem){
@@ -453,14 +463,20 @@ int main(int argc, char** argv, char** env){
 	}
     }
     cyc_time++;
+	cyc_do_not_have_commit++;
   }
   if(cyc_time==MAX_TIME){
-      cout<<"HIT BAD TRAP(Time OUT)"<<endl;
+      cout<<"HIT BAD TRAP(Time OUT)\n"<<cyc_time<<endl;
+  }
+  if(cyc_do_not_have_commit >500){
+		cout<<"HIT BAD TRAP(TOO LONG SINCE LAST COMMIT)\n"<<cyc_time<<endl;
   }
 end:
+  IPC = commit_inst_count/cyc_time;
   dumpwave();
   //dump_gpr();
   cout<<"simulation over\n";
+  cout<<"total cycle is:"<<cyc_time<<endl<<"total commited inst count is: "<<commit_inst_count<<endl<<"IPC is:"<<IPC<<endl;
   delete top;
 
   delete contextp;

@@ -24,6 +24,7 @@ class Reservation_Station extends Module with consts{
      val o_full = Output(Bool())//
      val i_exception = Input(Bool())
      val i_rollback_valid = Input(Bool())
+     //val i_rollback_num = Input(UInt(6.W))
      val i_available_funcs = Input(Vec(7, UInt(2.W)))
 
      //used to make sure issue loads and stores only when they are the first of ROB,
@@ -183,9 +184,39 @@ class Reservation_Station extends Module with consts{
          (!(write_idx1===63.U || write_idx2===63.U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
       ))//需要考虑 writeidx到底能不能等于63呢,得把这个选项排除掉,得额外考虑满的情况
 
-    //what about rollbacks????this is a BUG,A GODDAMN BIG BUG!
-    //NO WAY 2 FIX IT!!
-    //this is NOT a fix but just a get-by
+
+
+/*
+    val last_rollback_valid = RegInit(false.B)
+    last_rollback_valid :=(io.i_rollback_valid)
+    val new_mispred = Wire(Bool())
+    when(io.i_rollback_valid && last_rollback_valid){
+      new_mispred := false.B
+    }.elsewhen(io.i_rollback_valid && !last_rollback_valid){
+      new_mispred := true.B
+    }.otherwise{
+      new_mispred :=false.B
+    }
+    
+
+    //val max_age_temp =issued_age_pack.max_age- issue_num + write_num - Mux(new_mispred,io.i_rollback_num,0.U) 
+     next_max_age :=issued_age_pack.max_age- issue_num + write_num - Mux(new_mispred,io.i_rollback_num,0.U) 
+     //next_max_age := issued_age_pack.max_age- issue_num + write_num
+     //next_max_age := Mux(io.o_full,max_age_temp,59.U)
+
+     issued_age_pack.issue_valid(0) := issue0_valid
+     issued_age_pack.issue_valid(1) := issue1_valid
+     issued_age_pack.max_age := next_max_age
+     issued_age_pack.issued_ages(0) := MuxCase(63.U,(for(i <- 0 to 63)yield(i.U===issue1_idx)->reservation_station(i).io.o_age))
+     issued_age_pack.issued_ages(1) := MuxCase(63.U,(for(i <- 0 to 63)yield(i.U===issue2_idx)->reservation_station(i).io.o_age))
+     when(io.i_exception){
+        issued_age_pack := 0.U.asTypeOf(new age_pack())
+     }     
+
+     //io.o_full := issued_age_pack.max_age>60.U && (write_idx1===63.U || write_idx2 ===63.U)
+     io.o_full := issued_age_pack.max_age>60.U
+     assert( !((issued_age_pack.max_age>60.U) && ((write_idx1<60.U && write_idx2 <60.U))),"max agelogic wrong")
+*/
     val max_age_temp =issued_age_pack.max_age- issue_num + write_num  
      //next_max_age := issued_age_pack.max_age- issue_num + write_num
      next_max_age := Mux(io.o_full,max_age_temp,59.U)

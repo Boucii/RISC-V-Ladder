@@ -16,6 +16,11 @@ class CSR extends Module with consts{
         val o_pc_redirect_valid = Output(Bool())
 
         val o_commit_packs_modified = Output(Vec(2,new valid_uop_pack())) //commitpacks considering csr insts
+        //for debugging
+        val o_mepc    = Output(UInt(64.W))
+        val o_mtvec   = Output(UInt(64.W))
+        val o_mcause  = Output(UInt(64.W))
+        val o_mstatus = Output(UInt(64.W))
     })
     //dontTouch(io)
     //csr regfile
@@ -23,6 +28,11 @@ class CSR extends Module with consts{
     val mtvec   = RegInit(0.U(64.W))
     val mcause  = RegInit(0.U(64.W))  
     val mstatus = RegInit(0xa00001800L.U(64.W))//tobe decided each bit
+
+    io.o_mepc := mepc
+    io.o_mtvec := mtvec
+    io.o_mcause := mcause
+    io.o_mstatus := mstatus
 
     //csr read write logic
     //a.commit packs is ecall, mret and valid, and b.interrput/exception :ab are exclusive 

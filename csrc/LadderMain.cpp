@@ -11,17 +11,19 @@
 #include "verilated_dpi.h"
 #include "log.h"
 #include "memory.h"
+#include "devices.h"
 //#include <verilated.h>
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
 #define GTK_EN_CYC 0
 #define DIFFTEST_EN 1
-#define ITRACE_EN 1
-#define GTK_EN 1
+#define ITRACE_EN 0
+#define GTK_EN 0
 #define LOG_EN 0
-#define MAX_TIME 1000000//10000000
+#define MAX_TIME 1000000000//10000000
 #define RESET_VECTOR 0x80000000
+#define COMMIT_TIME_OUT 1500
 
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      /* Black */
@@ -66,6 +68,8 @@ bool diff_pass=1;
 
 #define RTC_PORT_BASE 0x48
 #define SERIAL_PORT_BASE 0x3f8
+#define KBD_PORT_BASE 0x60
+#define VGA_CTL_BASE 0x100
 
 //----------------Memory Management------------------
 extern uint64_t pmem_read(int addr);
@@ -170,7 +174,7 @@ void dump_gpr() {
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   if(mem_done==0){
 	if(raddr==RTC_PORT_BASE){
-		printf("reading the rtc\n");
+		//printf("reading the rtc\n");
 		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)(timeus.tv_sec*1000000+timeus.tv_usec);
@@ -178,13 +182,21 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 		return;
 	}
 	if(raddr==RTC_PORT_BASE+4){
-		printf("reading the rtc+4\n");
+		//printf("reading the rtc+4\n");
 		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)((timeus.tv_sec*1000000+timeus.tv_usec)>>32);
 		mem_done=1;
 		return;
 	}
+    if(raddr == KBD_PORT_BASE){
+		last_skip_for_mem = 1;
+      	kbd_update();
+      	//printf("reading kbd\n");
+		*rdata = key_dequeue();
+		mem_done=1;
+      	return;
+    }
   *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
   if(ITRACE_EN){
   	cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
@@ -341,6 +353,7 @@ int main(int argc, char** argv, char** env){
   LogInit();
   mem_init();
   load_img(argv);
+  init_keymap();
 
   reset(10);
 
@@ -373,7 +386,7 @@ int main(int argc, char** argv, char** env){
   cyc_do_not_have_commit =0;
   float IPC=0;
   int commit_inst_count=0;
-  while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>500)) {
+  while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>COMMIT_TIME_OUT)) {
 	if(cyc_time%100000==0){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
 	}
@@ -468,11 +481,11 @@ int main(int argc, char** argv, char** env){
   if(cyc_time==MAX_TIME){
       cout<<"HIT BAD TRAP(Time OUT)\n"<<cyc_time<<endl;
   }
-  if(cyc_do_not_have_commit >500){
+  if(cyc_do_not_have_commit >COMMIT_TIME_OUT){
 		cout<<"HIT BAD TRAP(TOO LONG SINCE LAST COMMIT)\n"<<cyc_time<<endl;
   }
 end:
-  IPC = commit_inst_count/cyc_time;
+  IPC = ((float)commit_inst_count/cyc_time);
   dumpwave();
   //dump_gpr();
   cout<<"simulation over\n";

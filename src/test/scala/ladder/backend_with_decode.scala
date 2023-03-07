@@ -34,6 +34,7 @@ class Back_End_With_Decode extends Module with consts{
         val o_dbg_commit_packs = Output(Vec(2,new valid_uop_pack()))
         val o_dbg_stop = Output(Bool())
         val o_dbg_arch_regs = Output(Vec(32,UInt(64.W)))
+        val o_dbg_csr_regs = Output(Vec(4,UInt(64.W)))
     }) 
     val decode = Module(new Decoder())
     val rename  = Module(new Rename())
@@ -81,6 +82,7 @@ class Back_End_With_Decode extends Module with consts{
     reservation_station.io.i_ex_res_packs := execute.io.o_ex_res_packs
     reservation_station.io.i_ROB_first_entry := rob.io.o_rob_head
     reservation_station.io.i_rollback_valid := rob.io.o_rollback_packs(0).valid || rob.io.o_rollback_packs(1).valid
+    //reservation_station.io.i_rollback_num := rob.io.o_rollback_num
 
     //connect execute input //??regfileread
     //this increses the critical path, i suppose
@@ -157,12 +159,20 @@ class Back_End_With_Decode extends Module with consts{
     //for decode and dpi-c arch regs
     val arch_regs = Module(new Arch_RegFile)
     val arch_regs_output = Wire(Vec(32,UInt(64.W)))
+    val csr_regs_output = Wire(Vec(4,UInt(64.W)))
     arch_regs.io.i_pregs := regfile.io.o_pregs
     arch_regs.io.i_rename_table := rename.io.o_commit_rename_table
+    arch_regs.io.i_csrs(0) := csr.io.o_mepc
+    arch_regs.io.i_csrs(1) := csr.io.o_mtvec
+    arch_regs.io.i_csrs(2) := csr.io.o_mcause
+    arch_regs.io.i_csrs(3) := csr.io.o_mstatus
     arch_regs_output := arch_regs.io.o_arch_regs
+    csr_regs_output := arch_regs.io.o_csr_regs
     dontTouch(arch_regs_output)
+    dontTouch(csr_regs_output)
 
     io.o_dbg_commit_packs := csr.io.o_commit_packs_modified
+    io.o_dbg_csr_regs := csr_regs_output
     io.o_dbg_stop := csr.io.o_commit_packs_modified(0).valid && csr.io.o_commit_packs_modified(0).uop.inst === "b00000000000100000000000001110011".U//aka ebreak
     io.o_dbg_arch_regs := arch_regs_output
 }

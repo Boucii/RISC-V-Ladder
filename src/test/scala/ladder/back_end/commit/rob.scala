@@ -35,6 +35,7 @@ class Reorder_Buffer extends Module with consts{
         val i_csr_pc_redirect = Input(Bool())
         val o_exception = Output(Bool())
         val o_rolling_back = Output(Bool())
+        //val o_rollback_num = Output(UInt(6.W))
 
         //for debug
         val dbg_commit_ptr = Output(UInt(7.W))
@@ -255,14 +256,9 @@ class Reorder_Buffer extends Module with consts{
       (rob_state === s_rollback && (io.i_branch_resolve_pack.rob_idx +1.U === allocate_ptr )) -> s_normal,
       (rob_state === s_full && will_commit(0)) -> s_normal
     )))
-    //printf("rob_state:%d\n",rob_state)
-    //printf("allocate_ptr:%d\n",allocate_ptr)
-    //printf("rob_state:%d\n",rob_state)
-    //printf("num_to_roll_back:%d\n",num_to_roll_back)
-    //printf("\n")
-    //printf("allocate_ptr:%d\n",allocate_ptr)
-    //printf("can_commit(0):%d\n",io.o_commit_packs(0).valid)
-    //printf("can_commit(1):%d\n",io.o_commit_packs(1).valid)
-    //printf("can_commit(0):%d\n",io.o_commit_packs(0).valid)
-    //printf("can_commit(1):%d\n",io.o_commit_packs(1).valid)
+/*
+    io.o_rollback_num := Mux(allocate_ptr(5,0) > io.i_branch_resolve_pack.rob_idx(5,0), 
+        allocate_ptr(5,0) - io.i_branch_resolve_pack.rob_idx(5,0) -1.U , 
+        allocate_ptr(5,0) + (63.U-io.i_branch_resolve_pack.rob_idx(5,0)) )
+        */
 }

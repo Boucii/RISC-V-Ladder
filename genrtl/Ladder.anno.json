@@ -16907,6 +16907,22 @@
   },
   {
     "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Back_End_With_Decode>csr_regs_output_0"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Back_End_With_Decode>csr_regs_output_1"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Back_End_With_Decode>csr_regs_output_2"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
+    "target":"~Ladder|Back_End_With_Decode>csr_regs_output_3"
+  },
+  {
+    "class":"firrtl.transforms.DontTouchAnnotation",
     "target":"~Ladder|Back_End_With_Decode>arch_regs_output_0"
   },
   {

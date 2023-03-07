@@ -7,6 +7,7 @@ CXXFLAGS += $(shell llvm-config-14 --cxxflags)
 CXXFLAGS += -g
 CXXFLAGS += -O3
 CXXFLAGS += -fsanitize=address
+CXXFLAGS += -DVL_THREADED
 
 CXXFLAGS += -L$(NEMU_HOME)/build/
 CXXFLAGS += -lriscv64-nemu-interpreter-so
@@ -16,8 +17,10 @@ LDFLAGS += $(shell llvm-config-14 --ldflags)
 LDFLAGS += $(shell llvm-config-14 --libs all)
 LDFLAGS +=-fsanitize=address
 LDFLAGS +=-L$(NEMU_HOME)/build/
+LDFLAGS += -lSDL2 
 
-VERILATORFLAGS += -O3 --x-assign fast --x-initial fast --noassert
+VERILATORFLAGS += -O3 --x-assign fast --x-initial fast --noassert --inline-mult 5000
+VERILATORFLAGS += --threads 5
 
 verilog:
 	$(call git_commit, "generate verilog")

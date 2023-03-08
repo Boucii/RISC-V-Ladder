@@ -89,3 +89,40 @@ void kbd_update() {
     }
   }
 }
+//---------------------VGA-----------------------------
+#define SCREEN_W  400
+#define SCREEN_H  300
+char vmem[300*400*4];
+
+uint8_t *vga_sync = new uint8_t();
+
+static SDL_Renderer *renderer = NULL;
+static SDL_Texture *texture = NULL;
+
+void init_screen() {
+  SDL_Window *window = NULL;
+  char title[128];
+  sprintf(title,"RISCV64-NPC");
+  SDL_Init(SDL_INIT_VIDEO);
+  SDL_CreateWindowAndRenderer(
+      SCREEN_W,
+      SCREEN_H,
+      0, &window, &renderer);
+  SDL_SetWindowTitle(window, title);
+  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+      SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
+}
+
+void update_screen() {
+  SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t));
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture, NULL, NULL);
+  SDL_RenderPresent(renderer);
+}
+
+void vga_update_screen() {
+  if(*vga_sync){
+    update_screen();
+    *vga_sync=0;
+  }
+}

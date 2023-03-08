@@ -16,10 +16,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC 0
+#define GTK_EN_CYC -1
 #define DIFFTEST_EN 1
-#define ITRACE_EN 0
-#define GTK_EN 0
+#define ITRACE_EN 1
+#define GTK_EN 1
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 #define RESET_VECTOR 0x80000000
@@ -48,6 +48,9 @@ using namespace std;
 //---------------Some Global Variables--------------
 extern uint8_t *mem;
 uint64_t img_size=0;
+extern char *vmem;
+       
+extern uint8_t *vga_sync;
 
 uint64_t *cpu_gpr = NULL;
 uint64_t last_ref_gpr[32] = {0}; 
@@ -66,10 +69,10 @@ struct timeval timeus;
 bool mem_done=0;
 bool diff_pass=1;
 
-#define RTC_PORT_BASE 0x48
-#define SERIAL_PORT_BASE 0x3f8
-#define KBD_PORT_BASE 0x60
-#define VGA_CTL_BASE 0x100
+#define RTC_PORT_BASE 		0xa0000048
+#define SERIAL_PORT_BASE 	0xa00003f8
+#define KBD_PORT_BASE 		0xa0000060
+#define VGA_CTL_BASE 		0xa0000100
 
 //----------------Memory Management------------------
 extern uint64_t pmem_read(int addr);
@@ -197,6 +200,21 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 		mem_done=1;
       	return;
     }
+	if(raddr == VGA_CTL_BASE){
+			last_skip_for_mem = 1;
+			*rdata = (300+(400<<16));
+			return; 
+	}
+	if(raddr == (VGA_CTL_BASE+4)){
+			last_skip_for_mem = 1;
+			*rdata = *vga_sync;
+			return;
+	}
+	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+400*300))){
+      		last_skip_for_mem =1;
+			*rdata = vmem[raddr-0xa1000000];
+			return;
+    }
   *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
   if(ITRACE_EN){
   	cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
@@ -215,6 +233,36 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
 	        mem_done=1;
 		return;
 	  }
+  	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+400*300*4))){
+		int len=0;
+		if(wmask==0){
+				len =0;
+		}else if(wmask==1){
+				len =1;
+		}else if(wmask==3){
+				len=2;
+		}else if(wmask==7){
+				len=3;
+    	}else if(wmask==15){
+				len =4;
+		}else if(wmask==255){
+				len =8;
+		}
+  	    for (int i = 0;i<len;i++){
+  	        vmem[waddr+i-0xa1000000] = wdata;
+  	        wdata = wdata>>8;
+  	    }
+	        mem_done=1;
+  	    return;
+  	  }  
+  	  if((waddr==(VGA_CTL_BASE+4))){
+  	      *vga_sync = wdata;
+  	      if(wdata==1){
+  	        update_screen();
+  	      }
+	        mem_done=1;
+		  return;
+  	  }
 	uint8_t mask=(uint8_t)wmask;
 	if(mask==0){
 
@@ -241,7 +289,7 @@ static VLadder* top;
 VerilatedVcdC* tfp=NULL;
 VerilatedContext* contextp=NULL;
 void dumpwave(){
-		if(GTK_EN && cyc_time>GTK_EN_CYC){
+		if(GTK_EN && cyc_time>GTK_EN_CYC &&GTK_EN_CYC>0){
     		tfp->dump(contextp->time()); //dump wav
     		contextp->timeInc(1); //推动仿真时间
 		}
@@ -354,6 +402,7 @@ int main(int argc, char** argv, char** env){
   mem_init();
   load_img(argv);
   init_keymap();
+  init_screen();
 
   reset(10);
 
@@ -389,6 +438,7 @@ int main(int argc, char** argv, char** env){
   while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>COMMIT_TIME_OUT)) {
 	if(cyc_time%100000==0){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
+		cout<<hex<<top->io_o_dbg_commit_packs_0_uop_pc<<dec<<endl;
 	}
     if(ITRACE_EN){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";

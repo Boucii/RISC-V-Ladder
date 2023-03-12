@@ -16,14 +16,17 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC -1
+#define GTK_EN_CYC  10000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 1
 #define GTK_EN 1
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
+//#define MAX_TIME 200000
 #define RESET_VECTOR 0x80000000
 #define COMMIT_TIME_OUT 1500
+#define SCRN_H 300
+#define SCRN_W 400
 
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      /* Black */
@@ -175,6 +178,7 @@ void dump_gpr() {
   }
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
+		//cout<<"memread "<<hex<<raddr<<endl;
   if(mem_done==0){
 	if(raddr==RTC_PORT_BASE){
 		//printf("reading the rtc\n");
@@ -202,15 +206,22 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
     }
 	if(raddr == VGA_CTL_BASE){
 			last_skip_for_mem = 1;
-			*rdata = (300+(400<<16));
+			*rdata = (SCRN_H+(SCRN_W<<16));
 			return; 
 	}
+	if(raddr == (VGA_CTL_BASE+2)){
+			last_skip_for_mem = 1;
+			*rdata = (SCRN_H+(SCRN_W<<16))>>16+(*vga_sync<<16);
+			return; 
+	}
+
 	if(raddr == (VGA_CTL_BASE+4)){
 			last_skip_for_mem = 1;
 			*rdata = *vga_sync;
 			return;
 	}
-	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+400*300))){
+	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+SCRN_W*SCRN_H))){
+		cout<<"memread "<<hex<<raddr<<endl;
       		last_skip_for_mem =1;
 			*rdata = vmem[raddr-0xa1000000];
 			return;
@@ -223,6 +234,7 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   }
 }
 extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
+		volatile char mask=wmask;
   if(ITRACE_EN){
   	cout<<BOLDCYAN<<hex<<endl<<"mem write, waddr is "<<waddr<<endl<<"wdata is "<<wdata<<" mask is"<<(uint8_t)wmask<<RESET<<endl;
   }
@@ -233,19 +245,22 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
 	        mem_done=1;
 		return;
 	  }
-  	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+400*300*4))){
+  	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
+			  static int ss=0;
+			  ss++;
+			  printf("mem,ss=%d\n",ss);
 		int len=0;
-		if(wmask==0){
+		if((uint8_t)wmask==0){
 				len =0;
-		}else if(wmask==1){
+		}else if((uint8_t)wmask==1){
 				len =1;
-		}else if(wmask==3){
+		}else if((uint8_t)wmask==3){
 				len=2;
-		}else if(wmask==7){
+		}else if((uint8_t)wmask==7){
 				len=3;
-    	}else if(wmask==15){
+    	}else if((uint8_t)wmask==15){
 				len =4;
-		}else if(wmask==255){
+		}else if((uint8_t)wmask==255){
 				len =8;
 		}
   	    for (int i = 0;i<len;i++){
@@ -258,6 +273,10 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  if((waddr==(VGA_CTL_BASE+4))){
   	      *vga_sync = wdata;
   	      if(wdata==1){
+				cout<<"!!!!\n";
+				cout<<"!!!!\n";
+				cout<<"!!!!\n";
+				cout<<"!!!!\n";
   	        update_screen();
   	      }
 	        mem_done=1;
@@ -289,7 +308,7 @@ static VLadder* top;
 VerilatedVcdC* tfp=NULL;
 VerilatedContext* contextp=NULL;
 void dumpwave(){
-		if(GTK_EN && cyc_time>GTK_EN_CYC &&GTK_EN_CYC>0){
+		if(GTK_EN && cyc_time>GTK_EN_CYC &&GTK_EN_CYC>=0){
     		tfp->dump(contextp->time()); //dump wav
     		contextp->timeInc(1); //推动仿真时间
 		}
@@ -398,7 +417,9 @@ int main(int argc, char** argv, char** env){
 
 
   //int time=0;
-  LogInit();
+  if(LOG_EN){
+  	LogInit();
+  }
   mem_init();
   load_img(argv);
   init_keymap();

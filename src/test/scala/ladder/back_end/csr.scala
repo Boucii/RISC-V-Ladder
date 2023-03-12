@@ -37,7 +37,7 @@ class CSR extends Module with consts{
     //csr read write logic
     //a.commit packs is ecall, mret and valid, and b.interrput/exception :ab are exclusive 
     //each commit packs can only has one csr write/read valid
-    //when there's ecall, mret and ebreak, it should and only be the valid inst in a cmt pack, and it's the first of the cmt pack 
+    //when there's ecall, mret and ebreak, it should and be the only valid inst in a cmt pack, and it's the first of the cmt pack 
     val commit0_is_csr_rw = Wire(Bool())
     val commit1_is_csr_rw = Wire(Bool())
     val csr_addr = Wire(UInt(12.W))
@@ -83,7 +83,8 @@ class CSR extends Module with consts{
         }.elsewhen(csr_addr===0x305.U){ 
             mtvec := csr_wdata
         }
-    }.elsewhen(commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL){
+    //}.elsewhen(commit0_is_csr_rw && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL){
+    }.elsewhen(io.i_commit_packs(0).valid && io.i_commit_packs(0).uop.func_code === FU_CSR && io.i_commit_packs(0).uop.alu_sel === CSR_ECALL){
         mcause := 11.U
         mepc := io.i_commit_packs(0).uop.pc//software add 4 later
     }

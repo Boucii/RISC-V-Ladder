@@ -100,8 +100,9 @@ class Reorder_Buffer extends Module with consts{
     next_can_commit(1) := rob_valid(commit_ptr+1.U) && rob_done(commit_ptr+1.U)
 
     next_will_commit(0) := !io.i_interrupt && !rob_exception(commit_ptr) && next_can_commit(0) && (next_rob_state===s_normal || next_rob_state===s_full )
-    next_will_commit(1) := !io.i_interrupt && !(rob_uop(commit_ptr).func_code === FU_CSR && 
-        ((rob_uop(commit_ptr).alu_sel === CSR_ECALL) || (rob_uop(commit_ptr).alu_sel === CSR_EBREAK) || (rob_uop(commit_ptr).alu_sel === CSR_MRET))) &&
+    next_will_commit(1) := !io.i_interrupt && !(rob_uop(commit_ptr+1.U).func_code === FU_CSR && 
+        ((rob_uop(commit_ptr+1.U).alu_sel === CSR_ECALL) || (rob_uop(commit_ptr+1.U).alu_sel === CSR_EBREAK) || (rob_uop(commit_ptr+1.U).alu_sel === CSR_MRET))) &&
+        !(rob_uop(commit_ptr).func_code === FU_CSR) &&
         !rob_exception(commit_ptr) && !rob_exception(commit_ptr+1.U) && next_can_commit(0) && next_can_commit(1) &&
         (next_rob_state===s_normal || next_rob_state===s_full)
 

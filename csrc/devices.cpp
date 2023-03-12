@@ -92,7 +92,7 @@ void kbd_update() {
 //---------------------VGA-----------------------------
 #define SCREEN_W  400
 #define SCREEN_H  300
-char vmem[300*400*4];
+char *vmem=new char[SCREEN_H*SCREEN_W*4];
 
 uint8_t *vga_sync = new uint8_t();
 

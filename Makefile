@@ -20,7 +20,7 @@ LDFLAGS +=-L$(NEMU_HOME)/build/
 LDFLAGS += -lSDL2 
 
 VERILATORFLAGS += -O3 --x-assign fast --x-initial fast --noassert --inline-mult 5000
-VERILATORFLAGS += --threads 5
+VERILATORFLAGS += --threads 6 #--trace-depth 3 --instr-count-dpi 300
 
 verilog:
 	$(call git_commit, "generate verilog")

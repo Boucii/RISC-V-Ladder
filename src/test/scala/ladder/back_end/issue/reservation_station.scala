@@ -252,8 +252,9 @@ class Reservation_Station extends Module with consts{
      //通过加一点num_write之类的
      reservation_station(i).io.i_uop := Mux(i.U===write_idx1,uops(0),uops(1))//rewrite this with mux??
 
-     reservation_station(i).io.i_exe_dst1 := Mux(io.i_ex_res_packs(0).valid  ,io.i_ex_res_packs(0).uop.phy_dst,0.U)
-     reservation_station(i).io.i_exe_dst2 := Mux(io.i_ex_res_packs(1).valid  ,io.i_ex_res_packs(1).uop.phy_dst,0.U)
+     //if ex_res is a csr inst, put dst to zero
+     reservation_station(i).io.i_exe_dst1 := Mux(io.i_ex_res_packs(0).valid && io.i_ex_res_packs(0).uop.func_code=/=FU_CSR  ,io.i_ex_res_packs(0).uop.phy_dst,0.U)
+     reservation_station(i).io.i_exe_dst2 := Mux(io.i_ex_res_packs(1).valid && io.i_ex_res_packs(1).uop.func_code=/=FU_CSR  ,io.i_ex_res_packs(1).uop.phy_dst,0.U)
      
      reservation_station(i).io.i_exe_value1 := io.i_ex_res_packs(0).uop.dst_value
      reservation_station(i).io.i_exe_value2 := io.i_ex_res_packs(1).uop.dst_value

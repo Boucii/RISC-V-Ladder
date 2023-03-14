@@ -16,10 +16,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  10000
+#define GTK_EN_CYC  260000
 #define DIFFTEST_EN 1
-#define ITRACE_EN 1
-#define GTK_EN 1
+#define ITRACE_EN 0
+#define GTK_EN 0
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 200000
@@ -470,8 +470,20 @@ int main(int argc, char** argv, char** env){
     addr_if2 = stall1? addr_if2 : addr_if1;
     addr_if1 = (int)(top->io_icache_io_o_addr);
 
-    uint32_t cur_inst = (uint32_t)pmem_read(addr_if1);
-    uint32_t cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
+    uint32_t cur_inst =  0;//(uint32_t)pmem_read(addr_if1);
+    uint32_t cur_inst2 = 0;//(uint32_t)pmem_read(addr_if1+4);
+
+	//this is for possible inst fetch on a mispredicted path that will
+	//later be flushed, so it's fine.
+	if(addr_if1<0x80000000||addr_if1>0x88000000){
+		cur_inst = 0;
+		cur_inst2 = 0;
+		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<addr_if1<<endl;
+	}else{
+    	cur_inst = (uint32_t)pmem_read(addr_if1);
+    	cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
+	}
+
     data_if3 = stall2? data_if3 : data_if2;
     data_if2 = stall1? data_if2 : data_if1;
     data_if1 = (uint64_t)cur_inst+((uint64_t)cur_inst2<<32);

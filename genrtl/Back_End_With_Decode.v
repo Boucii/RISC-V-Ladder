@@ -656,9 +656,11 @@ module Back_End_With_Decode(
   wire [1:0] reservation_station_io_o_issue_packs_1_mem_type; // @[backend_with_decode.scala 42:37]
   wire [127:0] reservation_station_io_i_wakeup_port; // @[backend_with_decode.scala 42:37]
   wire  reservation_station_io_i_ex_res_packs_0_valid; // @[backend_with_decode.scala 42:37]
+  wire [6:0] reservation_station_io_i_ex_res_packs_0_uop_func_code; // @[backend_with_decode.scala 42:37]
   wire [6:0] reservation_station_io_i_ex_res_packs_0_uop_phy_dst; // @[backend_with_decode.scala 42:37]
   wire [63:0] reservation_station_io_i_ex_res_packs_0_uop_dst_value; // @[backend_with_decode.scala 42:37]
   wire  reservation_station_io_i_ex_res_packs_1_valid; // @[backend_with_decode.scala 42:37]
+  wire [6:0] reservation_station_io_i_ex_res_packs_1_uop_func_code; // @[backend_with_decode.scala 42:37]
   wire [6:0] reservation_station_io_i_ex_res_packs_1_uop_phy_dst; // @[backend_with_decode.scala 42:37]
   wire [63:0] reservation_station_io_i_ex_res_packs_1_uop_dst_value; // @[backend_with_decode.scala 42:37]
   wire  reservation_station_io_i_branch_resolve_pack_valid; // @[backend_with_decode.scala 42:37]
@@ -2122,9 +2124,11 @@ module Back_End_With_Decode(
     .io_o_issue_packs_1_mem_type(reservation_station_io_o_issue_packs_1_mem_type),
     .io_i_wakeup_port(reservation_station_io_i_wakeup_port),
     .io_i_ex_res_packs_0_valid(reservation_station_io_i_ex_res_packs_0_valid),
+    .io_i_ex_res_packs_0_uop_func_code(reservation_station_io_i_ex_res_packs_0_uop_func_code),
     .io_i_ex_res_packs_0_uop_phy_dst(reservation_station_io_i_ex_res_packs_0_uop_phy_dst),
     .io_i_ex_res_packs_0_uop_dst_value(reservation_station_io_i_ex_res_packs_0_uop_dst_value),
     .io_i_ex_res_packs_1_valid(reservation_station_io_i_ex_res_packs_1_valid),
+    .io_i_ex_res_packs_1_uop_func_code(reservation_station_io_i_ex_res_packs_1_uop_func_code),
     .io_i_ex_res_packs_1_uop_phy_dst(reservation_station_io_i_ex_res_packs_1_uop_phy_dst),
     .io_i_ex_res_packs_1_uop_dst_value(reservation_station_io_i_ex_res_packs_1_uop_dst_value),
     .io_i_branch_resolve_pack_valid(reservation_station_io_i_branch_resolve_pack_valid),
@@ -3377,9 +3381,11 @@ module Back_End_With_Decode(
   assign reservation_station_io_i_wakeup_port = _written_back_table_with_bypass_T_8 |
     _written_back_table_with_bypass_T_16; // @[backend_with_decode.scala 75:204]
   assign reservation_station_io_i_ex_res_packs_0_valid = execute_io_o_ex_res_packs_0_valid; // @[backend_with_decode.scala 82:43]
+  assign reservation_station_io_i_ex_res_packs_0_uop_func_code = execute_io_o_ex_res_packs_0_uop_func_code; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_ex_res_packs_0_uop_phy_dst = execute_io_o_ex_res_packs_0_uop_phy_dst; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_ex_res_packs_0_uop_dst_value = execute_io_o_ex_res_packs_0_uop_dst_value; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_ex_res_packs_1_valid = execute_io_o_ex_res_packs_1_valid; // @[backend_with_decode.scala 82:43]
+  assign reservation_station_io_i_ex_res_packs_1_uop_func_code = execute_io_o_ex_res_packs_1_uop_func_code; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_ex_res_packs_1_uop_phy_dst = execute_io_o_ex_res_packs_1_uop_phy_dst; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_ex_res_packs_1_uop_dst_value = execute_io_o_ex_res_packs_1_uop_dst_value; // @[backend_with_decode.scala 82:43]
   assign reservation_station_io_i_branch_resolve_pack_valid = execute_io_o_branch_resolve_pack_valid; // @[backend_with_decode.scala 79:50]

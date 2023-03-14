@@ -25,9 +25,10 @@ class BPU extends Module {
 
         val o_branch_predict_pack = Output(new branch_predict_pack())//two insts in a fetch pack shares the same prediction
     })
-    dontTouch(io)
-    def btb_size = 512
+    //dontTouch(io)
+    def btb_size = 64
     def idx_len = log2Ceil(btb_size)
+    require(isPow2(btb_size))
     val btb = RegInit(0.U.asTypeOf(Vec(btb_size , new btb_pack())))
     //allocate ptr/victim ptr, consider btb as a queue, allocate from tail, victim from head
     val btb_victim_ptr = RegInit(0.U(idx_len.W))
@@ -71,7 +72,7 @@ class BPU extends Module {
         //update victim ptr
         btb_victim_ptr := btb_victim_ptr + 1.U
     }
-    //update on a mispredicted branch,暗含valid表示是一个branch,mispred代表即使没有pred,也可能会mispred
+    //update on a mispredicted branch,indicates that "valid" means it's a branch, mispred stands for even if not pred, mispred could be true.
     //this entry_found logic is so not "a circuit" but a "program", optimize it later
     /*
     various cases:

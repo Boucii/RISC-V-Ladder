@@ -13,7 +13,6 @@ module Front_End(
   input         io_i_branch_resolve_pack_taken,
   input  [63:0] io_i_branch_resolve_pack_pc,
   input  [63:0] io_i_branch_resolve_pack_target,
-  input  [6:0]  io_i_branch_resolve_pack_rob_idx,
   input         io_i_branch_resolve_pack_prediction_valid,
   input  [2:0]  io_i_branch_resolve_pack_branch_type,
   input         io_i_pc_redirect_valid,
@@ -51,15 +50,12 @@ module Front_End(
   wire  bpu_reset; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_addr; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_resolve_pack_valid; // @[front_end.scala 27:21]
-  wire  bpu_io_i_branch_resolve_pack_mispred; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_resolve_pack_taken; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_branch_resolve_pack_pc; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_branch_resolve_pack_target; // @[front_end.scala 27:21]
-  wire [6:0] bpu_io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_resolve_pack_prediction_valid; // @[front_end.scala 27:21]
   wire [2:0] bpu_io_i_branch_resolve_pack_branch_type; // @[front_end.scala 27:21]
   wire  bpu_io_i_branch_presolve_pack_valid; // @[front_end.scala 27:21]
-  wire  bpu_io_i_branch_presolve_pack_taken; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_i_branch_presolve_pack_pc; // @[front_end.scala 27:21]
   wire  bpu_io_o_branch_predict_pack_valid; // @[front_end.scala 27:21]
   wire [63:0] bpu_io_o_branch_predict_pack_target; // @[front_end.scala 27:21]
@@ -207,15 +203,12 @@ module Front_End(
     .reset(bpu_reset),
     .io_i_addr(bpu_io_i_addr),
     .io_i_branch_resolve_pack_valid(bpu_io_i_branch_resolve_pack_valid),
-    .io_i_branch_resolve_pack_mispred(bpu_io_i_branch_resolve_pack_mispred),
     .io_i_branch_resolve_pack_taken(bpu_io_i_branch_resolve_pack_taken),
     .io_i_branch_resolve_pack_pc(bpu_io_i_branch_resolve_pack_pc),
     .io_i_branch_resolve_pack_target(bpu_io_i_branch_resolve_pack_target),
-    .io_i_branch_resolve_pack_rob_idx(bpu_io_i_branch_resolve_pack_rob_idx),
     .io_i_branch_resolve_pack_prediction_valid(bpu_io_i_branch_resolve_pack_prediction_valid),
     .io_i_branch_resolve_pack_branch_type(bpu_io_i_branch_resolve_pack_branch_type),
     .io_i_branch_presolve_pack_valid(bpu_io_i_branch_presolve_pack_valid),
-    .io_i_branch_presolve_pack_taken(bpu_io_i_branch_presolve_pack_taken),
     .io_i_branch_presolve_pack_pc(bpu_io_i_branch_presolve_pack_pc),
     .io_o_branch_predict_pack_valid(bpu_io_o_branch_predict_pack_valid),
     .io_o_branch_predict_pack_target(bpu_io_o_branch_predict_pack_target),
@@ -393,15 +386,12 @@ module Front_End(
   assign bpu_reset = reset;
   assign bpu_io_i_addr = pc_gen_io_o_pc; // @[front_end.scala 59:19]
   assign bpu_io_i_branch_resolve_pack_valid = io_i_branch_resolve_pack_valid; // @[front_end.scala 61:34]
-  assign bpu_io_i_branch_resolve_pack_mispred = io_i_branch_resolve_pack_mispred; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_resolve_pack_taken = io_i_branch_resolve_pack_taken; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_resolve_pack_pc = io_i_branch_resolve_pack_pc; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_resolve_pack_target = io_i_branch_resolve_pack_target; // @[front_end.scala 61:34]
-  assign bpu_io_i_branch_resolve_pack_rob_idx = io_i_branch_resolve_pack_rob_idx; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_resolve_pack_prediction_valid = io_i_branch_resolve_pack_prediction_valid; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_resolve_pack_branch_type = io_i_branch_resolve_pack_branch_type; // @[front_end.scala 61:34]
   assign bpu_io_i_branch_presolve_pack_valid = branch_presolve_io_o_branch_presolve_pack_valid; // @[front_end.scala 60:35]
-  assign bpu_io_i_branch_presolve_pack_taken = branch_presolve_io_o_branch_presolve_pack_taken; // @[front_end.scala 60:35]
   assign bpu_io_i_branch_presolve_pack_pc = branch_presolve_io_o_branch_presolve_pack_pc; // @[front_end.scala 60:35]
   assign if1_if2_clock = clock;
   assign if1_if2_reset = reset;

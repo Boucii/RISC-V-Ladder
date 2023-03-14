@@ -111,7 +111,6 @@ module Ladder(
   wire  front_end_io_i_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 21:25]
   wire [63:0] front_end_io_i_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 21:25]
   wire [63:0] front_end_io_i_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 21:25]
-  wire [6:0] front_end_io_i_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 21:25]
   wire  front_end_io_i_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 21:25]
   wire [2:0] front_end_io_i_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 21:25]
   wire  front_end_io_i_pc_redirect_valid; // @[CPU_top_with_dpic.scala 21:25]
@@ -333,7 +332,6 @@ module Ladder(
     .io_i_branch_resolve_pack_taken(front_end_io_i_branch_resolve_pack_taken),
     .io_i_branch_resolve_pack_pc(front_end_io_i_branch_resolve_pack_pc),
     .io_i_branch_resolve_pack_target(front_end_io_i_branch_resolve_pack_target),
-    .io_i_branch_resolve_pack_rob_idx(front_end_io_i_branch_resolve_pack_rob_idx),
     .io_i_branch_resolve_pack_prediction_valid(front_end_io_i_branch_resolve_pack_prediction_valid),
     .io_i_branch_resolve_pack_branch_type(front_end_io_i_branch_resolve_pack_branch_type),
     .io_i_pc_redirect_valid(front_end_io_i_pc_redirect_valid),
@@ -642,8 +640,6 @@ module Ladder(
     _front_end_io_i_branch_resolve_pack_T_1 ? 64'h0 : back_end_io_o_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_target = _front_end_io_i_branch_resolve_pack_T ==
     _front_end_io_i_branch_resolve_pack_T_1 ? 64'h0 : back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 29:44]
-  assign front_end_io_i_branch_resolve_pack_rob_idx = _front_end_io_i_branch_resolve_pack_T ==
-    _front_end_io_i_branch_resolve_pack_T_1 ? 7'h0 : back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_prediction_valid = _front_end_io_i_branch_resolve_pack_T ==
     _front_end_io_i_branch_resolve_pack_T_1 ? 1'h0 : back_end_io_o_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 29:44]
   assign front_end_io_i_branch_resolve_pack_branch_type = _front_end_io_i_branch_resolve_pack_T ==

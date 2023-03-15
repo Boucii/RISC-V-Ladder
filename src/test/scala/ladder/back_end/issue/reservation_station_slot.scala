@@ -7,14 +7,6 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
-class age_pack extends Bundle {
-  val issue_valid = Vec(2,Bool())
-  val max_age = UInt(8.W)
-  val issued_ages = Vec(2,UInt(8.W))//by default, age(1)>=age(0)!
-}
-
-//TODO: how to add a age scheme?when to release this slot
-//2 reservation stations, one for INT, one for MEM
 class Reservation_Station_Slot extends Module with consts{
     val io=IO(new Bundle{
         val o_valid = Output(Bool()) //is this slot occupied
@@ -37,15 +29,11 @@ class Reservation_Station_Slot extends Module with consts{
         val i_exe_value1 = Input(UInt(64.W))
         val i_exe_value2 = Input(UInt(64.W))
 
-        val i_age_pack = Input(new age_pack())
-        val o_age = Output(UInt(8.W))
 
         val cond = Output(Bool())
 
         val i_ROB_first_entry = Input(UInt(7.W))
     })
-    val age = RegInit(63.U(6.W))
-    io.o_age := age
 
     val uop = RegInit(0.U.asTypeOf(new uop()))
     io.o_uop := uop
@@ -58,23 +46,6 @@ class Reservation_Station_Slot extends Module with consts{
             (valid && (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred &&
               ((io.i_branch_resolve_pack.rob_idx(6) === uop.rob_idx(6) && io.i_branch_resolve_pack.rob_idx(5,0) < uop.rob_idx(5,0))||
             (io.i_branch_resolve_pack.rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_branch_resolve_pack.rob_idx(6) ^ uop.rob_idx(6)))))) 
-
-    when(flush ){//or mux? when-wlse should be cascaded,so mux is better TODO:make this mux!!!!
-        age := 63.U
-    }.elsewhen(io.i_write_slot && io.i_uop.valid){//decouple this plz
-        age := io.i_age_pack.max_age+io.i_allocated_idx
-    }.elsewhen(!io.i_write_slot && io.i_issue_granted){
-        age := 63.U//invalid
-    }.elsewhen(valid && io.i_age_pack.issue_valid(0) && io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(0) && age<io.i_age_pack.issued_ages(1)){
-        age := age-1.U //issued 2 and age in between them
-    }.elsewhen(valid && io.i_age_pack.issue_valid(0) && io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(1)){
-        age := age-2.U //issued 2 and age larger than both
-    }.elsewhen(valid &&io.i_age_pack.issue_valid(0) && !io.i_age_pack.issue_valid(1)&& age>io.i_age_pack.issued_ages(0)){
-        age := age-1.U //issued only 1 and larger
-    }.otherwise{
-        age := age//preserve
-    }
-
     val src1_ready = RegInit(false.B)
     val next_src1_ready =Wire(Bool())
     src1_ready:=next_src1_ready

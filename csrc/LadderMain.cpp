@@ -16,7 +16,7 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  260000
+#define GTK_EN_CYC  -1
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 #define GTK_EN 0

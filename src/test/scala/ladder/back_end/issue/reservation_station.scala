@@ -35,15 +35,15 @@ class Reservation_Station extends Module with consts{
      val uops = Wire((Vec(2,new uop())))
      uops:=io.i_dispatch_packs
 
-     val reservation_station = Seq.fill(64)(Module(new Reservation_Station_Slot()))
-     val reservation_station_valid = Wire(UInt(64.W))
-     val reservation_station_valid_withmask = Wire(UInt(64.W))
-     val temp = Wire(Vec(64,Bool()))
-     for (i <- 0 until 64) {
+     val reservation_station = Seq.fill(RS_size)(Module(new Reservation_Station_Slot()))
+     val reservation_station_valid = Wire(UInt(RS_size.W))
+     val reservation_station_valid_withmask = Wire(UInt(RS_size.W))
+     val temp = Wire(Vec(RS_size,Bool()))
+     for (i <- 0 until RS_size) {
        temp(i) := ((reservation_station(i).io.o_valid))
      }
-     val write_idx1 = Wire(UInt(6.W))
-     val write_idx2 = Wire(UInt(6.W))
+     val write_idx1 = Wire(UInt((rs_idx_len).W))
+     val write_idx2 = Wire(UInt((rs_idx_len).W))
 
      reservation_station_valid := temp.asUInt()
      write_idx1:=PriorityEncoder(~(reservation_station_valid)) //可能错的不是他,是用到他的变量
@@ -51,7 +51,7 @@ class Reservation_Station extends Module with consts{
      write_idx2:=PriorityEncoder(~(reservation_station_valid_withmask))//TODO:这个可以改成反向寻找的优先编码器
 
      //Issue Logic
-     val indexes = VecInit.tabulate(64){_.U}
+     val indexes = VecInit.tabulate(RS_size){_.U}
      val available_funcs = Wire(UInt(7.W))
 
      val temp2=Wire(Vec(7,Bool()))
@@ -60,12 +60,12 @@ class Reservation_Station extends Module with consts{
      }
      available_funcs := temp2.asUInt()
 
-     val slots_can_issue = (VecInit.tabulate(64){ i=> reservation_station(i).io.o_ready_to_issue && ((reservation_station(i).io.o_uop.func_code & available_funcs).orR).asBool})
-     val issue1_idx = Wire(UInt(6.W))
+     val slots_can_issue = (VecInit.tabulate(RS_size){ i=> reservation_station(i).io.o_ready_to_issue && ((reservation_station(i).io.o_uop.func_code & available_funcs).orR).asBool})
+     val issue1_idx = Wire(UInt((rs_idx_len).W))
      issue1_idx := PriorityEncoder(slots_can_issue.asUInt())
 
      val issue1_func_code = Wire(UInt(7.W)) 
-     issue1_func_code := MuxCase(FU_NUL, Seq.tabulate(64)(i=>i).map(i => ((i.U === issue1_idx) -> reservation_station(i).io.o_uop.func_code)))
+     issue1_func_code := MuxCase(FU_NUL, Seq.tabulate(RS_size)(i=>i).map(i => ((i.U === issue1_idx) -> reservation_station(i).io.o_uop.func_code)))
      val available_funcs_with_mask = Wire(Vec(7, UInt(2.W)))
      available_funcs_with_mask:=io.i_available_funcs
      available_funcs_with_mask(OHToUInt(issue1_func_code)):=io.i_available_funcs(OHToUInt(issue1_func_code))-1.U //optimize this OHToUInt
@@ -76,17 +76,17 @@ class Reservation_Station extends Module with consts{
      }
 
      val available_funcs2_bits = temp3.asUInt()
-     val slots_can_issue2 = (VecInit.tabulate(64){i=> (slots_can_issue(i) && ((i.U=/=issue1_idx)) &&
+     val slots_can_issue2 = (VecInit.tabulate(RS_size){i=> (slots_can_issue(i) && ((i.U=/=issue1_idx)) &&
           ((reservation_station(i).io.o_uop.func_code & available_funcs2_bits).orR).asBool)})
 
-     val issue2_idx = Wire(UInt(6.W))
+     val issue2_idx = Wire(UInt((rs_idx_len).W))
      issue2_idx := PriorityEncoder(slots_can_issue2.asUInt)
 
      val issue_num= Wire(UInt(2.W))
      issue_num := MuxCase(0.U,Seq(
-         (issue1_idx===63.U && issue2_idx===63.U) -> 0.U,
-         ((issue1_idx===63.U && issue2_idx=/=63.U) || (issue1_idx=/=63.U && issue2_idx===63.U)) ->1.U,
-         (issue1_idx=/=63.U && issue2_idx=/=63.U )->2.U
+         (issue1_idx===((RS_size-1)).U && issue2_idx===((RS_size-1).U)) -> 0.U,
+         ((issue1_idx===(RS_size-1).U && issue2_idx=/=(RS_size-1).U) || (issue1_idx=/=(RS_size-1).U && issue2_idx===(RS_size-1).U)) ->1.U,
+         (issue1_idx=/=(RS_size-1).U && issue2_idx=/=(RS_size-1).U )->2.U
      ))
      val issue0_valid =Wire(Bool())
      val issue1_valid = Wire(Bool())
@@ -95,28 +95,28 @@ class Reservation_Station extends Module with consts{
 
       val write_num = Wire(UInt(2.W))
       write_num := MuxCase(0.U,Seq(
-         (write_idx1===63.U || write_idx2===63.U) -> 0.U,//full
-         (!(write_idx1===63.U || write_idx2===63.U) && (uops(0).valid && uops(1).valid)) -> 2.U,
-         (!(write_idx1===63.U || write_idx2===63.U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
+         (write_idx1===(RS_size-1).U || write_idx2===(RS_size-1).U) -> 0.U,//full
+         (!(write_idx1===(RS_size-1).U || write_idx2===(RS_size-1).U) && (uops(0).valid && uops(1).valid)) -> 2.U,
+         (!(write_idx1===(RS_size-1).U || write_idx2===(RS_size-1).U) && ((uops(0).valid && !uops(1).valid) || (!uops(0).valid && uops(1).valid))) ->1.U
       ))//需要考虑 writeidx到底能不能等于63呢,得把这个选项排除掉,得额外考虑满的情况
 
      //when got 1 dispatch valid,
-     io.o_full := (write_idx1===63.U || write_idx2 ===63.U)
+     io.o_full := (write_idx1===(RS_size-1).U || write_idx2 ===(RS_size-1).U)
 
-     io.o_issue_packs(0):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to 63)yield(i.U===issue1_idx)->reservation_station(i).io.o_uop))
-     io.o_issue_packs(1):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to 63)yield(i.U===issue2_idx)->reservation_station(i).io.o_uop))
+     io.o_issue_packs(0):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to (RS_size-1))yield(i.U===issue1_idx)->reservation_station(i).io.o_uop))
+     io.o_issue_packs(1):=MuxCase(reservation_station(0).io.o_uop,(for(i <- 0 to (RS_size-1))yield(i.U===issue2_idx)->reservation_station(i).io.o_uop))
      io.o_issue_packs(0).valid := issue0_valid
      io.o_issue_packs(1).valid := issue1_valid
 
-     for (i <- 0 until 64){//connect input ports
+     for (i <- 0 until RS_size){//connect input ports
      reservation_station(i).io.i_issue_granted := Mux((i.U===issue1_idx || i.U===issue2_idx) && !(io.i_exception || io.i_rollback_valid),true.B,false.B)
      reservation_station(i).io.i_branch_resolve_pack := io.i_branch_resolve_pack
      reservation_station(i).io.i_exception := io.i_exception
      reservation_station(i).io.i_wakeup_port := io.i_wakeup_port
      reservation_station(i).io.i_allocated_idx := Mux(write_idx2===i.U,1.U,0.U)
      reservation_station(i).io.i_write_slot := MuxCase(false.B,Seq(
-        ((i.U===write_idx1) && (write_idx1=/=63.U)) -> uops(0).valid,
-        ((i.U===write_idx2) && (write_idx2=/=63.U)) -> uops(1).valid
+        ((i.U===write_idx1) && (write_idx1=/=(RS_size-1).U)) -> uops(0).valid,
+        ((i.U===write_idx2) && (write_idx2=/=(RS_size-1).U)) -> uops(1).valid
       )
      )//Mux((i.U===write_idx1||i.U===write_idx2)&&(!io.o_full),true.B,false.B)//and we have things to write_idx1,改一改这个的逻辑,尽量让他和uopvalid解耦
      //通过加一点num_write之类的

@@ -22,7 +22,7 @@
 #define GTK_EN 0
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
-//#define MAX_TIME 200000
+//#define MAX_TIME 300000
 #define RESET_VECTOR 0x80000000
 #define COMMIT_TIME_OUT 1500
 #define SCRN_H 300

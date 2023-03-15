@@ -8,6 +8,10 @@ import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
 trait consts{
+    def RS_size =32
+    def rs_idx_len = log2Ceil(RS_size)
+    require(isPow2(RS_size))
+
     def X = BitPat("b?")
     def N = BitPat("b0")
     def Y = BitPat("b1")

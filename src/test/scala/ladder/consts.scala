@@ -1,16 +1,27 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
+
+trait params{
+    def ROB_size =32
+    def rob_idx_len = (log2Ceil(ROB_size)+1)
+    require(isPow2(ROB_size))
+}
 trait consts{
     def RS_size =32
     def rs_idx_len = log2Ceil(RS_size)
     require(isPow2(RS_size))
+
+    def ROB_size =32
+    def rob_idx_len = (log2Ceil(ROB_size)+1)
+    require(isPow2(ROB_size))
 
     def X = BitPat("b?")
     def N = BitPat("b0")

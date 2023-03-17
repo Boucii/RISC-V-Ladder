@@ -1,7 +1,9 @@
 package Ladder 
 
-import chisel3._
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._

@@ -20,11 +20,14 @@ LDFLAGS +=-L$(NEMU_HOME)/build/
 LDFLAGS += -lSDL2 
 
 VERILATORFLAGS += -O3 --x-assign fast --x-initial fast --noassert --inline-mult 5000
-VERILATORFLAGS += --threads 6 #--trace-depth 3 --instr-count-dpi 300
+VERILATORFLAGS += --threads 3
+#--trace-depth 3 --instr-count-dpi 300
+#VERILATORFLAGS += -Wwarn-WIDTH
 
 verilog:
 	$(call git_commit, "generate verilog")
-	sbt "test:runMain Ladder.GenVerilog"
+	sbt "test:runMain Ladder.GenVerilog "
+	#--Wall --Werror" #-Werror=silent-truncation
 	#sbt "Test/runMain Ladder.Genverilog"
 	make sim
 

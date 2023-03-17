@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -32,7 +33,7 @@ class Reservation_Station_Slot extends Module with consts{
 
         val cond = Output(Bool())
 
-        val i_ROB_first_entry = Input(UInt(7.W))
+        val i_ROB_first_entry = Input(UInt(rob_idx_len.W))
     })
 
     val uop = RegInit(0.U.asTypeOf(new uop()))
@@ -44,8 +45,8 @@ class Reservation_Station_Slot extends Module with consts{
     val flush = Wire(Bool())
     flush := io.i_exception ||
             (valid && (io.i_branch_resolve_pack.valid && io.i_branch_resolve_pack.mispred &&
-              ((io.i_branch_resolve_pack.rob_idx(6) === uop.rob_idx(6) && io.i_branch_resolve_pack.rob_idx(5,0) < uop.rob_idx(5,0))||
-            (io.i_branch_resolve_pack.rob_idx(5,0) > uop.rob_idx(5,0) && (io.i_branch_resolve_pack.rob_idx(6) ^ uop.rob_idx(6)))))) 
+              ((io.i_branch_resolve_pack.rob_idx(rob_idx_len-1) === uop.rob_idx(rob_idx_len-1) && io.i_branch_resolve_pack.rob_idx((rob_idx_len-2),0) < uop.rob_idx((rob_idx_len-2),0))||
+            (io.i_branch_resolve_pack.rob_idx((rob_idx_len-2),0) > uop.rob_idx((rob_idx_len-2),0) && (io.i_branch_resolve_pack.rob_idx(rob_idx_len-1) ^ uop.rob_idx(rob_idx_len-1)))))) 
     val src1_ready = RegInit(false.B)
     val next_src1_ready =Wire(Bool())
     src1_ready:=next_src1_ready

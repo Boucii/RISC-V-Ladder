@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -13,10 +14,12 @@ import chisel3.experimental.BundleLiterals._
 //this is currently unbypassable,can this be bypassed?
 //在上层中需要加入,如果不写reg,就不req preg
 //TODO:when exception,free 2 pregs per cyc
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._

@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -19,7 +20,7 @@ class Execute extends Module with consts{
 
         //to rob
         val o_ex_res_packs = Output(Vec(2, new valid_uop_pack()))//rename result to res 
-        val i_ROB_first_entry = Input(UInt(7.W))
+        val i_ROB_first_entry = Input(UInt(rob_idx_len.W))
         val dcache_io = (new DcacheIO())
 
         val o_branch_resolve_pack=Output(new branch_resolve_pack())
@@ -32,7 +33,7 @@ class Execute extends Module with consts{
 
         //for interrupt mask
         val o_lsu_uop_valid = Output(Bool()) 
-        val o_lsu_uop_rob_idx = Output(UInt(7.W)) 
+        val o_lsu_uop_rob_idx = Output(UInt(rob_idx_len.W)) 
     })
 
     //lets do this for now. imrove this by adding a virtual exunit class 

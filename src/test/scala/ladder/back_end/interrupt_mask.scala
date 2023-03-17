@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -12,11 +13,11 @@ import chisel3.experimental.BundleLiterals._
 //when executing a store in lsu, and the memory returns in more than one cycle( weather it's for cache miss or anything else)
 //if an interrupt occurs, due to the axi bus transactions can't br canceled, we must finish the store instruction and then deal 
 //with the interrupt. When the store is commited(commit_ptr changed), we can go on unmask the interrupt signal.
-class Interrupt_Mask extends Module{
+class Interrupt_Mask extends Module with consts{
     val io = IO(new Bundle{
     	val i_lsu_uop_valid = Input(Bool())
-    	val i_rob_idx  = Input(UInt(7.W))
-        val i_lsu_uop_rob_idx = Input(UInt(7.W))
+    	val i_rob_idx  = Input(UInt(rob_idx_len.W))
+        val i_lsu_uop_rob_idx = Input(UInt(rob_idx_len.W))
 
         val i_interrupt = Input(Bool())
         val o_interrupt_with_mask = Output(Bool())
@@ -24,7 +25,7 @@ class Interrupt_Mask extends Module{
     val mask = RegInit(false.B)
     val next_mask = Wire(Bool())
     mask := next_mask
-    val cmt_ptr = RegInit(0.U(8.W))
+    val cmt_ptr = RegInit(0.U(rob_idx_len.W))
     next_mask := mask
     when(io.i_lsu_uop_valid && io.i_lsu_uop_rob_idx===io.i_rob_idx){
     	next_mask := true.B 

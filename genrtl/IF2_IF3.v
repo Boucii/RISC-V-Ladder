@@ -27,68 +27,68 @@ module IF2_IF3(
   reg [31:0] _RAND_5;
   reg [31:0] _RAND_6;
 `endif // RANDOMIZE_REG_INIT
-  reg [63:0] pc; // @[if2_if3.scala 23:21]
-  reg  branch_predict_pack_valid; // @[if2_if3.scala 27:38]
-  reg [63:0] branch_predict_pack_target; // @[if2_if3.scala 27:38]
-  reg [3:0] branch_predict_pack_branch_type; // @[if2_if3.scala 27:38]
-  reg  branch_predict_pack_select; // @[if2_if3.scala 27:38]
-  reg  branch_predict_pack_taken; // @[if2_if3.scala 27:38]
-  reg  fetch_valid; // @[if2_if3.scala 32:30]
-  assign io_o_fetch_valid = fetch_valid; // @[if2_if3.scala 34:22]
-  assign io_o_pc = pc; // @[if2_if3.scala 25:13]
-  assign io_o_branch_predict_pack_valid = branch_predict_pack_valid; // @[if2_if3.scala 30:30]
-  assign io_o_branch_predict_pack_target = branch_predict_pack_target; // @[if2_if3.scala 30:30]
-  assign io_o_branch_predict_pack_branch_type = branch_predict_pack_branch_type; // @[if2_if3.scala 30:30]
-  assign io_o_branch_predict_pack_select = branch_predict_pack_select; // @[if2_if3.scala 30:30]
-  assign io_o_branch_predict_pack_taken = branch_predict_pack_taken; // @[if2_if3.scala 30:30]
+  reg [63:0] pc; // @[if2_if3.scala 24:21]
+  reg  branch_predict_pack_valid; // @[if2_if3.scala 28:38]
+  reg [63:0] branch_predict_pack_target; // @[if2_if3.scala 28:38]
+  reg [3:0] branch_predict_pack_branch_type; // @[if2_if3.scala 28:38]
+  reg  branch_predict_pack_select; // @[if2_if3.scala 28:38]
+  reg  branch_predict_pack_taken; // @[if2_if3.scala 28:38]
+  reg  fetch_valid; // @[if2_if3.scala 33:30]
+  assign io_o_fetch_valid = fetch_valid; // @[if2_if3.scala 35:22]
+  assign io_o_pc = pc; // @[if2_if3.scala 26:13]
+  assign io_o_branch_predict_pack_valid = branch_predict_pack_valid; // @[if2_if3.scala 31:30]
+  assign io_o_branch_predict_pack_target = branch_predict_pack_target; // @[if2_if3.scala 31:30]
+  assign io_o_branch_predict_pack_branch_type = branch_predict_pack_branch_type; // @[if2_if3.scala 31:30]
+  assign io_o_branch_predict_pack_select = branch_predict_pack_select; // @[if2_if3.scala 31:30]
+  assign io_o_branch_predict_pack_taken = branch_predict_pack_taken; // @[if2_if3.scala 31:30]
   always @(posedge clock) begin
-    if (reset) begin // @[if2_if3.scala 23:21]
-      pc <= 64'h0; // @[if2_if3.scala 23:21]
-    end else if (io_i_flush) begin // @[if2_if3.scala 24:14]
+    if (reset) begin // @[if2_if3.scala 24:21]
+      pc <= 64'h0; // @[if2_if3.scala 24:21]
+    end else if (io_i_flush) begin // @[if2_if3.scala 25:14]
       pc <= 64'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 24:35]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 25:35]
       pc <= io_i_pc;
     end
-    if (reset) begin // @[if2_if3.scala 27:38]
-      branch_predict_pack_valid <= 1'h0; // @[if2_if3.scala 27:38]
-    end else if (io_i_flush) begin // @[if2_if3.scala 28:31]
+    if (reset) begin // @[if2_if3.scala 28:38]
+      branch_predict_pack_valid <= 1'h0; // @[if2_if3.scala 28:38]
+    end else if (io_i_flush) begin // @[if2_if3.scala 29:31]
       branch_predict_pack_valid <= 1'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 28:88]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 29:88]
       branch_predict_pack_valid <= io_i_branch_predict_pack_valid;
     end
-    if (reset) begin // @[if2_if3.scala 27:38]
-      branch_predict_pack_target <= 64'h0; // @[if2_if3.scala 27:38]
-    end else if (io_i_flush) begin // @[if2_if3.scala 28:31]
+    if (reset) begin // @[if2_if3.scala 28:38]
+      branch_predict_pack_target <= 64'h0; // @[if2_if3.scala 28:38]
+    end else if (io_i_flush) begin // @[if2_if3.scala 29:31]
       branch_predict_pack_target <= 64'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 28:88]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 29:88]
       branch_predict_pack_target <= io_i_branch_predict_pack_target;
     end
-    if (reset) begin // @[if2_if3.scala 27:38]
-      branch_predict_pack_branch_type <= 4'h0; // @[if2_if3.scala 27:38]
-    end else if (io_i_flush) begin // @[if2_if3.scala 28:31]
+    if (reset) begin // @[if2_if3.scala 28:38]
+      branch_predict_pack_branch_type <= 4'h0; // @[if2_if3.scala 28:38]
+    end else if (io_i_flush) begin // @[if2_if3.scala 29:31]
       branch_predict_pack_branch_type <= 4'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 28:88]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 29:88]
       branch_predict_pack_branch_type <= io_i_branch_predict_pack_branch_type;
     end
-    if (reset) begin // @[if2_if3.scala 27:38]
-      branch_predict_pack_select <= 1'h0; // @[if2_if3.scala 27:38]
-    end else if (io_i_flush) begin // @[if2_if3.scala 28:31]
+    if (reset) begin // @[if2_if3.scala 28:38]
+      branch_predict_pack_select <= 1'h0; // @[if2_if3.scala 28:38]
+    end else if (io_i_flush) begin // @[if2_if3.scala 29:31]
       branch_predict_pack_select <= 1'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 28:88]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 29:88]
       branch_predict_pack_select <= io_i_branch_predict_pack_select;
     end
-    if (reset) begin // @[if2_if3.scala 27:38]
-      branch_predict_pack_taken <= 1'h0; // @[if2_if3.scala 27:38]
-    end else if (io_i_flush) begin // @[if2_if3.scala 28:31]
+    if (reset) begin // @[if2_if3.scala 28:38]
+      branch_predict_pack_taken <= 1'h0; // @[if2_if3.scala 28:38]
+    end else if (io_i_flush) begin // @[if2_if3.scala 29:31]
       branch_predict_pack_taken <= 1'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 28:88]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 29:88]
       branch_predict_pack_taken <= io_i_branch_predict_pack_taken;
     end
-    if (reset) begin // @[if2_if3.scala 32:30]
-      fetch_valid <= 1'h0; // @[if2_if3.scala 32:30]
-    end else if (io_i_flush) begin // @[if2_if3.scala 33:23]
+    if (reset) begin // @[if2_if3.scala 33:30]
+      fetch_valid <= 1'h0; // @[if2_if3.scala 33:30]
+    end else if (io_i_flush) begin // @[if2_if3.scala 34:23]
       fetch_valid <= 1'h0;
-    end else if (!(io_i_stall)) begin // @[if2_if3.scala 33:48]
+    end else if (!(io_i_stall)) begin // @[if2_if3.scala 34:48]
       fetch_valid <= io_i_fetch_valid;
     end
   end

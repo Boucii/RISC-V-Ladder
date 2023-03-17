@@ -513,6 +513,7 @@ int main(int argc, char** argv, char** env){
 	    if(!first_cycle){
       		diff_check_regs();
 		}
+	}
       char hex_string[20];
       //if commit two
         if(top->io_o_dbg_commit_packs_0_valid && top->io_o_dbg_commit_packs_1_valid){
@@ -520,16 +521,19 @@ int main(int argc, char** argv, char** env){
 				cyc_do_not_have_commit =0;
           log_inst_commit(0);
 	  	  log_inst_commit(1);
-          difftest_exec_once();
-		  if(last_skip_for_mem){
-			  //for possible cases that 2 commits in a row. the regcpy must finish this cycle.
-			  //aka we must know the write value of a pending regfile write.
-			  cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
-			  ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
-			  ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
-			  last_skip_for_mem =0;
-		  }
-          difftest_exec_once();
+
+    	if(DIFFTEST_EN){
+    	      difftest_exec_once();
+			  if(last_skip_for_mem){
+				  //for possible cases that 2 commits in a row. the regcpy must finish this cycle.
+				  //aka we must know the write value of a pending regfile write.
+				  cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+				  ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+				  ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
+				  last_skip_for_mem =0;
+			  }
+    	      difftest_exec_once();
+		}
 	    first_cycle =0;
         }
 	//if commit one
@@ -537,13 +541,15 @@ int main(int argc, char** argv, char** env){
 				commit_inst_count +=1;
 				cyc_do_not_have_commit =0;
           log_inst_commit(0);
-          difftest_exec_once();
-		  if(last_skip_for_mem){
-			  cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
-			  ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
-			  ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
-			  last_skip_for_mem =0;
-		  }
+    	  if(DIFFTEST_EN){
+           difftest_exec_once();
+		   if(last_skip_for_mem){
+		       cpu_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+		       ref_gpr[top->io_o_dbg_commit_packs_0_uop_arch_dst] = top->io_o_dbg_commit_packs_0_uop_dst_value;
+		       ref_difftest_regcpy(cpu_gpr,DIFFTEST_TO_REF);
+		       last_skip_for_mem =0;
+		   }
+		}
 	    first_cycle =0;
         }
 	if(diff_pass==0){
@@ -557,7 +563,7 @@ int main(int argc, char** argv, char** env){
                 cout<<"0x"<<fixed << setw(8) << setfill('0')<<hex<<cur_inst<<dec<<"	"<<BOLDYELLOW/*<<temp*/<<RESET<<endl;
 		goto end;
 	}
-    }
+    
     cyc_time++;
 	cyc_do_not_have_commit++;
   }

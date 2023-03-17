@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -71,7 +72,7 @@ class branch_presolve_pack extends Bundle
     val taken = Bool() //if a non-br is predicted as br and tk, redirect pc to pc+4
     val pc = UInt(64.W)//pc of the mispred inst
 }
-class branch_resolve_pack extends Bundle
+class branch_resolve_pack extends Bundle with params
 {
     val valid = Bool()//aka valid
     val mispred = Bool()
@@ -79,7 +80,7 @@ class branch_resolve_pack extends Bundle
     val pc = UInt(64.W)
     val target = UInt(64.W)
     //val uop = new uop()
-    val rob_idx = UInt(7.W)
+    val rob_idx = UInt(rob_idx_len.W)
     val prediction_valid = Bool()
     val branch_type = UInt(3.W)
     //val branch_predict_pack = new branch_predict_pack()
@@ -137,7 +138,7 @@ class rob_allocation_pack extends Bundle()
    val valids     = Vec(2, Bool())
    val uops       = Vec(2, new uop())
 }
-class uop extends Bundle(){
+class uop extends Bundle() with params{
     val valid=Bool()
     val pc=UInt(32.W)
     val inst=UInt(32.W)
@@ -161,7 +162,7 @@ class uop extends Bundle(){
     val phy_rs2=UInt(7.W)
     val arch_rs2=UInt(5.W)
 
-    val rob_idx = UInt(7.W)
+    val rob_idx = UInt(rob_idx_len.W)
     val imm = UInt(64.W)//TODO:signed?
 
     val dst_value = UInt(64.W)

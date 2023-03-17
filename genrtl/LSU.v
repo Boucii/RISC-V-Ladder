@@ -21,7 +21,7 @@ module LSU(
   input         io_i_uop_src2_valid,
   input  [6:0]  io_i_uop_phy_rs2,
   input  [4:0]  io_i_uop_arch_rs2,
-  input  [6:0]  io_i_uop_rob_idx,
+  input  [5:0]  io_i_uop_rob_idx,
   input  [63:0] io_i_uop_imm,
   input  [63:0] io_i_uop_src1_value,
   input  [63:0] io_i_uop_src2_value,
@@ -53,7 +53,7 @@ module LSU(
   output        io_o_ex_res_pack_uop_src2_valid,
   output [6:0]  io_o_ex_res_pack_uop_phy_rs2,
   output [4:0]  io_o_ex_res_pack_uop_arch_rs2,
-  output [6:0]  io_o_ex_res_pack_uop_rob_idx,
+  output [5:0]  io_o_ex_res_pack_uop_rob_idx,
   output [63:0] io_o_ex_res_pack_uop_imm,
   output [63:0] io_o_ex_res_pack_uop_dst_value,
   output [63:0] io_o_ex_res_pack_uop_src1_value,
@@ -64,7 +64,7 @@ module LSU(
   output [3:0]  io_o_ex_res_pack_uop_branch_type,
   output [1:0]  io_o_ex_res_pack_uop_mem_type,
   output        io_o_available,
-  input  [6:0]  io_i_ROB_first_entry,
+  input  [5:0]  io_i_ROB_first_entry,
   input         io_dcache_io_data_valid,
   output        io_dcache_io_addr_valid,
   input         io_dcache_io_addr_ready,
@@ -75,10 +75,10 @@ module LSU(
   input  [63:0] io_dcache_io_MdataIn,
   output [63:0] io_dcache_io_MdataOut,
   output        io_o_lsu_uop_valid,
-  output [6:0]  io_o_lsu_uop_rob_idx,
+  output [5:0]  io_o_lsu_uop_rob_idx,
   input         io_i_exception,
   input         io_i_rollback_valid,
-  input  [6:0]  io_i_rollback_rob_idx
+  input  [5:0]  io_i_rollback_rob_idx
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -119,97 +119,97 @@ module LSU(
   reg [63:0] _RAND_35;
   reg [63:0] _RAND_36;
 `endif // RANDOMIZE_REG_INIT
-  reg  state; // @[execute_unit.scala 263:24]
-  reg  uop_valid; // @[execute_unit.scala 267:23]
-  reg [31:0] uop_pc; // @[execute_unit.scala 267:23]
-  reg [31:0] uop_inst; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_func_code; // @[execute_unit.scala 267:23]
-  reg  uop_branch_predict_pack_valid; // @[execute_unit.scala 267:23]
-  reg [63:0] uop_branch_predict_pack_target; // @[execute_unit.scala 267:23]
-  reg [3:0] uop_branch_predict_pack_branch_type; // @[execute_unit.scala 267:23]
-  reg  uop_branch_predict_pack_select; // @[execute_unit.scala 267:23]
-  reg  uop_branch_predict_pack_taken; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_phy_dst; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_stale_dst; // @[execute_unit.scala 267:23]
-  reg [4:0] uop_arch_dst; // @[execute_unit.scala 267:23]
-  reg [2:0] uop_inst_type; // @[execute_unit.scala 267:23]
-  reg  uop_regWen; // @[execute_unit.scala 267:23]
-  reg  uop_src1_valid; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_phy_rs1; // @[execute_unit.scala 267:23]
-  reg [4:0] uop_arch_rs1; // @[execute_unit.scala 267:23]
-  reg  uop_src2_valid; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_phy_rs2; // @[execute_unit.scala 267:23]
-  reg [4:0] uop_arch_rs2; // @[execute_unit.scala 267:23]
-  reg [6:0] uop_rob_idx; // @[execute_unit.scala 267:23]
-  reg [63:0] uop_imm; // @[execute_unit.scala 267:23]
-  reg [63:0] uop_dst_value; // @[execute_unit.scala 267:23]
-  reg [63:0] uop_src1_value; // @[execute_unit.scala 267:23]
-  reg [63:0] uop_src2_value; // @[execute_unit.scala 267:23]
-  reg [2:0] uop_op1_sel; // @[execute_unit.scala 267:23]
-  reg [2:0] uop_op2_sel; // @[execute_unit.scala 267:23]
-  reg [4:0] uop_alu_sel; // @[execute_unit.scala 267:23]
-  reg [3:0] uop_branch_type; // @[execute_unit.scala 267:23]
-  reg [1:0] uop_mem_type; // @[execute_unit.scala 267:23]
-  wire [1:0] next_uop_mem_type = io_i_select ? io_i_uop_mem_type : uop_mem_type; // @[execute_unit.scala 269:20]
-  wire  _next_state_T = ~state; // @[execute_unit.scala 398:17]
-  wire  _next_state_T_1 = ~state & io_i_select; // @[execute_unit.scala 398:29]
-  wire  _next_state_T_3 = state & io_i_select_to_commit; // @[execute_unit.scala 399:29]
-  wire  _next_ready_to_commit_T_2 = uop_mem_type == 2'h1; // @[execute_unit.scala 405:67]
-  reg  addr_given; // @[execute_unit.scala 368:29]
-  wire  _next_ready_to_commit_T_4 = state & io_dcache_io_addr_ready & uop_mem_type == 2'h1 & addr_given; // @[execute_unit.scala 405:76]
-  wire  _next_ready_to_commit_T_7 = uop_mem_type == 2'h2; // @[execute_unit.scala 406:67]
-  wire  _next_ready_to_commit_T_9 = state & io_dcache_io_data_valid & uop_mem_type == 2'h2 & addr_given; // @[execute_unit.scala 406:76]
-  reg  ready_to_commit; // @[execute_unit.scala 383:34]
+  reg  state; // @[execute_unit.scala 264:24]
+  reg  uop_valid; // @[execute_unit.scala 268:23]
+  reg [31:0] uop_pc; // @[execute_unit.scala 268:23]
+  reg [31:0] uop_inst; // @[execute_unit.scala 268:23]
+  reg [6:0] uop_func_code; // @[execute_unit.scala 268:23]
+  reg  uop_branch_predict_pack_valid; // @[execute_unit.scala 268:23]
+  reg [63:0] uop_branch_predict_pack_target; // @[execute_unit.scala 268:23]
+  reg [3:0] uop_branch_predict_pack_branch_type; // @[execute_unit.scala 268:23]
+  reg  uop_branch_predict_pack_select; // @[execute_unit.scala 268:23]
+  reg  uop_branch_predict_pack_taken; // @[execute_unit.scala 268:23]
+  reg [6:0] uop_phy_dst; // @[execute_unit.scala 268:23]
+  reg [6:0] uop_stale_dst; // @[execute_unit.scala 268:23]
+  reg [4:0] uop_arch_dst; // @[execute_unit.scala 268:23]
+  reg [2:0] uop_inst_type; // @[execute_unit.scala 268:23]
+  reg  uop_regWen; // @[execute_unit.scala 268:23]
+  reg  uop_src1_valid; // @[execute_unit.scala 268:23]
+  reg [6:0] uop_phy_rs1; // @[execute_unit.scala 268:23]
+  reg [4:0] uop_arch_rs1; // @[execute_unit.scala 268:23]
+  reg  uop_src2_valid; // @[execute_unit.scala 268:23]
+  reg [6:0] uop_phy_rs2; // @[execute_unit.scala 268:23]
+  reg [4:0] uop_arch_rs2; // @[execute_unit.scala 268:23]
+  reg [5:0] uop_rob_idx; // @[execute_unit.scala 268:23]
+  reg [63:0] uop_imm; // @[execute_unit.scala 268:23]
+  reg [63:0] uop_dst_value; // @[execute_unit.scala 268:23]
+  reg [63:0] uop_src1_value; // @[execute_unit.scala 268:23]
+  reg [63:0] uop_src2_value; // @[execute_unit.scala 268:23]
+  reg [2:0] uop_op1_sel; // @[execute_unit.scala 268:23]
+  reg [2:0] uop_op2_sel; // @[execute_unit.scala 268:23]
+  reg [4:0] uop_alu_sel; // @[execute_unit.scala 268:23]
+  reg [3:0] uop_branch_type; // @[execute_unit.scala 268:23]
+  reg [1:0] uop_mem_type; // @[execute_unit.scala 268:23]
+  wire [1:0] next_uop_mem_type = io_i_select ? io_i_uop_mem_type : uop_mem_type; // @[execute_unit.scala 270:20]
+  wire  _next_state_T = ~state; // @[execute_unit.scala 399:17]
+  wire  _next_state_T_1 = ~state & io_i_select; // @[execute_unit.scala 399:29]
+  wire  _next_state_T_3 = state & io_i_select_to_commit; // @[execute_unit.scala 400:29]
+  wire  _next_ready_to_commit_T_2 = uop_mem_type == 2'h1; // @[execute_unit.scala 406:67]
+  reg  addr_given; // @[execute_unit.scala 369:29]
+  wire  _next_ready_to_commit_T_4 = state & io_dcache_io_addr_ready & uop_mem_type == 2'h1 & addr_given; // @[execute_unit.scala 406:76]
+  wire  _next_ready_to_commit_T_7 = uop_mem_type == 2'h2; // @[execute_unit.scala 407:67]
+  wire  _next_ready_to_commit_T_9 = state & io_dcache_io_data_valid & uop_mem_type == 2'h2 & addr_given; // @[execute_unit.scala 407:76]
+  reg  ready_to_commit; // @[execute_unit.scala 384:34]
   wire  _next_ready_to_commit_T_11 = _next_state_T ? 1'h0 : ready_to_commit; // @[Mux.scala 101:16]
   wire  next_ready_to_commit = _next_ready_to_commit_T_4 | (_next_ready_to_commit_T_9 | _next_ready_to_commit_T_11); // @[Mux.scala 101:16]
-  reg  rollback_occured; // @[execute_unit.scala 387:35]
-  reg  exception_occured; // @[execute_unit.scala 276:36]
-  wire  _next_state_T_7 = exception_occured & _next_ready_to_commit_T_7; // @[execute_unit.scala 401:98]
+  reg  rollback_occured; // @[execute_unit.scala 388:35]
+  reg  exception_occured; // @[execute_unit.scala 277:36]
+  wire  _next_state_T_7 = exception_occured & _next_ready_to_commit_T_7; // @[execute_unit.scala 402:98]
   wire  _next_state_T_9 = state & next_ready_to_commit & (rollback_occured | exception_occured &
-    _next_ready_to_commit_T_7); // @[execute_unit.scala 401:55]
+    _next_ready_to_commit_T_7); // @[execute_unit.scala 402:55]
   wire  _next_state_T_10 = _next_state_T_9 ? 1'h0 : state; // @[Mux.scala 101:16]
   wire  _next_state_T_11 = _next_state_T_3 ? 1'h0 : _next_state_T_10; // @[Mux.scala 101:16]
   wire  _next_state_T_12 = _next_state_T_1 | _next_state_T_11; // @[Mux.scala 101:16]
-  wire [1:0] next_state = {{1'd0}, _next_state_T_12}; // @[execute_unit.scala 264:26 397:16]
-  wire  _T_2 = next_state == 2'h0; // @[execute_unit.scala 270:63]
-  wire  _GEN_1 = io_i_exception & state | exception_occured; // @[execute_unit.scala 277:45 278:27 276:36]
-  wire  _len_T_1 = uop_inst[13:12] == 2'h0; // @[execute_unit.scala 286:26]
-  wire  _len_T_3 = uop_inst[13:12] == 2'h1; // @[execute_unit.scala 287:26]
-  wire  _len_T_5 = uop_inst[13:12] == 2'h2; // @[execute_unit.scala 288:26]
-  wire  _len_T_7 = uop_inst[13:12] == 2'h3; // @[execute_unit.scala 289:26]
+  wire [1:0] next_state = {{1'd0}, _next_state_T_12}; // @[execute_unit.scala 265:26 398:16]
+  wire  _T_2 = next_state == 2'h0; // @[execute_unit.scala 271:63]
+  wire  _GEN_1 = io_i_exception & state | exception_occured; // @[execute_unit.scala 278:45 279:27 277:36]
+  wire  _len_T_1 = uop_inst[13:12] == 2'h0; // @[execute_unit.scala 287:26]
+  wire  _len_T_3 = uop_inst[13:12] == 2'h1; // @[execute_unit.scala 288:26]
+  wire  _len_T_5 = uop_inst[13:12] == 2'h2; // @[execute_unit.scala 289:26]
+  wire  _len_T_7 = uop_inst[13:12] == 2'h3; // @[execute_unit.scala 290:26]
   wire [3:0] _len_T_8 = _len_T_7 ? 4'h8 : 4'h0; // @[Mux.scala 101:16]
   wire [3:0] _len_T_9 = _len_T_5 ? 4'h4 : _len_T_8; // @[Mux.scala 101:16]
   wire [3:0] _len_T_10 = _len_T_3 ? 4'h2 : _len_T_9; // @[Mux.scala 101:16]
   wire [3:0] _len_T_11 = _len_T_1 ? 4'h1 : _len_T_10; // @[Mux.scala 101:16]
-  wire  loadu = uop_inst[14]; // @[execute_unit.scala 292:23]
-  wire [63:0] _addr_T_2 = uop_src1_value + uop_src2_value; // @[execute_unit.scala 295:54]
-  wire [63:0] _addr_T_4 = uop_src1_value + uop_imm; // @[execute_unit.scala 295:84]
-  wire [31:0] len = {{28'd0}, _len_T_11}; // @[execute_unit.scala 284:19 285:9]
-  wire  _io_o_ex_res_pack_uop_dst_value_T = len == 32'h1; // @[execute_unit.scala 300:22]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_2 = loadu & len == 32'h1 & io_dcache_io_data_valid; // @[execute_unit.scala 300:29]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_4 = len == 32'h2; // @[execute_unit.scala 301:22]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_6 = loadu & len == 32'h2 & io_dcache_io_data_valid; // @[execute_unit.scala 301:29]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_8 = len == 32'h4; // @[execute_unit.scala 302:22]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_10 = loadu & len == 32'h4 & io_dcache_io_data_valid; // @[execute_unit.scala 302:29]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_12 = len == 32'h8; // @[execute_unit.scala 303:22]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_14 = loadu & len == 32'h8 & io_dcache_io_data_valid; // @[execute_unit.scala 303:29]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_15 = ~loadu; // @[execute_unit.scala 305:10]
-  wire  _io_o_ex_res_pack_uop_dst_value_T_18 = ~loadu & _io_o_ex_res_pack_uop_dst_value_T & io_dcache_io_data_valid; // @[execute_unit.scala 305:30]
+  wire  loadu = uop_inst[14]; // @[execute_unit.scala 293:23]
+  wire [63:0] _addr_T_2 = uop_src1_value + uop_src2_value; // @[execute_unit.scala 296:54]
+  wire [63:0] _addr_T_4 = uop_src1_value + uop_imm; // @[execute_unit.scala 296:84]
+  wire [31:0] len = {{28'd0}, _len_T_11}; // @[execute_unit.scala 285:19 286:9]
+  wire  _io_o_ex_res_pack_uop_dst_value_T = len == 32'h1; // @[execute_unit.scala 301:22]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_2 = loadu & len == 32'h1 & io_dcache_io_data_valid; // @[execute_unit.scala 301:29]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_4 = len == 32'h2; // @[execute_unit.scala 302:22]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_6 = loadu & len == 32'h2 & io_dcache_io_data_valid; // @[execute_unit.scala 302:29]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_8 = len == 32'h4; // @[execute_unit.scala 303:22]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_10 = loadu & len == 32'h4 & io_dcache_io_data_valid; // @[execute_unit.scala 303:29]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_12 = len == 32'h8; // @[execute_unit.scala 304:22]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_14 = loadu & len == 32'h8 & io_dcache_io_data_valid; // @[execute_unit.scala 304:29]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_15 = ~loadu; // @[execute_unit.scala 306:10]
+  wire  _io_o_ex_res_pack_uop_dst_value_T_18 = ~loadu & _io_o_ex_res_pack_uop_dst_value_T & io_dcache_io_data_valid; // @[execute_unit.scala 306:30]
   wire [55:0] _io_o_ex_res_pack_uop_dst_value_T_23 = {48'hffffffffffff,io_dcache_io_MdataIn[7:0]}; // @[Cat.scala 33:92]
   wire [55:0] _io_o_ex_res_pack_uop_dst_value_T_24 = ~io_dcache_io_MdataIn[7] ? {{48'd0}, io_dcache_io_MdataIn[7:0]} :
-    _io_o_ex_res_pack_uop_dst_value_T_23; // @[execute_unit.scala 305:64]
+    _io_o_ex_res_pack_uop_dst_value_T_23; // @[execute_unit.scala 306:64]
   wire  _io_o_ex_res_pack_uop_dst_value_T_28 = _io_o_ex_res_pack_uop_dst_value_T_15 &
-    _io_o_ex_res_pack_uop_dst_value_T_4 & io_dcache_io_data_valid; // @[execute_unit.scala 306:30]
+    _io_o_ex_res_pack_uop_dst_value_T_4 & io_dcache_io_data_valid; // @[execute_unit.scala 307:30]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_33 = {48'hffffffffffff,io_dcache_io_MdataIn[15:0]}; // @[Cat.scala 33:92]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_34 = ~io_dcache_io_MdataIn[15] ? {{48'd0}, io_dcache_io_MdataIn[15:0]}
-     : _io_o_ex_res_pack_uop_dst_value_T_33; // @[execute_unit.scala 306:64]
+     : _io_o_ex_res_pack_uop_dst_value_T_33; // @[execute_unit.scala 307:64]
   wire  _io_o_ex_res_pack_uop_dst_value_T_38 = _io_o_ex_res_pack_uop_dst_value_T_15 &
-    _io_o_ex_res_pack_uop_dst_value_T_8 & io_dcache_io_data_valid; // @[execute_unit.scala 307:30]
+    _io_o_ex_res_pack_uop_dst_value_T_8 & io_dcache_io_data_valid; // @[execute_unit.scala 308:30]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_43 = {32'hffffffff,io_dcache_io_MdataIn[31:0]}; // @[Cat.scala 33:92]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_44 = ~io_dcache_io_MdataIn[31] ? {{32'd0}, io_dcache_io_MdataIn[31:0]}
-     : _io_o_ex_res_pack_uop_dst_value_T_43; // @[execute_unit.scala 307:64]
+     : _io_o_ex_res_pack_uop_dst_value_T_43; // @[execute_unit.scala 308:64]
   wire  _io_o_ex_res_pack_uop_dst_value_T_48 = _io_o_ex_res_pack_uop_dst_value_T_15 &
-    _io_o_ex_res_pack_uop_dst_value_T_12 & io_dcache_io_data_valid; // @[execute_unit.scala 308:30]
+    _io_o_ex_res_pack_uop_dst_value_T_12 & io_dcache_io_data_valid; // @[execute_unit.scala 309:30]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_49 = _io_o_ex_res_pack_uop_dst_value_T_48 ? io_dcache_io_MdataIn :
     uop_dst_value; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_50 = _io_o_ex_res_pack_uop_dst_value_T_38 ?
@@ -224,187 +224,187 @@ module LSU(
     io_dcache_io_MdataIn[31:0]} : _io_o_ex_res_pack_uop_dst_value_T_53; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_pack_uop_dst_value_T_55 = _io_o_ex_res_pack_uop_dst_value_T_6 ? {{48'd0},
     io_dcache_io_MdataIn[15:0]} : _io_o_ex_res_pack_uop_dst_value_T_54; // @[Mux.scala 101:16]
-  wire  _condd2_T = loadu & io_dcache_io_data_valid; // @[execute_unit.scala 314:22]
-  reg [63:0] temptest; // @[execute_unit.scala 329:27]
-  reg [63:0] temptest2; // @[execute_unit.scala 330:28]
-  wire  condd = _io_o_ex_res_pack_uop_dst_value_T_2; // @[execute_unit.scala 311:34]
+  wire  _condd2_T = loadu & io_dcache_io_data_valid; // @[execute_unit.scala 315:22]
+  reg [63:0] temptest; // @[execute_unit.scala 330:27]
+  reg [63:0] temptest2; // @[execute_unit.scala 331:28]
+  wire  condd = _io_o_ex_res_pack_uop_dst_value_T_2; // @[execute_unit.scala 312:34]
   wire [63:0] _uop_dst_value_T_3 = {56'h0,io_dcache_io_MdataIn[7:0]}; // @[Cat.scala 33:92]
   wire [63:0] _uop_dst_value_T_6 = {48'h0,io_dcache_io_MdataIn[15:0]}; // @[Cat.scala 33:92]
   wire [62:0] _uop_dst_value_T_9 = {31'h0,io_dcache_io_MdataIn[31:0]}; // @[Cat.scala 33:92]
   wire [63:0] _uop_dst_value_T_10 = _io_o_ex_res_pack_uop_dst_value_T_8 ? {{1'd0}, _uop_dst_value_T_9} :
     io_dcache_io_MdataIn; // @[Mux.scala 101:16]
-  wire  _addr_given_T_1 = io_dcache_io_addr_valid & ~io_i_select_to_commit; // @[execute_unit.scala 370:34]
+  wire  _addr_given_T_1 = io_dcache_io_addr_valid & ~io_i_select_to_commit; // @[execute_unit.scala 371:34]
   wire  _addr_given_T_3 = _T_2 ? 1'h0 : addr_given; // @[Mux.scala 101:16]
   wire  _addr_given_T_4 = _addr_given_T_1 | _addr_given_T_3; // @[Mux.scala 101:16]
-  wire  _next_rollback_occured_T_14 = io_i_rollback_rob_idx[5:0] > uop_rob_idx[5:0] & (io_i_rollback_rob_idx[6] ^
-    uop_rob_idx[6]); // @[execute_unit.scala 394:60]
-  wire  _next_rollback_occured_T_16 = io_i_rollback_valid & (io_i_rollback_rob_idx[5:0] < uop_rob_idx[5:0] &
-    io_i_rollback_rob_idx[6] == uop_rob_idx[6] | _next_rollback_occured_T_14); // @[execute_unit.scala 393:30]
-  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 411:26]
-  wire  condd2 = loadu & io_dcache_io_data_valid; // @[execute_unit.scala 314:22]
-  wire  condd3 = _io_o_ex_res_pack_uop_dst_value_T_15 & io_dcache_io_data_valid; // @[execute_unit.scala 317:23]
-  wire  condd4 = _io_o_ex_res_pack_uop_dst_value_T_18; // @[execute_unit.scala 320:36]
-  wire  condd5 = _io_o_ex_res_pack_uop_dst_value_T_28; // @[execute_unit.scala 323:36]
-  wire  condd6 = _io_o_ex_res_pack_uop_dst_value_T_38; // @[execute_unit.scala 326:36]
-  wire [1:0] _GEN_4 = reset ? 2'h0 : next_state; // @[execute_unit.scala 263:{24,24} 265:11]
-  assign io_o_ex_res_pack_valid = next_ready_to_commit & ~rollback_occured & ~_next_state_T_7; // @[execute_unit.scala 409:73]
-  assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_func_code = uop_func_code; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_valid = uop_branch_predict_pack_valid; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_target = uop_branch_predict_pack_target; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_branch_type = uop_branch_predict_pack_branch_type; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_select = uop_branch_predict_pack_select; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_taken = uop_branch_predict_pack_taken; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_phy_dst = uop_phy_dst; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_stale_dst = uop_stale_dst; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_arch_dst = uop_arch_dst; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_inst_type = uop_inst_type; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_regWen = uop_regWen; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_src1_valid = uop_src1_valid; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_phy_rs1 = uop_phy_rs1; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_arch_rs1 = uop_arch_rs1; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_src2_valid = uop_src2_valid; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_phy_rs2 = uop_phy_rs2; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_arch_rs2 = uop_arch_rs2; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_imm = uop_imm; // @[execute_unit.scala 274:26]
+  wire  _next_rollback_occured_T_14 = io_i_rollback_rob_idx[4:0] > uop_rob_idx[4:0] & (io_i_rollback_rob_idx[5] ^
+    uop_rob_idx[5]); // @[execute_unit.scala 395:88]
+  wire  _next_rollback_occured_T_16 = io_i_rollback_valid & (io_i_rollback_rob_idx[4:0] < uop_rob_idx[4:0] &
+    io_i_rollback_rob_idx[5] == uop_rob_idx[5] | _next_rollback_occured_T_14); // @[execute_unit.scala 394:30]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 412:26]
+  wire  condd2 = loadu & io_dcache_io_data_valid; // @[execute_unit.scala 315:22]
+  wire  condd3 = _io_o_ex_res_pack_uop_dst_value_T_15 & io_dcache_io_data_valid; // @[execute_unit.scala 318:23]
+  wire  condd4 = _io_o_ex_res_pack_uop_dst_value_T_18; // @[execute_unit.scala 321:36]
+  wire  condd5 = _io_o_ex_res_pack_uop_dst_value_T_28; // @[execute_unit.scala 324:36]
+  wire  condd6 = _io_o_ex_res_pack_uop_dst_value_T_38; // @[execute_unit.scala 327:36]
+  wire [1:0] _GEN_4 = reset ? 2'h0 : next_state; // @[execute_unit.scala 264:{24,24} 266:11]
+  assign io_o_ex_res_pack_valid = next_ready_to_commit & ~rollback_occured & ~_next_state_T_7; // @[execute_unit.scala 410:73]
+  assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_func_code = uop_func_code; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_valid = uop_branch_predict_pack_valid; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_target = uop_branch_predict_pack_target; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_branch_type = uop_branch_predict_pack_branch_type; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_select = uop_branch_predict_pack_select; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_taken = uop_branch_predict_pack_taken; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_phy_dst = uop_phy_dst; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_stale_dst = uop_stale_dst; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_arch_dst = uop_arch_dst; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_inst_type = uop_inst_type; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_regWen = uop_regWen; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_src1_valid = uop_src1_valid; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_phy_rs1 = uop_phy_rs1; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_arch_rs1 = uop_arch_rs1; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_src2_valid = uop_src2_valid; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_phy_rs2 = uop_phy_rs2; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_arch_rs2 = uop_arch_rs2; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_imm = uop_imm; // @[execute_unit.scala 275:26]
   assign io_o_ex_res_pack_uop_dst_value = _io_o_ex_res_pack_uop_dst_value_T_2 ? {{56'd0}, io_dcache_io_MdataIn[7:0]} :
     _io_o_ex_res_pack_uop_dst_value_T_55; // @[Mux.scala 101:16]
-  assign io_o_ex_res_pack_uop_src1_value = uop_src1_value; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_src2_value = uop_src2_value; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_op1_sel = uop_op1_sel; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_op2_sel = uop_op2_sel; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 274:26]
-  assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 274:26]
-  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 411:61]
+  assign io_o_ex_res_pack_uop_src1_value = uop_src1_value; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_src2_value = uop_src2_value; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_op1_sel = uop_op1_sel; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_op2_sel = uop_op2_sel; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 275:26]
+  assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 275:26]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 412:61]
   assign io_dcache_io_addr_valid = uop_valid & ~addr_given & next_uop_mem_type == 2'h2 | uop_valid & ~addr_given &
-    _next_ready_to_commit_T_2 & io_i_ROB_first_entry == uop_rob_idx; // @[execute_unit.scala 374:90]
-  assign io_dcache_io_Mwout = uop_mem_type == 2'h1; // @[execute_unit.scala 377:40]
-  assign io_dcache_io_Maddr = _next_ready_to_commit_T_7 ? _addr_T_2 : _addr_T_4; // @[execute_unit.scala 295:16]
-  assign io_dcache_io_Men = ~(uop_mem_type == 2'h0); // @[execute_unit.scala 378:25]
-  assign io_dcache_io_Mlen = {{28'd0}, _len_T_11}; // @[execute_unit.scala 284:19 285:9]
-  assign io_dcache_io_MdataOut = uop_src2_value; // @[execute_unit.scala 380:27]
-  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 413:44]
-  assign io_o_lsu_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 414:26]
+    _next_ready_to_commit_T_2 & io_i_ROB_first_entry == uop_rob_idx; // @[execute_unit.scala 375:90]
+  assign io_dcache_io_Mwout = uop_mem_type == 2'h1; // @[execute_unit.scala 378:40]
+  assign io_dcache_io_Maddr = _next_ready_to_commit_T_7 ? _addr_T_2 : _addr_T_4; // @[execute_unit.scala 296:16]
+  assign io_dcache_io_Men = ~(uop_mem_type == 2'h0); // @[execute_unit.scala 379:25]
+  assign io_dcache_io_Mlen = {{28'd0}, _len_T_11}; // @[execute_unit.scala 285:19 286:9]
+  assign io_dcache_io_MdataOut = uop_src2_value; // @[execute_unit.scala 381:27]
+  assign io_o_lsu_uop_valid = state & _next_ready_to_commit_T_2; // @[execute_unit.scala 414:44]
+  assign io_o_lsu_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 415:26]
   always @(posedge clock) begin
-    state <= _GEN_4[0]; // @[execute_unit.scala 263:{24,24} 265:11]
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_valid <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select_to_commit & ~io_i_select | next_state == 2'h0) begin // @[execute_unit.scala 270:75]
-      uop_valid <= 1'h0; // @[execute_unit.scala 271:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    state <= _GEN_4[0]; // @[execute_unit.scala 264:{24,24} 266:11]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_valid <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select_to_commit & ~io_i_select | next_state == 2'h0) begin // @[execute_unit.scala 271:75]
+      uop_valid <= 1'h0; // @[execute_unit.scala 272:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_valid <= io_i_uop_valid;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_pc <= 32'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_pc <= 32'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_pc <= io_i_uop_pc;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_inst <= 32'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_inst <= 32'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_inst <= io_i_uop_inst;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_func_code <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_func_code <= 7'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_func_code <= io_i_uop_func_code;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_predict_pack_valid <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_predict_pack_valid <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_predict_pack_valid <= io_i_uop_branch_predict_pack_valid;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_predict_pack_target <= 64'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_predict_pack_target <= 64'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_predict_pack_target <= io_i_uop_branch_predict_pack_target;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_predict_pack_branch_type <= 4'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_predict_pack_branch_type <= 4'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_predict_pack_branch_type <= io_i_uop_branch_predict_pack_branch_type;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_predict_pack_select <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_predict_pack_select <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_predict_pack_select <= io_i_uop_branch_predict_pack_select;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_predict_pack_taken <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_predict_pack_taken <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_predict_pack_taken <= io_i_uop_branch_predict_pack_taken;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_phy_dst <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_phy_dst <= 7'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_phy_dst <= io_i_uop_phy_dst;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_stale_dst <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_stale_dst <= 7'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_stale_dst <= io_i_uop_stale_dst;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_arch_dst <= 5'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_arch_dst <= 5'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_arch_dst <= io_i_uop_arch_dst;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_inst_type <= 3'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_inst_type <= 3'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_inst_type <= io_i_uop_inst_type;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_regWen <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_regWen <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_regWen <= io_i_uop_regWen;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_src1_valid <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_src1_valid <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_src1_valid <= io_i_uop_src1_valid;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_phy_rs1 <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_phy_rs1 <= 7'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_phy_rs1 <= io_i_uop_phy_rs1;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_arch_rs1 <= 5'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_arch_rs1 <= 5'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_arch_rs1 <= io_i_uop_arch_rs1;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_src2_valid <= 1'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_src2_valid <= 1'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_src2_valid <= io_i_uop_src2_valid;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_phy_rs2 <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_phy_rs2 <= 7'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_phy_rs2 <= io_i_uop_phy_rs2;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_arch_rs2 <= 5'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_arch_rs2 <= 5'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_arch_rs2 <= io_i_uop_arch_rs2;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_rob_idx <= 7'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_rob_idx <= 6'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_rob_idx <= io_i_uop_rob_idx;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_imm <= 64'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_imm <= 64'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_imm <= io_i_uop_imm;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_dst_value <= 64'h0; // @[execute_unit.scala 267:23]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_dst_value <= 64'h0; // @[execute_unit.scala 268:23]
     end else if (_condd2_T) begin // @[Mux.scala 101:16]
       if (_io_o_ex_res_pack_uop_dst_value_T) begin // @[Mux.scala 101:16]
         uop_dst_value <= _uop_dst_value_T_3;
@@ -420,74 +420,74 @@ module LSU(
     end else begin
       uop_dst_value <= _io_o_ex_res_pack_uop_dst_value_T_50;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_src1_value <= 64'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_src1_value <= 64'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_src1_value <= io_i_uop_src1_value;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_src2_value <= 64'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_src2_value <= 64'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_src2_value <= io_i_uop_src2_value;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_op1_sel <= 3'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_op1_sel <= 3'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_op1_sel <= io_i_uop_op1_sel;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_op2_sel <= 3'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_op2_sel <= 3'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_op2_sel <= io_i_uop_op2_sel;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_alu_sel <= 5'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_alu_sel <= 5'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_alu_sel <= io_i_uop_alu_sel;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_branch_type <= 4'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_branch_type <= 4'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_branch_type <= io_i_uop_branch_type;
     end
-    if (reset) begin // @[execute_unit.scala 267:23]
-      uop_mem_type <= 2'h0; // @[execute_unit.scala 267:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 269:20]
+    if (reset) begin // @[execute_unit.scala 268:23]
+      uop_mem_type <= 2'h0; // @[execute_unit.scala 268:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 270:20]
       uop_mem_type <= io_i_uop_mem_type;
     end
-    if (reset) begin // @[execute_unit.scala 368:29]
-      addr_given <= 1'h0; // @[execute_unit.scala 368:29]
+    if (reset) begin // @[execute_unit.scala 369:29]
+      addr_given <= 1'h0; // @[execute_unit.scala 369:29]
     end else begin
-      addr_given <= _addr_given_T_4; // @[execute_unit.scala 369:16]
+      addr_given <= _addr_given_T_4; // @[execute_unit.scala 370:16]
     end
-    if (reset) begin // @[execute_unit.scala 383:34]
-      ready_to_commit <= 1'h0; // @[execute_unit.scala 383:34]
+    if (reset) begin // @[execute_unit.scala 384:34]
+      ready_to_commit <= 1'h0; // @[execute_unit.scala 384:34]
     end else begin
-      ready_to_commit <= next_ready_to_commit; // @[execute_unit.scala 385:20]
+      ready_to_commit <= next_ready_to_commit; // @[execute_unit.scala 386:20]
     end
-    if (reset) begin // @[execute_unit.scala 387:35]
-      rollback_occured <= 1'h0; // @[execute_unit.scala 387:35]
+    if (reset) begin // @[execute_unit.scala 388:35]
+      rollback_occured <= 1'h0; // @[execute_unit.scala 388:35]
     end else if (_T_2) begin // @[Mux.scala 101:16]
       rollback_occured <= 1'h0;
     end else begin
       rollback_occured <= _next_rollback_occured_T_16 | rollback_occured;
     end
-    if (reset) begin // @[execute_unit.scala 276:36]
-      exception_occured <= 1'h0; // @[execute_unit.scala 276:36]
-    end else if (_T_2) begin // @[execute_unit.scala 280:32]
-      exception_occured <= 1'h0; // @[execute_unit.scala 281:27]
+    if (reset) begin // @[execute_unit.scala 277:36]
+      exception_occured <= 1'h0; // @[execute_unit.scala 277:36]
+    end else if (_T_2) begin // @[execute_unit.scala 281:32]
+      exception_occured <= 1'h0; // @[execute_unit.scala 282:27]
     end else begin
       exception_occured <= _GEN_1;
     end
-    if (reset) begin // @[execute_unit.scala 329:27]
-      temptest <= 64'h0; // @[execute_unit.scala 329:27]
-    end else if (condd) begin // @[execute_unit.scala 332:5]
-      temptest <= io_dcache_io_MdataIn; // @[execute_unit.scala 334:14]
+    if (reset) begin // @[execute_unit.scala 330:27]
+      temptest <= 64'h0; // @[execute_unit.scala 330:27]
+    end else if (condd) begin // @[execute_unit.scala 333:5]
+      temptest <= io_dcache_io_MdataIn; // @[execute_unit.scala 335:14]
     end
-    if (reset) begin // @[execute_unit.scala 330:28]
-      temptest2 <= 64'h0; // @[execute_unit.scala 330:28]
+    if (reset) begin // @[execute_unit.scala 331:28]
+      temptest2 <= 64'h0; // @[execute_unit.scala 331:28]
     end else begin
-      temptest2 <= io_dcache_io_MdataIn; // @[execute_unit.scala 336:15]
+      temptest2 <= io_dcache_io_MdataIn; // @[execute_unit.scala 337:15]
     end
   end
 // Register and memory initialization
@@ -569,7 +569,7 @@ initial begin
   _RAND_20 = {1{`RANDOM}};
   uop_arch_rs2 = _RAND_20[4:0];
   _RAND_21 = {1{`RANDOM}};
-  uop_rob_idx = _RAND_21[6:0];
+  uop_rob_idx = _RAND_21[5:0];
   _RAND_22 = {2{`RANDOM}};
   uop_imm = _RAND_22[63:0];
   _RAND_23 = {2{`RANDOM}};

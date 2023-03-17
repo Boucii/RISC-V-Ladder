@@ -1,6 +1,7 @@
 package Ladder
 
-import chisel3._
+import chisel3._ 
+import chisel3.ExplicitCompileOptions.Strict
 import chiseltest._
 import org.scalatest.freespec.AnyFreeSpec
 import chisel3.util._
@@ -29,7 +30,7 @@ class Reservation_Station extends Module with consts{
 
      //used to make sure issue loads and stores only when they are the first of ROB,
      //and a better solution is down here, but not fully implemented
-      val i_ROB_first_entry = Input(UInt(7.W))
+      val i_ROB_first_entry = Input(UInt(rob_idx_len.W))
    }) 
      //val uops = Reg(Vec(2,new uop()))
      val uops = Wire((Vec(2,new uop())))

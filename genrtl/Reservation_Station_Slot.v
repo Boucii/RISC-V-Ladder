@@ -6,7 +6,7 @@ module Reservation_Station_Slot(
   input          io_i_issue_granted,
   input          io_i_branch_resolve_pack_valid,
   input          io_i_branch_resolve_pack_mispred,
-  input  [5:0]   io_i_branch_resolve_pack_rob_idx,
+  input  [3:0]   io_i_branch_resolve_pack_rob_idx,
   input          io_i_exception,
   input          io_i_write_slot,
   input  [127:0] io_i_wakeup_port,
@@ -30,7 +30,7 @@ module Reservation_Station_Slot(
   input          io_i_uop_src2_valid,
   input  [6:0]   io_i_uop_phy_rs2,
   input  [4:0]   io_i_uop_arch_rs2,
-  input  [5:0]   io_i_uop_rob_idx,
+  input  [3:0]   io_i_uop_rob_idx,
   input  [63:0]  io_i_uop_imm,
   input  [63:0]  io_i_uop_src1_value,
   input  [63:0]  io_i_uop_src2_value,
@@ -58,7 +58,7 @@ module Reservation_Station_Slot(
   output         io_o_uop_src2_valid,
   output [6:0]   io_o_uop_phy_rs2,
   output [4:0]   io_o_uop_arch_rs2,
-  output [5:0]   io_o_uop_rob_idx,
+  output [3:0]   io_o_uop_rob_idx,
   output [63:0]  io_o_uop_imm,
   output [63:0]  io_o_uop_src1_value,
   output [63:0]  io_o_uop_src2_value,
@@ -71,7 +71,7 @@ module Reservation_Station_Slot(
   input  [6:0]   io_i_exe_dst2,
   input  [63:0]  io_i_exe_value1,
   input  [63:0]  io_i_exe_value2,
-  input  [5:0]   io_i_ROB_first_entry
+  input  [3:0]   io_i_ROB_first_entry
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -127,7 +127,7 @@ module Reservation_Station_Slot(
   reg  uop_src2_valid; // @[reservation_station_slot.scala 39:22]
   reg [6:0] uop_phy_rs2; // @[reservation_station_slot.scala 39:22]
   reg [4:0] uop_arch_rs2; // @[reservation_station_slot.scala 39:22]
-  reg [5:0] uop_rob_idx; // @[reservation_station_slot.scala 39:22]
+  reg [3:0] uop_rob_idx; // @[reservation_station_slot.scala 39:22]
   reg [63:0] uop_imm; // @[reservation_station_slot.scala 39:22]
   reg [63:0] uop_src1_value; // @[reservation_station_slot.scala 39:22]
   reg [63:0] uop_src2_value; // @[reservation_station_slot.scala 39:22]
@@ -137,10 +137,10 @@ module Reservation_Station_Slot(
   reg [3:0] uop_branch_type; // @[reservation_station_slot.scala 39:22]
   reg [1:0] uop_mem_type; // @[reservation_station_slot.scala 39:22]
   reg  valid; // @[reservation_station_slot.scala 42:24]
-  wire  _flush_T_14 = io_i_branch_resolve_pack_rob_idx[4:0] > uop_rob_idx[4:0] & (io_i_branch_resolve_pack_rob_idx[5] ^
-    uop_rob_idx[5]); // @[reservation_station_slot.scala 49:99]
-  wire  _flush_T_15 = io_i_branch_resolve_pack_rob_idx[5] == uop_rob_idx[5] & io_i_branch_resolve_pack_rob_idx[4:0] <
-    uop_rob_idx[4:0] | _flush_T_14; // @[reservation_station_slot.scala 48:184]
+  wire  _flush_T_14 = io_i_branch_resolve_pack_rob_idx[2:0] > uop_rob_idx[2:0] & (io_i_branch_resolve_pack_rob_idx[3] ^
+    uop_rob_idx[3]); // @[reservation_station_slot.scala 49:99]
+  wire  _flush_T_15 = io_i_branch_resolve_pack_rob_idx[3] == uop_rob_idx[3] & io_i_branch_resolve_pack_rob_idx[2:0] <
+    uop_rob_idx[2:0] | _flush_T_14; // @[reservation_station_slot.scala 48:184]
   wire  _flush_T_17 = valid & (io_i_branch_resolve_pack_valid & io_i_branch_resolve_pack_mispred & _flush_T_15); // @[reservation_station_slot.scala 47:20]
   wire  flush = io_i_exception | _flush_T_17; // @[reservation_station_slot.scala 46:29]
   reg  src1_ready; // @[reservation_station_slot.scala 50:29]
@@ -376,7 +376,7 @@ module Reservation_Station_Slot(
       end
     end
     if (reset) begin // @[reservation_station_slot.scala 39:22]
-      uop_rob_idx <= 6'h0; // @[reservation_station_slot.scala 39:22]
+      uop_rob_idx <= 4'h0; // @[reservation_station_slot.scala 39:22]
     end else if (!(flush)) begin // @[reservation_station_slot.scala 59:16]
       if (io_i_write_slot) begin // @[reservation_station_slot.scala 61:32]
         uop_rob_idx <= io_i_uop_rob_idx; // @[reservation_station_slot.scala 62:12]
@@ -601,7 +601,7 @@ initial begin
   _RAND_19 = {1{`RANDOM}};
   uop_arch_rs2 = _RAND_19[4:0];
   _RAND_20 = {1{`RANDOM}};
-  uop_rob_idx = _RAND_20[5:0];
+  uop_rob_idx = _RAND_20[3:0];
   _RAND_21 = {2{`RANDOM}};
   uop_imm = _RAND_21[63:0];
   _RAND_22 = {2{`RANDOM}};

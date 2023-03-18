@@ -21,7 +21,7 @@ module Execute(
   input         io_i_issue_res_packs_0_src2_valid,
   input  [6:0]  io_i_issue_res_packs_0_phy_rs2,
   input  [4:0]  io_i_issue_res_packs_0_arch_rs2,
-  input  [5:0]  io_i_issue_res_packs_0_rob_idx,
+  input  [3:0]  io_i_issue_res_packs_0_rob_idx,
   input  [63:0] io_i_issue_res_packs_0_imm,
   input  [63:0] io_i_issue_res_packs_0_src1_value,
   input  [63:0] io_i_issue_res_packs_0_src2_value,
@@ -50,7 +50,7 @@ module Execute(
   input         io_i_issue_res_packs_1_src2_valid,
   input  [6:0]  io_i_issue_res_packs_1_phy_rs2,
   input  [4:0]  io_i_issue_res_packs_1_arch_rs2,
-  input  [5:0]  io_i_issue_res_packs_1_rob_idx,
+  input  [3:0]  io_i_issue_res_packs_1_rob_idx,
   input  [63:0] io_i_issue_res_packs_1_imm,
   input  [63:0] io_i_issue_res_packs_1_src1_value,
   input  [63:0] io_i_issue_res_packs_1_src2_value,
@@ -86,7 +86,7 @@ module Execute(
   output        io_o_ex_res_packs_0_uop_src2_valid,
   output [6:0]  io_o_ex_res_packs_0_uop_phy_rs2,
   output [4:0]  io_o_ex_res_packs_0_uop_arch_rs2,
-  output [5:0]  io_o_ex_res_packs_0_uop_rob_idx,
+  output [3:0]  io_o_ex_res_packs_0_uop_rob_idx,
   output [63:0] io_o_ex_res_packs_0_uop_imm,
   output [63:0] io_o_ex_res_packs_0_uop_dst_value,
   output [63:0] io_o_ex_res_packs_0_uop_src1_value,
@@ -117,7 +117,7 @@ module Execute(
   output        io_o_ex_res_packs_1_uop_src2_valid,
   output [6:0]  io_o_ex_res_packs_1_uop_phy_rs2,
   output [4:0]  io_o_ex_res_packs_1_uop_arch_rs2,
-  output [5:0]  io_o_ex_res_packs_1_uop_rob_idx,
+  output [3:0]  io_o_ex_res_packs_1_uop_rob_idx,
   output [63:0] io_o_ex_res_packs_1_uop_imm,
   output [63:0] io_o_ex_res_packs_1_uop_dst_value,
   output [63:0] io_o_ex_res_packs_1_uop_src1_value,
@@ -127,7 +127,7 @@ module Execute(
   output [4:0]  io_o_ex_res_packs_1_uop_alu_sel,
   output [3:0]  io_o_ex_res_packs_1_uop_branch_type,
   output [1:0]  io_o_ex_res_packs_1_uop_mem_type,
-  input  [5:0]  io_i_ROB_first_entry,
+  input  [3:0]  io_i_ROB_first_entry,
   input         io_dcache_io_data_valid,
   output        io_dcache_io_addr_valid,
   input         io_dcache_io_addr_ready,
@@ -142,13 +142,13 @@ module Execute(
   output        io_o_branch_resolve_pack_taken,
   output [63:0] io_o_branch_resolve_pack_pc,
   output [63:0] io_o_branch_resolve_pack_target,
-  output [5:0]  io_o_branch_resolve_pack_rob_idx,
+  output [3:0]  io_o_branch_resolve_pack_rob_idx,
   output        io_o_branch_resolve_pack_prediction_valid,
   output [2:0]  io_o_branch_resolve_pack_branch_type,
   input         io_i_exception,
   input         io_i_rollback_valid,
   output        io_o_lsu_uop_valid,
-  output [5:0]  io_o_lsu_uop_rob_idx
+  output [3:0]  io_o_lsu_uop_rob_idx
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -182,7 +182,7 @@ module Execute(
   wire  alu1_io_i_uop_src2_valid; // @[execute.scala 41:22]
   wire [6:0] alu1_io_i_uop_phy_rs2; // @[execute.scala 41:22]
   wire [4:0] alu1_io_i_uop_arch_rs2; // @[execute.scala 41:22]
-  wire [5:0] alu1_io_i_uop_rob_idx; // @[execute.scala 41:22]
+  wire [3:0] alu1_io_i_uop_rob_idx; // @[execute.scala 41:22]
   wire [63:0] alu1_io_i_uop_imm; // @[execute.scala 41:22]
   wire [63:0] alu1_io_i_uop_src1_value; // @[execute.scala 41:22]
   wire [63:0] alu1_io_i_uop_src2_value; // @[execute.scala 41:22]
@@ -214,7 +214,7 @@ module Execute(
   wire  alu1_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 41:22]
   wire [6:0] alu1_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 41:22]
   wire [4:0] alu1_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 41:22]
-  wire [5:0] alu1_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 41:22]
+  wire [3:0] alu1_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 41:22]
   wire [63:0] alu1_io_o_ex_res_pack_uop_imm; // @[execute.scala 41:22]
   wire [63:0] alu1_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 41:22]
   wire [63:0] alu1_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 41:22]
@@ -227,7 +227,7 @@ module Execute(
   wire  alu1_io_o_available; // @[execute.scala 41:22]
   wire  alu1_io_i_exception; // @[execute.scala 41:22]
   wire  alu1_io_i_rollback_valid; // @[execute.scala 41:22]
-  wire [5:0] alu1_io_i_rollback_rob_idx; // @[execute.scala 41:22]
+  wire [3:0] alu1_io_i_rollback_rob_idx; // @[execute.scala 41:22]
   wire  alu2_clock; // @[execute.scala 42:22]
   wire  alu2_reset; // @[execute.scala 42:22]
   wire  alu2_io_i_uop_valid; // @[execute.scala 42:22]
@@ -250,7 +250,7 @@ module Execute(
   wire  alu2_io_i_uop_src2_valid; // @[execute.scala 42:22]
   wire [6:0] alu2_io_i_uop_phy_rs2; // @[execute.scala 42:22]
   wire [4:0] alu2_io_i_uop_arch_rs2; // @[execute.scala 42:22]
-  wire [5:0] alu2_io_i_uop_rob_idx; // @[execute.scala 42:22]
+  wire [3:0] alu2_io_i_uop_rob_idx; // @[execute.scala 42:22]
   wire [63:0] alu2_io_i_uop_imm; // @[execute.scala 42:22]
   wire [63:0] alu2_io_i_uop_src1_value; // @[execute.scala 42:22]
   wire [63:0] alu2_io_i_uop_src2_value; // @[execute.scala 42:22]
@@ -282,7 +282,7 @@ module Execute(
   wire  alu2_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 42:22]
   wire [6:0] alu2_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 42:22]
   wire [4:0] alu2_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 42:22]
-  wire [5:0] alu2_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 42:22]
+  wire [3:0] alu2_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 42:22]
   wire [63:0] alu2_io_o_ex_res_pack_uop_imm; // @[execute.scala 42:22]
   wire [63:0] alu2_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 42:22]
   wire [63:0] alu2_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 42:22]
@@ -295,7 +295,7 @@ module Execute(
   wire  alu2_io_o_available; // @[execute.scala 42:22]
   wire  alu2_io_i_exception; // @[execute.scala 42:22]
   wire  alu2_io_i_rollback_valid; // @[execute.scala 42:22]
-  wire [5:0] alu2_io_i_rollback_rob_idx; // @[execute.scala 42:22]
+  wire [3:0] alu2_io_i_rollback_rob_idx; // @[execute.scala 42:22]
   wire  bru_clock; // @[execute.scala 43:21]
   wire  bru_reset; // @[execute.scala 43:21]
   wire  bru_io_o_branch_resolve_pack_valid; // @[execute.scala 43:21]
@@ -303,7 +303,7 @@ module Execute(
   wire  bru_io_o_branch_resolve_pack_taken; // @[execute.scala 43:21]
   wire [63:0] bru_io_o_branch_resolve_pack_pc; // @[execute.scala 43:21]
   wire [63:0] bru_io_o_branch_resolve_pack_target; // @[execute.scala 43:21]
-  wire [5:0] bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 43:21]
+  wire [3:0] bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 43:21]
   wire  bru_io_o_branch_resolve_pack_prediction_valid; // @[execute.scala 43:21]
   wire [2:0] bru_io_o_branch_resolve_pack_branch_type; // @[execute.scala 43:21]
   wire  bru_io_i_uop_valid; // @[execute.scala 43:21]
@@ -326,7 +326,7 @@ module Execute(
   wire  bru_io_i_uop_src2_valid; // @[execute.scala 43:21]
   wire [6:0] bru_io_i_uop_phy_rs2; // @[execute.scala 43:21]
   wire [4:0] bru_io_i_uop_arch_rs2; // @[execute.scala 43:21]
-  wire [5:0] bru_io_i_uop_rob_idx; // @[execute.scala 43:21]
+  wire [3:0] bru_io_i_uop_rob_idx; // @[execute.scala 43:21]
   wire [63:0] bru_io_i_uop_imm; // @[execute.scala 43:21]
   wire [63:0] bru_io_i_uop_src1_value; // @[execute.scala 43:21]
   wire [63:0] bru_io_i_uop_src2_value; // @[execute.scala 43:21]
@@ -358,7 +358,7 @@ module Execute(
   wire  bru_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 43:21]
   wire [6:0] bru_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 43:21]
   wire [4:0] bru_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 43:21]
-  wire [5:0] bru_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 43:21]
+  wire [3:0] bru_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 43:21]
   wire [63:0] bru_io_o_ex_res_pack_uop_imm; // @[execute.scala 43:21]
   wire [63:0] bru_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 43:21]
   wire [63:0] bru_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 43:21]
@@ -392,7 +392,7 @@ module Execute(
   wire  func_units_3_io_i_uop_src2_valid; // @[execute.scala 44:21]
   wire [6:0] func_units_3_io_i_uop_phy_rs2; // @[execute.scala 44:21]
   wire [4:0] func_units_3_io_i_uop_arch_rs2; // @[execute.scala 44:21]
-  wire [5:0] func_units_3_io_i_uop_rob_idx; // @[execute.scala 44:21]
+  wire [3:0] func_units_3_io_i_uop_rob_idx; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_i_uop_imm; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_i_uop_src1_value; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_i_uop_src2_value; // @[execute.scala 44:21]
@@ -424,7 +424,7 @@ module Execute(
   wire  func_units_3_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 44:21]
   wire [6:0] func_units_3_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 44:21]
   wire [4:0] func_units_3_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 44:21]
-  wire [5:0] func_units_3_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 44:21]
+  wire [3:0] func_units_3_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_o_ex_res_pack_uop_imm; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 44:21]
@@ -435,7 +435,7 @@ module Execute(
   wire [3:0] func_units_3_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 44:21]
   wire [1:0] func_units_3_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 44:21]
   wire  func_units_3_io_o_available; // @[execute.scala 44:21]
-  wire [5:0] func_units_3_io_i_ROB_first_entry; // @[execute.scala 44:21]
+  wire [3:0] func_units_3_io_i_ROB_first_entry; // @[execute.scala 44:21]
   wire  func_units_3_io_dcache_io_data_valid; // @[execute.scala 44:21]
   wire  func_units_3_io_dcache_io_addr_valid; // @[execute.scala 44:21]
   wire  func_units_3_io_dcache_io_addr_ready; // @[execute.scala 44:21]
@@ -446,10 +446,10 @@ module Execute(
   wire [63:0] func_units_3_io_dcache_io_MdataIn; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_dcache_io_MdataOut; // @[execute.scala 44:21]
   wire  func_units_3_io_o_lsu_uop_valid; // @[execute.scala 44:21]
-  wire [5:0] func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 44:21]
+  wire [3:0] func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 44:21]
   wire  func_units_3_io_i_exception; // @[execute.scala 44:21]
   wire  func_units_3_io_i_rollback_valid; // @[execute.scala 44:21]
-  wire [5:0] func_units_3_io_i_rollback_rob_idx; // @[execute.scala 44:21]
+  wire [3:0] func_units_3_io_i_rollback_rob_idx; // @[execute.scala 44:21]
   wire  func_units_4_clock; // @[execute.scala 45:21]
   wire  func_units_4_reset; // @[execute.scala 45:21]
   wire  func_units_4_io_i_uop_valid; // @[execute.scala 45:21]
@@ -472,7 +472,7 @@ module Execute(
   wire  func_units_4_io_i_uop_src2_valid; // @[execute.scala 45:21]
   wire [6:0] func_units_4_io_i_uop_phy_rs2; // @[execute.scala 45:21]
   wire [4:0] func_units_4_io_i_uop_arch_rs2; // @[execute.scala 45:21]
-  wire [5:0] func_units_4_io_i_uop_rob_idx; // @[execute.scala 45:21]
+  wire [3:0] func_units_4_io_i_uop_rob_idx; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_i_uop_imm; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_i_uop_src1_value; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_i_uop_src2_value; // @[execute.scala 45:21]
@@ -504,7 +504,7 @@ module Execute(
   wire  func_units_4_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 45:21]
   wire [6:0] func_units_4_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 45:21]
   wire [4:0] func_units_4_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 45:21]
-  wire [5:0] func_units_4_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 45:21]
+  wire [3:0] func_units_4_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_o_ex_res_pack_uop_imm; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 45:21]
   wire [63:0] func_units_4_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 45:21]
@@ -517,7 +517,7 @@ module Execute(
   wire  func_units_4_io_o_available; // @[execute.scala 45:21]
   wire  func_units_4_io_i_exception; // @[execute.scala 45:21]
   wire  func_units_4_io_i_rollback_valid; // @[execute.scala 45:21]
-  wire [5:0] func_units_4_io_i_rollback_rob_idx; // @[execute.scala 45:21]
+  wire [3:0] func_units_4_io_i_rollback_rob_idx; // @[execute.scala 45:21]
   wire  div_clock; // @[execute.scala 46:21]
   wire  div_reset; // @[execute.scala 46:21]
   wire  div_io_i_uop_valid; // @[execute.scala 46:21]
@@ -540,7 +540,7 @@ module Execute(
   wire  div_io_i_uop_src2_valid; // @[execute.scala 46:21]
   wire [6:0] div_io_i_uop_phy_rs2; // @[execute.scala 46:21]
   wire [4:0] div_io_i_uop_arch_rs2; // @[execute.scala 46:21]
-  wire [5:0] div_io_i_uop_rob_idx; // @[execute.scala 46:21]
+  wire [3:0] div_io_i_uop_rob_idx; // @[execute.scala 46:21]
   wire [63:0] div_io_i_uop_imm; // @[execute.scala 46:21]
   wire [63:0] div_io_i_uop_src1_value; // @[execute.scala 46:21]
   wire [63:0] div_io_i_uop_src2_value; // @[execute.scala 46:21]
@@ -572,7 +572,7 @@ module Execute(
   wire  div_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 46:21]
   wire [6:0] div_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 46:21]
   wire [4:0] div_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 46:21]
-  wire [5:0] div_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 46:21]
+  wire [3:0] div_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 46:21]
   wire [63:0] div_io_o_ex_res_pack_uop_imm; // @[execute.scala 46:21]
   wire [63:0] div_io_o_ex_res_pack_uop_dst_value; // @[execute.scala 46:21]
   wire [63:0] div_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 46:21]
@@ -585,7 +585,7 @@ module Execute(
   wire  div_io_o_available; // @[execute.scala 46:21]
   wire  div_io_i_exception; // @[execute.scala 46:21]
   wire  div_io_i_rollback_valid; // @[execute.scala 46:21]
-  wire [5:0] div_io_i_rollback_rob_idx; // @[execute.scala 46:21]
+  wire [3:0] div_io_i_rollback_rob_idx; // @[execute.scala 46:21]
   wire  csr_bf_clock; // @[execute.scala 47:24]
   wire  csr_bf_reset; // @[execute.scala 47:24]
   wire  csr_bf_io_i_uop_valid; // @[execute.scala 47:24]
@@ -608,7 +608,7 @@ module Execute(
   wire  csr_bf_io_i_uop_src2_valid; // @[execute.scala 47:24]
   wire [6:0] csr_bf_io_i_uop_phy_rs2; // @[execute.scala 47:24]
   wire [4:0] csr_bf_io_i_uop_arch_rs2; // @[execute.scala 47:24]
-  wire [5:0] csr_bf_io_i_uop_rob_idx; // @[execute.scala 47:24]
+  wire [3:0] csr_bf_io_i_uop_rob_idx; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_i_uop_imm; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_i_uop_src1_value; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_i_uop_src2_value; // @[execute.scala 47:24]
@@ -640,7 +640,7 @@ module Execute(
   wire  csr_bf_io_o_ex_res_pack_uop_src2_valid; // @[execute.scala 47:24]
   wire [6:0] csr_bf_io_o_ex_res_pack_uop_phy_rs2; // @[execute.scala 47:24]
   wire [4:0] csr_bf_io_o_ex_res_pack_uop_arch_rs2; // @[execute.scala 47:24]
-  wire [5:0] csr_bf_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 47:24]
+  wire [3:0] csr_bf_io_o_ex_res_pack_uop_rob_idx; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_o_ex_res_pack_uop_imm; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_o_ex_res_pack_uop_src1_value; // @[execute.scala 47:24]
   wire [63:0] csr_bf_io_o_ex_res_pack_uop_src2_value; // @[execute.scala 47:24]
@@ -652,19 +652,19 @@ module Execute(
   wire  csr_bf_io_o_available; // @[execute.scala 47:24]
   wire  csr_bf_io_i_exception; // @[execute.scala 47:24]
   wire  csr_bf_io_i_rollback_valid; // @[execute.scala 47:24]
-  wire [5:0] csr_bf_io_i_rollback_rob_idx; // @[execute.scala 47:24]
+  wire [3:0] csr_bf_io_i_rollback_rob_idx; // @[execute.scala 47:24]
   reg  last_branch_resolve_pack_valid; // @[execute.scala 52:43]
   reg  last_branch_resolve_pack_mispred; // @[execute.scala 52:43]
   reg  last_branch_resolve_pack_taken; // @[execute.scala 52:43]
   reg [63:0] last_branch_resolve_pack_pc; // @[execute.scala 52:43]
   reg [63:0] last_branch_resolve_pack_target; // @[execute.scala 52:43]
-  reg [5:0] last_branch_resolve_pack_rob_idx; // @[execute.scala 52:43]
+  reg [3:0] last_branch_resolve_pack_rob_idx; // @[execute.scala 52:43]
   reg  last_branch_resolve_pack_prediction_valid; // @[execute.scala 52:43]
   reg [2:0] last_branch_resolve_pack_branch_type; // @[execute.scala 52:43]
-  wire [140:0] _new_br_resolve_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
+  wire [138:0] _new_br_resolve_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
     last_branch_resolve_pack_taken,last_branch_resolve_pack_pc,last_branch_resolve_pack_target,
     last_branch_resolve_pack_rob_idx,last_branch_resolve_pack_prediction_valid,last_branch_resolve_pack_branch_type}; // @[execute.scala 55:48]
-  wire [140:0] _new_br_resolve_T_1 = {io_o_branch_resolve_pack_valid,io_o_branch_resolve_pack_mispred,
+  wire [138:0] _new_br_resolve_T_1 = {io_o_branch_resolve_pack_valid,io_o_branch_resolve_pack_mispred,
     io_o_branch_resolve_pack_taken,io_o_branch_resolve_pack_pc,io_o_branch_resolve_pack_target,
     io_o_branch_resolve_pack_rob_idx,io_o_branch_resolve_pack_prediction_valid,io_o_branch_resolve_pack_branch_type}; // @[execute.scala 55:84]
   wire  new_br_resolve = _new_br_resolve_T != _new_br_resolve_T_1 & (io_o_branch_resolve_pack_valid &
@@ -778,7 +778,7 @@ module Execute(
     csr_bf_io_o_ex_res_pack_uop_phy_rs2 : alu1_io_o_ex_res_pack_uop_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_7_arch_rs2 = _csr_bf_io_i_select_to_commit_T ?
     csr_bf_io_o_ex_res_pack_uop_arch_rs2 : alu1_io_o_ex_res_pack_uop_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_7_rob_idx = _csr_bf_io_i_select_to_commit_T ?
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_7_rob_idx = _csr_bf_io_i_select_to_commit_T ?
     csr_bf_io_o_ex_res_pack_uop_rob_idx : alu1_io_o_ex_res_pack_uop_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_7_imm = _csr_bf_io_i_select_to_commit_T ? csr_bf_io_o_ex_res_pack_uop_imm :
     alu1_io_o_ex_res_pack_uop_imm; // @[Mux.scala 101:16]
@@ -839,7 +839,7 @@ module Execute(
     _io_o_ex_res_packs_0_uop_T_7_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_8_arch_rs2 = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_arch_rs2 :
     _io_o_ex_res_packs_0_uop_T_7_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_8_rob_idx = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_rob_idx :
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_8_rob_idx = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_rob_idx :
     _io_o_ex_res_packs_0_uop_T_7_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_8_imm = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_0_uop_T_7_imm; // @[Mux.scala 101:16]
@@ -904,7 +904,7 @@ module Execute(
     func_units_4_io_o_ex_res_pack_uop_phy_rs2 : _io_o_ex_res_packs_0_uop_T_8_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_9_arch_rs2 = _mul_io_i_select_to_commit_T ?
     func_units_4_io_o_ex_res_pack_uop_arch_rs2 : _io_o_ex_res_packs_0_uop_T_8_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_9_rob_idx = _mul_io_i_select_to_commit_T ?
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_9_rob_idx = _mul_io_i_select_to_commit_T ?
     func_units_4_io_o_ex_res_pack_uop_rob_idx : _io_o_ex_res_packs_0_uop_T_8_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_9_imm = _mul_io_i_select_to_commit_T ? func_units_4_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_0_uop_T_8_imm; // @[Mux.scala 101:16]
@@ -969,7 +969,7 @@ module Execute(
     func_units_3_io_o_ex_res_pack_uop_phy_rs2 : _io_o_ex_res_packs_0_uop_T_9_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_10_arch_rs2 = _lsu_io_i_select_to_commit_T ?
     func_units_3_io_o_ex_res_pack_uop_arch_rs2 : _io_o_ex_res_packs_0_uop_T_9_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_10_rob_idx = _lsu_io_i_select_to_commit_T ?
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_10_rob_idx = _lsu_io_i_select_to_commit_T ?
     func_units_3_io_o_ex_res_pack_uop_rob_idx : _io_o_ex_res_packs_0_uop_T_9_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_10_imm = _lsu_io_i_select_to_commit_T ? func_units_3_io_o_ex_res_pack_uop_imm
      : _io_o_ex_res_packs_0_uop_T_9_imm; // @[Mux.scala 101:16]
@@ -1030,7 +1030,7 @@ module Execute(
     _io_o_ex_res_packs_0_uop_T_10_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_11_arch_rs2 = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_arch_rs2
      : _io_o_ex_res_packs_0_uop_T_10_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_11_rob_idx = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_rob_idx :
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_11_rob_idx = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_rob_idx :
     _io_o_ex_res_packs_0_uop_T_10_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_11_imm = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_0_uop_T_10_imm; // @[Mux.scala 101:16]
@@ -1091,7 +1091,7 @@ module Execute(
      : _io_o_ex_res_packs_0_uop_T_11_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_0_uop_T_12_arch_rs2 = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_arch_rs2
      : _io_o_ex_res_packs_0_uop_T_11_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_0_uop_T_12_rob_idx = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_rob_idx
+  wire [3:0] _io_o_ex_res_packs_0_uop_T_12_rob_idx = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_rob_idx
      : _io_o_ex_res_packs_0_uop_T_11_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_0_uop_T_12_imm = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_0_uop_T_11_imm; // @[Mux.scala 101:16]
@@ -1152,7 +1152,7 @@ module Execute(
     csr_bf_io_o_ex_res_pack_uop_phy_rs2 : alu1_io_o_ex_res_pack_uop_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_7_arch_rs2 = _csr_bf_io_i_select_to_commit_T_1 ?
     csr_bf_io_o_ex_res_pack_uop_arch_rs2 : alu1_io_o_ex_res_pack_uop_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_7_rob_idx = _csr_bf_io_i_select_to_commit_T_1 ?
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_7_rob_idx = _csr_bf_io_i_select_to_commit_T_1 ?
     csr_bf_io_o_ex_res_pack_uop_rob_idx : alu1_io_o_ex_res_pack_uop_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_7_imm = _csr_bf_io_i_select_to_commit_T_1 ? csr_bf_io_o_ex_res_pack_uop_imm :
     alu1_io_o_ex_res_pack_uop_imm; // @[Mux.scala 101:16]
@@ -1213,7 +1213,7 @@ module Execute(
     _io_o_ex_res_packs_1_uop_T_7_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_8_arch_rs2 = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_arch_rs2
      : _io_o_ex_res_packs_1_uop_T_7_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_8_rob_idx = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_rob_idx :
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_8_rob_idx = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_rob_idx :
     _io_o_ex_res_packs_1_uop_T_7_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_8_imm = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_1_uop_T_7_imm; // @[Mux.scala 101:16]
@@ -1278,7 +1278,7 @@ module Execute(
     func_units_4_io_o_ex_res_pack_uop_phy_rs2 : _io_o_ex_res_packs_1_uop_T_8_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_9_arch_rs2 = _mul_io_i_select_to_commit_T_1 ?
     func_units_4_io_o_ex_res_pack_uop_arch_rs2 : _io_o_ex_res_packs_1_uop_T_8_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_9_rob_idx = _mul_io_i_select_to_commit_T_1 ?
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_9_rob_idx = _mul_io_i_select_to_commit_T_1 ?
     func_units_4_io_o_ex_res_pack_uop_rob_idx : _io_o_ex_res_packs_1_uop_T_8_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_9_imm = _mul_io_i_select_to_commit_T_1 ? func_units_4_io_o_ex_res_pack_uop_imm
      : _io_o_ex_res_packs_1_uop_T_8_imm; // @[Mux.scala 101:16]
@@ -1343,7 +1343,7 @@ module Execute(
     func_units_3_io_o_ex_res_pack_uop_phy_rs2 : _io_o_ex_res_packs_1_uop_T_9_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_10_arch_rs2 = _lsu_io_i_select_to_commit_T_1 ?
     func_units_3_io_o_ex_res_pack_uop_arch_rs2 : _io_o_ex_res_packs_1_uop_T_9_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_10_rob_idx = _lsu_io_i_select_to_commit_T_1 ?
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_10_rob_idx = _lsu_io_i_select_to_commit_T_1 ?
     func_units_3_io_o_ex_res_pack_uop_rob_idx : _io_o_ex_res_packs_1_uop_T_9_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_10_imm = _lsu_io_i_select_to_commit_T_1 ? func_units_3_io_o_ex_res_pack_uop_imm
      : _io_o_ex_res_packs_1_uop_T_9_imm; // @[Mux.scala 101:16]
@@ -1404,7 +1404,7 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_10_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_11_arch_rs2 = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_arch_rs2
      : _io_o_ex_res_packs_1_uop_T_10_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_11_rob_idx = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_rob_idx
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_11_rob_idx = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_rob_idx
      : _io_o_ex_res_packs_1_uop_T_10_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_11_imm = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_1_uop_T_10_imm; // @[Mux.scala 101:16]
@@ -1465,7 +1465,7 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_11_phy_rs2; // @[Mux.scala 101:16]
   wire [4:0] _io_o_ex_res_packs_1_uop_T_12_arch_rs2 = _alu2_io_i_select_to_commit_T_1 ?
     alu2_io_o_ex_res_pack_uop_arch_rs2 : _io_o_ex_res_packs_1_uop_T_11_arch_rs2; // @[Mux.scala 101:16]
-  wire [5:0] _io_o_ex_res_packs_1_uop_T_12_rob_idx = _alu2_io_i_select_to_commit_T_1 ? alu2_io_o_ex_res_pack_uop_rob_idx
+  wire [3:0] _io_o_ex_res_packs_1_uop_T_12_rob_idx = _alu2_io_i_select_to_commit_T_1 ? alu2_io_o_ex_res_pack_uop_rob_idx
      : _io_o_ex_res_packs_1_uop_T_11_rob_idx; // @[Mux.scala 101:16]
   wire [63:0] _io_o_ex_res_packs_1_uop_T_12_imm = _alu2_io_i_select_to_commit_T_1 ? alu2_io_o_ex_res_pack_uop_imm :
     _io_o_ex_res_packs_1_uop_T_11_imm; // @[Mux.scala 101:16]
@@ -2626,7 +2626,7 @@ module Execute(
       last_branch_resolve_pack_target <= io_o_branch_resolve_pack_target; // @[execute.scala 53:30]
     end
     if (reset) begin // @[execute.scala 52:43]
-      last_branch_resolve_pack_rob_idx <= 6'h0; // @[execute.scala 52:43]
+      last_branch_resolve_pack_rob_idx <= 4'h0; // @[execute.scala 52:43]
     end else begin
       last_branch_resolve_pack_rob_idx <= io_o_branch_resolve_pack_rob_idx; // @[execute.scala 53:30]
     end
@@ -2736,7 +2736,7 @@ initial begin
   _RAND_4 = {2{`RANDOM}};
   last_branch_resolve_pack_target = _RAND_4[63:0];
   _RAND_5 = {1{`RANDOM}};
-  last_branch_resolve_pack_rob_idx = _RAND_5[5:0];
+  last_branch_resolve_pack_rob_idx = _RAND_5[3:0];
   _RAND_6 = {1{`RANDOM}};
   last_branch_resolve_pack_prediction_valid = _RAND_6[0:0];
   _RAND_7 = {1{`RANDOM}};

@@ -6,7 +6,7 @@ module BRU(
   output        io_o_branch_resolve_pack_taken,
   output [63:0] io_o_branch_resolve_pack_pc,
   output [63:0] io_o_branch_resolve_pack_target,
-  output [5:0]  io_o_branch_resolve_pack_rob_idx,
+  output [3:0]  io_o_branch_resolve_pack_rob_idx,
   output        io_o_branch_resolve_pack_prediction_valid,
   output [2:0]  io_o_branch_resolve_pack_branch_type,
   input         io_i_uop_valid,
@@ -29,7 +29,7 @@ module BRU(
   input         io_i_uop_src2_valid,
   input  [6:0]  io_i_uop_phy_rs2,
   input  [4:0]  io_i_uop_arch_rs2,
-  input  [5:0]  io_i_uop_rob_idx,
+  input  [3:0]  io_i_uop_rob_idx,
   input  [63:0] io_i_uop_imm,
   input  [63:0] io_i_uop_src1_value,
   input  [63:0] io_i_uop_src2_value,
@@ -61,7 +61,7 @@ module BRU(
   output        io_o_ex_res_pack_uop_src2_valid,
   output [6:0]  io_o_ex_res_pack_uop_phy_rs2,
   output [4:0]  io_o_ex_res_pack_uop_arch_rs2,
-  output [5:0]  io_o_ex_res_pack_uop_rob_idx,
+  output [3:0]  io_o_ex_res_pack_uop_rob_idx,
   output [63:0] io_o_ex_res_pack_uop_imm,
   output [63:0] io_o_ex_res_pack_uop_dst_value,
   output [63:0] io_o_ex_res_pack_uop_src1_value,
@@ -127,7 +127,7 @@ module BRU(
   reg  uop_src2_valid; // @[execute_unit.scala 153:23]
   reg [6:0] uop_phy_rs2; // @[execute_unit.scala 153:23]
   reg [4:0] uop_arch_rs2; // @[execute_unit.scala 153:23]
-  reg [5:0] uop_rob_idx; // @[execute_unit.scala 153:23]
+  reg [3:0] uop_rob_idx; // @[execute_unit.scala 153:23]
   reg [63:0] uop_imm; // @[execute_unit.scala 153:23]
   reg [63:0] uop_src1_value; // @[execute_unit.scala 153:23]
   reg [63:0] uop_src2_value; // @[execute_unit.scala 153:23]
@@ -336,7 +336,7 @@ module BRU(
       uop_arch_rs2 <= io_i_uop_arch_rs2;
     end
     if (reset) begin // @[execute_unit.scala 153:23]
-      uop_rob_idx <= 6'h0; // @[execute_unit.scala 153:23]
+      uop_rob_idx <= 4'h0; // @[execute_unit.scala 153:23]
     end else if (io_i_select) begin // @[execute_unit.scala 155:20]
       uop_rob_idx <= io_i_uop_rob_idx;
     end
@@ -460,7 +460,7 @@ initial begin
   _RAND_20 = {1{`RANDOM}};
   uop_arch_rs2 = _RAND_20[4:0];
   _RAND_21 = {1{`RANDOM}};
-  uop_rob_idx = _RAND_21[5:0];
+  uop_rob_idx = _RAND_21[3:0];
   _RAND_22 = {2{`RANDOM}};
   uop_imm = _RAND_22[63:0];
   _RAND_23 = {2{`RANDOM}};

@@ -17,7 +17,7 @@
 #include "VLadder__Dpi.h"
 
 #define GTK_EN_CYC  -1
-#define DIFFTEST_EN 1
+#define DIFFTEST_EN 0
 #define ITRACE_EN 0
 #define GTK_EN 0
 #define LOG_EN 0
@@ -248,7 +248,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
 			  static int ss=0;
 			  ss++;
-			  printf("mem,ss=%d\n",ss);
+			  //printf("mem,ss=%d\n",ss);
 		int len=0;
 		if((uint8_t)wmask==0){
 				len =0;
@@ -411,9 +411,9 @@ int main(int argc, char** argv, char** env){
   svSetScope(scope);
 
   contextp->traceEverOn(true); //打开追踪功能
-  tfp = new VerilatedVcdC; //初始化VCD对象指针
-  top->trace(tfp, 0); //
-  tfp->open("wave.vcd"); //设置输出的文件wave.vcd
+  //tfp = new VerilatedVcdC; //初始化VCD对象指针
+  //top->trace(tfp, 0); //
+  //tfp->open("wave.vcd"); //设置输出的文件wave.vcd
 
 
   //int time=0;
@@ -582,7 +582,7 @@ end:
   delete top;
 
   delete contextp;
-  tfp->close();
+  //tfp->close();
   delete pc_cmt1;
   delete pc_cmt2;
   delete pc ;

@@ -21,7 +21,7 @@ module ALU(
   input         io_i_uop_src2_valid,
   input  [6:0]  io_i_uop_phy_rs2,
   input  [4:0]  io_i_uop_arch_rs2,
-  input  [5:0]  io_i_uop_rob_idx,
+  input  [3:0]  io_i_uop_rob_idx,
   input  [63:0] io_i_uop_imm,
   input  [63:0] io_i_uop_src1_value,
   input  [63:0] io_i_uop_src2_value,
@@ -53,7 +53,7 @@ module ALU(
   output        io_o_ex_res_pack_uop_src2_valid,
   output [6:0]  io_o_ex_res_pack_uop_phy_rs2,
   output [4:0]  io_o_ex_res_pack_uop_arch_rs2,
-  output [5:0]  io_o_ex_res_pack_uop_rob_idx,
+  output [3:0]  io_o_ex_res_pack_uop_rob_idx,
   output [63:0] io_o_ex_res_pack_uop_imm,
   output [63:0] io_o_ex_res_pack_uop_dst_value,
   output [63:0] io_o_ex_res_pack_uop_src1_value,
@@ -66,7 +66,7 @@ module ALU(
   output        io_o_available,
   input         io_i_exception,
   input         io_i_rollback_valid,
-  input  [5:0]  io_i_rollback_rob_idx
+  input  [3:0]  io_i_rollback_rob_idx
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -121,7 +121,7 @@ module ALU(
   reg  uop_src2_valid; // @[execute_unit.scala 49:22]
   reg [6:0] uop_phy_rs2; // @[execute_unit.scala 49:22]
   reg [4:0] uop_arch_rs2; // @[execute_unit.scala 49:22]
-  reg [5:0] uop_rob_idx; // @[execute_unit.scala 49:22]
+  reg [3:0] uop_rob_idx; // @[execute_unit.scala 49:22]
   reg [63:0] uop_imm; // @[execute_unit.scala 49:22]
   reg [63:0] uop_src1_value; // @[execute_unit.scala 49:22]
   reg [63:0] uop_src2_value; // @[execute_unit.scala 49:22]
@@ -130,9 +130,9 @@ module ALU(
   reg [4:0] uop_alu_sel; // @[execute_unit.scala 49:22]
   reg [3:0] uop_branch_type; // @[execute_unit.scala 49:22]
   reg [1:0] uop_mem_type; // @[execute_unit.scala 49:22]
-  wire  _T_16 = io_i_rollback_rob_idx[4:0] > uop_rob_idx[4:0] & (io_i_rollback_rob_idx[5] ^ uop_rob_idx[5]); // @[execute_unit.scala 55:90]
-  wire  _T_18 = io_i_rollback_valid & (io_i_rollback_rob_idx[4:0] < uop_rob_idx[4:0] & io_i_rollback_rob_idx[5] ==
-    uop_rob_idx[5] | _T_16); // @[execute_unit.scala 54:31]
+  wire  _T_16 = io_i_rollback_rob_idx[2:0] > uop_rob_idx[2:0] & (io_i_rollback_rob_idx[3] ^ uop_rob_idx[3]); // @[execute_unit.scala 55:90]
+  wire  _T_18 = io_i_rollback_valid & (io_i_rollback_rob_idx[2:0] < uop_rob_idx[2:0] & io_i_rollback_rob_idx[3] ==
+    uop_rob_idx[3] | _T_16); // @[execute_unit.scala 54:31]
   wire  _T_19 = io_i_select_to_commit & ~io_i_select | io_i_exception | _T_18; // @[execute_unit.scala 53:66]
   wire  _intermediate_T = uop_alu_sel == 5'h8; // @[execute_unit.scala 84:22]
   wire [63:0] _intermediate_T_2 = uop_src1_value + uop_src2_value; // @[execute_unit.scala 84:48]
@@ -410,7 +410,7 @@ module ALU(
       uop_arch_rs2 <= io_i_uop_arch_rs2;
     end
     if (reset) begin // @[execute_unit.scala 49:22]
-      uop_rob_idx <= 6'h0; // @[execute_unit.scala 49:22]
+      uop_rob_idx <= 4'h0; // @[execute_unit.scala 49:22]
     end else if (io_i_select) begin // @[execute_unit.scala 51:20]
       uop_rob_idx <= io_i_uop_rob_idx;
     end
@@ -558,7 +558,7 @@ initial begin
   _RAND_20 = {1{`RANDOM}};
   uop_arch_rs2 = _RAND_20[4:0];
   _RAND_21 = {1{`RANDOM}};
-  uop_rob_idx = _RAND_21[5:0];
+  uop_rob_idx = _RAND_21[3:0];
   _RAND_22 = {2{`RANDOM}};
   uop_imm = _RAND_22[63:0];
   _RAND_23 = {2{`RANDOM}};

@@ -43,7 +43,7 @@ module Ladder(
   output        io_o_dbg_commit_packs_0_uop_src2_valid,
   output [6:0]  io_o_dbg_commit_packs_0_uop_phy_rs2,
   output [4:0]  io_o_dbg_commit_packs_0_uop_arch_rs2,
-  output [5:0]  io_o_dbg_commit_packs_0_uop_rob_idx,
+  output [3:0]  io_o_dbg_commit_packs_0_uop_rob_idx,
   output [63:0] io_o_dbg_commit_packs_0_uop_imm,
   output [63:0] io_o_dbg_commit_packs_0_uop_dst_value,
   output [63:0] io_o_dbg_commit_packs_0_uop_src1_value,
@@ -75,7 +75,7 @@ module Ladder(
   output        io_o_dbg_commit_packs_1_uop_src2_valid,
   output [6:0]  io_o_dbg_commit_packs_1_uop_phy_rs2,
   output [4:0]  io_o_dbg_commit_packs_1_uop_arch_rs2,
-  output [5:0]  io_o_dbg_commit_packs_1_uop_rob_idx,
+  output [3:0]  io_o_dbg_commit_packs_1_uop_rob_idx,
   output [63:0] io_o_dbg_commit_packs_1_uop_imm,
   output [63:0] io_o_dbg_commit_packs_1_uop_dst_value,
   output [63:0] io_o_dbg_commit_packs_1_uop_src1_value,
@@ -146,7 +146,7 @@ module Ladder(
   wire  back_end_io_o_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 23:24]
-  wire [5:0] back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
+  wire [3:0] back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
   wire  back_end_io_o_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 23:24]
   wire [2:0] back_end_io_o_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 23:24]
   wire  back_end_io_o_stall; // @[CPU_top_with_dpic.scala 23:24]
@@ -183,7 +183,7 @@ module Ladder(
   wire  back_end_io_o_dbg_commit_packs_0_uop_src2_valid; // @[CPU_top_with_dpic.scala 23:24]
   wire [6:0] back_end_io_o_dbg_commit_packs_0_uop_phy_rs2; // @[CPU_top_with_dpic.scala 23:24]
   wire [4:0] back_end_io_o_dbg_commit_packs_0_uop_arch_rs2; // @[CPU_top_with_dpic.scala 23:24]
-  wire [5:0] back_end_io_o_dbg_commit_packs_0_uop_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
+  wire [3:0] back_end_io_o_dbg_commit_packs_0_uop_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_0_uop_imm; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_0_uop_dst_value; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_0_uop_src1_value; // @[CPU_top_with_dpic.scala 23:24]
@@ -214,7 +214,7 @@ module Ladder(
   wire  back_end_io_o_dbg_commit_packs_1_uop_src2_valid; // @[CPU_top_with_dpic.scala 23:24]
   wire [6:0] back_end_io_o_dbg_commit_packs_1_uop_phy_rs2; // @[CPU_top_with_dpic.scala 23:24]
   wire [4:0] back_end_io_o_dbg_commit_packs_1_uop_arch_rs2; // @[CPU_top_with_dpic.scala 23:24]
-  wire [5:0] back_end_io_o_dbg_commit_packs_1_uop_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
+  wire [3:0] back_end_io_o_dbg_commit_packs_1_uop_rob_idx; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_1_uop_imm; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_1_uop_dst_value; // @[CPU_top_with_dpic.scala 23:24]
   wire [63:0] back_end_io_o_dbg_commit_packs_1_uop_src1_value; // @[CPU_top_with_dpic.scala 23:24]
@@ -306,13 +306,13 @@ module Ladder(
   reg  last_branch_resolve_pack_taken; // @[CPU_top_with_dpic.scala 27:41]
   reg [63:0] last_branch_resolve_pack_pc; // @[CPU_top_with_dpic.scala 27:41]
   reg [63:0] last_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 27:41]
-  reg [5:0] last_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 27:41]
+  reg [3:0] last_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 27:41]
   reg  last_branch_resolve_pack_prediction_valid; // @[CPU_top_with_dpic.scala 27:41]
   reg [2:0] last_branch_resolve_pack_branch_type; // @[CPU_top_with_dpic.scala 27:41]
-  wire [140:0] _front_end_io_i_branch_resolve_pack_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
+  wire [138:0] _front_end_io_i_branch_resolve_pack_T = {last_branch_resolve_pack_valid,last_branch_resolve_pack_mispred,
     last_branch_resolve_pack_taken,last_branch_resolve_pack_pc,last_branch_resolve_pack_target,
     last_branch_resolve_pack_rob_idx,last_branch_resolve_pack_prediction_valid,last_branch_resolve_pack_branch_type}; // @[CPU_top_with_dpic.scala 30:70]
-  wire [140:0] _front_end_io_i_branch_resolve_pack_T_1 = {back_end_io_o_branch_resolve_pack_valid,
+  wire [138:0] _front_end_io_i_branch_resolve_pack_T_1 = {back_end_io_o_branch_resolve_pack_valid,
     back_end_io_o_branch_resolve_pack_mispred,back_end_io_o_branch_resolve_pack_taken,
     back_end_io_o_branch_resolve_pack_pc,back_end_io_o_branch_resolve_pack_target,
     back_end_io_o_branch_resolve_pack_rob_idx,back_end_io_o_branch_resolve_pack_prediction_valid,
@@ -737,7 +737,7 @@ module Ladder(
       last_branch_resolve_pack_target <= back_end_io_o_branch_resolve_pack_target; // @[CPU_top_with_dpic.scala 28:28]
     end
     if (reset) begin // @[CPU_top_with_dpic.scala 27:41]
-      last_branch_resolve_pack_rob_idx <= 6'h0; // @[CPU_top_with_dpic.scala 27:41]
+      last_branch_resolve_pack_rob_idx <= 4'h0; // @[CPU_top_with_dpic.scala 27:41]
     end else begin
       last_branch_resolve_pack_rob_idx <= back_end_io_o_branch_resolve_pack_rob_idx; // @[CPU_top_with_dpic.scala 28:28]
     end
@@ -799,7 +799,7 @@ initial begin
   _RAND_4 = {2{`RANDOM}};
   last_branch_resolve_pack_target = _RAND_4[63:0];
   _RAND_5 = {1{`RANDOM}};
-  last_branch_resolve_pack_rob_idx = _RAND_5[5:0];
+  last_branch_resolve_pack_rob_idx = _RAND_5[3:0];
   _RAND_6 = {1{`RANDOM}};
   last_branch_resolve_pack_prediction_valid = _RAND_6[0:0];
   _RAND_7 = {1{`RANDOM}};

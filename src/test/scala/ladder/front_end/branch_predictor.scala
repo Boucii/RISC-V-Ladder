@@ -27,7 +27,7 @@ class BPU extends Module {
         val o_branch_predict_pack = Output(new branch_predict_pack())//two insts in a fetch pack shares the same prediction
     })
     //dontTouch(io)
-    def btb_size = 64
+    def btb_size = 16
     def idx_len = log2Ceil(btb_size)
     require(isPow2(btb_size))
     val btb = RegInit(0.U.asTypeOf(Vec(btb_size , new btb_pack())))

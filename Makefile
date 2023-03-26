@@ -20,7 +20,7 @@ LDFLAGS +=-L$(NEMU_HOME)/build/
 LDFLAGS += -lSDL2 
 
 VERILATORFLAGS += -O3 --x-assign fast --x-initial fast --noassert --inline-mult 50000
-VERILATORFLAGS += --threads 3 -Wno-UNOPTTHREADS 
+VERILATORFLAGS += --threads 2 -Wno-UNOPTTHREADS 
 #--threads-dpi none
 #--trace-depth 3 --instr-count-dpi 300
 #VERILATORFLAGS += -Wwarn-WIDTH

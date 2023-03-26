@@ -2,6 +2,8 @@
 test_run_dir/*
 ### XilinxISE template
 # intermediate build files
+*.wave.vcd
+*.vcd
 *.bgn
 *.bit
 *.bld

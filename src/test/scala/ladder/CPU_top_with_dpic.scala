@@ -11,55 +11,62 @@ import chisel3.experimental.BundleLiterals._
 class Ladder extends Module {
   val io = IO(new Bundle {
     //icache io
-    val icache_io = new IcacheIO()
+    //val icache_io = new IcacheIO()
+    //axiport for both icache and dcache, should be connected to a arbiter.
+    //4 now, just used 4 icache and mem
+    val axi_master = new AxiLiteMaster(64,128)
+
     //dcache io
     val dcache_io = new DcacheIO()
     val i_interrupt = Input(Bool())
     //cmt_dbg
     val o_dbg_commit_packs = Output(Vec(2,new valid_uop_pack()))
   })
-  dontTouch(io.icache_io)
+  dontTouch(io.axi_master)
   val front_end = Module(new Front_End())
   val back_end = Module(new Back_End_With_Decode())
+  val icache = Module(new Icache())
   val dpic = Module(new dpic())
 
   //connect front end input
   val last_branch_resolve_pack = RegInit(0.U.asTypeOf(new branch_resolve_pack()))
   last_branch_resolve_pack := back_end.io.o_branch_resolve_pack
   //when backend branch resolve flush, the front end just have to flush one cycle
-  front_end.io.i_branch_resolve_pack := Mux(last_branch_resolve_pack.asUInt === back_end.io.o_branch_resolve_pack.asUInt, 
+  front_end.io.i_branch_resolve_pack := Mux(last_branch_resolve_pack.asUInt === back_end.io.o_branch_resolve_pack.asUInt,
        0.U.asTypeOf(new branch_resolve_pack()), back_end.io.o_branch_resolve_pack)
   front_end.io.i_pc_redirect_valid := back_end.io.o_pc_redirect_valid
   front_end.io.i_pc_redirect_target := back_end.io.o_pc_redirect_target
 
-  front_end.io.icache_io.i_addr_ready := io.icache_io.i_addr_ready
-  front_end.io.icache_io.i_data_valid := io.icache_io.i_data_valid
-  io.icache_io.o_wen := front_end.io.icache_io.o_wen 
-  io.icache_io.o_addr := front_end.io.icache_io.o_addr
-  io.icache_io.o_addr_valid := front_end.io.icache_io.o_addr_valid
-  io.icache_io.o_stall1 := front_end.io.icache_io.o_stall1
-  io.icache_io.o_stall2 := front_end.io.icache_io.o_stall2
-  front_end.io.icache_io.i_data := io.icache_io.i_data
+  front_end.io.icache_io.i_addr_ready := icache.io.cpu_if.i_addr_ready
+  front_end.io.icache_io.i_data_valid := icache.io.cpu_if.i_data_valid
+  icache.io.cpu_if.o_wen := front_end.io.icache_io.o_wen
+  icache.io.cpu_if.o_addr := front_end.io.icache_io.o_addr
+  icache.io.cpu_if.o_addr_valid := front_end.io.icache_io.o_addr_valid
+  icache.io.cpu_if.o_stall1 := front_end.io.icache_io.o_stall1
+  icache.io.cpu_if.o_stall2 := front_end.io.icache_io.o_stall2
+  front_end.io.icache_io.i_data := icache.io.cpu_if.i_data
 
   //dbg usage
-  front_end.io.icache_io.dbg_i_addr2 := io.icache_io.dbg_i_addr2
-  front_end.io.icache_io.dbg_i_addr3 := io.icache_io.dbg_i_addr3
+  front_end.io.icache_io.dbg_i_addr2 := icache.io.cpu_if.dbg_i_addr2
+  front_end.io.icache_io.dbg_i_addr3 := icache.io.cpu_if.dbg_i_addr3
 
+  //connect icache and axi bus
+  io.axi_master :<>= icache.io.mem_master
 
   //connect back end input
   back_end.io.i_fetch_pack <> front_end.io.o_fetch_pack
   back_end.io.i_interrupt := io.i_interrupt
 
-  back_end.io.dcache_io.data_valid  := dpic.io.data_valid//io.dcache_io.data_valid  
-  back_end.io.dcache_io.MdataIn     := dpic.io.MdataIn//io.dcache_io.MdataIn  
-  io.dcache_io.addr_valid          :=back_end.io.dcache_io.addr_valid  
+  back_end.io.dcache_io.data_valid  := dpic.io.data_valid//io.dcache_io.data_valid
+  back_end.io.dcache_io.MdataIn     := dpic.io.MdataIn//io.dcache_io.MdataIn
+  io.dcache_io.addr_valid          :=back_end.io.dcache_io.addr_valid
   io.dcache_io.data_ready          :=back_end.io.dcache_io.data_ready
   back_end.io.dcache_io.addr_ready := dpic.io.addr_ready //io.dcache_io.addr_ready
 
-  io.dcache_io.Mwout              :=back_end.io.dcache_io.Mwout  
-  io.dcache_io.Maddr              :=back_end.io.dcache_io.Maddr  
-  io.dcache_io.Men                :=back_end.io.dcache_io.Men    
-  io.dcache_io.Mlen               :=back_end.io.dcache_io.Mlen   
+  io.dcache_io.Mwout              :=back_end.io.dcache_io.Mwout
+  io.dcache_io.Maddr              :=back_end.io.dcache_io.Maddr
+  io.dcache_io.Men                :=back_end.io.dcache_io.Men
+  io.dcache_io.Mlen               :=back_end.io.dcache_io.Mlen
   io.dcache_io.MdataOut           :=back_end.io.dcache_io.MdataOut
 
   io.o_dbg_commit_packs := back_end.io.o_dbg_commit_packs
@@ -71,8 +78,8 @@ class Ladder extends Module {
   dpic.io.addr_valid := back_end.io.dcache_io.addr_valid
   dpic.io.Mwout := back_end.io.dcache_io.Mwout
   dpic.io.Maddr := back_end.io.dcache_io.Maddr
-  dpic.io.Men     :=back_end.io.dcache_io.Men    
-  dpic.io.Mlen      :=back_end.io.dcache_io.Mlen   
+  dpic.io.Men     :=back_end.io.dcache_io.Men
+  dpic.io.Mlen      :=back_end.io.dcache_io.Mlen
   dpic.io.MdataOut  :=back_end.io.dcache_io.MdataOut
 
   dpic.io.regs0  :=  back_end.io.o_dbg_arch_regs(0)

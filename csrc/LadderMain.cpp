@@ -178,7 +178,10 @@ void dump_gpr() {
   }
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
-		//cout<<"memread "<<hex<<raddr<<endl;
+	//cout<<"memread "<<hex<<raddr<<endl;
+
+
+
   if(mem_done==0){
 	if(raddr==RTC_PORT_BASE){
 		//printf("reading the rtc\n");
@@ -226,6 +229,14 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 			*rdata = vmem[raddr-0xa1000000];
 			return;
     }
+	//instruction fetch
+	//this is for possible inst fetch on a mispredicted path that will
+	//later be flushed, so it's fine.
+	if(raddr<0x80000000||raddr>0x88000000){
+		*rdata = 0;
+		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<addr_if1<<endl;
+		return;
+	}
   *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
   if(ITRACE_EN){
   	cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
@@ -438,21 +449,7 @@ int main(int argc, char** argv, char** env){
       cout<<"\nstart simulating\n";
   }
   dumpwave();
-  //*pc = RESET_VECTOR;
-
-
-  uint32_t addr_if1=0;
-  uint32_t addr_if2=0;
-  uint32_t addr_if3=0;
-  uint64_t data_if1=0;
-  uint64_t data_if2=0;
-  uint64_t data_if3=0;
-
   int first_cycle = 1;
-
-  bool stall1 = (bool)(top->io_icache_io_o_stall1);
-  bool stall2 = (bool)(top->io_icache_io_o_stall2);
-
   cyc_do_not_have_commit =0;
   float IPC=0;
   int commit_inst_count=0;
@@ -464,43 +461,17 @@ int main(int argc, char** argv, char** env){
     if(ITRACE_EN){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
     }
-    //instruction fetch
-	//must be if3->if2->if1
-    addr_if3 = stall2? addr_if3 : addr_if2;
-    addr_if2 = stall1? addr_if2 : addr_if1;
-    addr_if1 = (int)(top->io_icache_io_o_addr);
 
-    uint32_t cur_inst =  0;//(uint32_t)pmem_read(addr_if1);
-    uint32_t cur_inst2 = 0;//(uint32_t)pmem_read(addr_if1+4);
 
-	//this is for possible inst fetch on a mispredicted path that will
-	//later be flushed, so it's fine.
-	if(addr_if1<0x80000000||addr_if1>0x88000000){
-		cur_inst = 0;
-		cur_inst2 = 0;
-		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<addr_if1<<endl;
-	}else{
-    	cur_inst = (uint32_t)pmem_read(addr_if1);
-    	cur_inst2 = (uint32_t)pmem_read(addr_if1+4);
-	}
 
-    data_if3 = stall2? data_if3 : data_if2;
-    data_if2 = stall1? data_if2 : data_if1;
-    data_if1 = (uint64_t)cur_inst+((uint64_t)cur_inst2<<32);
 
-	top->io_icache_io_dbg_i_addr2 = addr_if2;
-	top->io_icache_io_dbg_i_addr3 = addr_if3;
 
-    top->io_icache_io_i_data_valid = (svBit)1;
-    top->io_icache_io_i_data = data_if3;
-    top->io_icache_io_i_addr_ready = (svBit)1;
 
-    //memory read/write
+
+
+
+
     single_cycleup();
-
- 	stall1 = (bool)(top->io_icache_io_o_stall1);
- 	stall2 = (bool)(top->io_icache_io_o_stall2);
-
     single_cycledown();
     
     //check for trap

@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <string>
 #include <dlfcn.h>
+#include <mutex>
 #include "VLadder.h"
 #include "verilated_vcd_c.h"
 #include "verilated_dpi.h"
@@ -16,10 +17,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  -1
-#define DIFFTEST_EN 0
-#define ITRACE_EN 0
-#define GTK_EN 0
+#define GTK_EN_CYC  1
+#define DIFFTEST_EN 1
+#define ITRACE_EN 1
+#define GTK_EN 1
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000
@@ -76,6 +77,8 @@ bool diff_pass=1;
 #define SERIAL_PORT_BASE 	0xa00003f8
 #define KBD_PORT_BASE 		0xa0000060
 #define VGA_CTL_BASE 		0xa0000100
+
+mutex mem_lock;
 
 //----------------Memory Management------------------
 extern uint64_t pmem_read(int addr);
@@ -178,17 +181,18 @@ void dump_gpr() {
   }
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
-	//cout<<"memread "<<hex<<raddr<<endl;
-
-
-
-  if(mem_done==0){
+  mem_lock.lock();
+  cout<<"memread "<<hex<<raddr<<endl;
+  //if(mem_done==0){
+  if(1){
+  cout<<"memread "<<hex<<raddr<<endl;
 	if(raddr==RTC_PORT_BASE){
 		//printf("reading the rtc\n");
 		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)(timeus.tv_sec*1000000+timeus.tv_usec);
 		mem_done=1;
+	mem_lock.unlock();
 		return;
 	}
 	if(raddr==RTC_PORT_BASE+4){
@@ -197,6 +201,7 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)((timeus.tv_sec*1000000+timeus.tv_usec)>>32);
 		mem_done=1;
+	mem_lock.unlock();
 		return;
 	}
     if(raddr == KBD_PORT_BASE){
@@ -205,28 +210,33 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
       	//printf("reading kbd\n");
 		*rdata = key_dequeue();
 		mem_done=1;
+	mem_lock.unlock();
       	return;
     }
 	if(raddr == VGA_CTL_BASE){
 			last_skip_for_mem = 1;
 			*rdata = (SCRN_H+(SCRN_W<<16));
+	mem_lock.unlock();
 			return; 
 	}
 	if(raddr == (VGA_CTL_BASE+2)){
 			last_skip_for_mem = 1;
 			*rdata = (SCRN_H+(SCRN_W<<16))>>16+(*vga_sync<<16);
+	mem_lock.unlock();
 			return; 
 	}
 
 	if(raddr == (VGA_CTL_BASE+4)){
 			last_skip_for_mem = 1;
 			*rdata = *vga_sync;
+	mem_lock.unlock();
 			return;
 	}
 	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+SCRN_W*SCRN_H))){
 		cout<<"memread "<<hex<<raddr<<endl;
       		last_skip_for_mem =1;
 			*rdata = vmem[raddr-0xa1000000];
+	mem_lock.unlock();
 			return;
     }
 	//instruction fetch
@@ -234,7 +244,9 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 	//later be flushed, so it's fine.
 	if(raddr<0x80000000||raddr>0x88000000){
 		*rdata = 0;
-		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<addr_if1<<endl;
+		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<raddr<<endl;
+  		mem_done=1;
+	mem_lock.unlock();
 		return;
 	}
   *rdata=pmem_read((int)raddr);//it should be uint i think , but lets keep it this way and change when fail
@@ -242,18 +254,30 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   	cout<<BOLDCYAN<<hex<<endl<<"memr, raddr is "<<raddr<<endl<<"rdata is "<<*rdata<<RESET<<endl;
   }
   	mem_done=1;
+	mem_lock.unlock();
   }
 }
 extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
-		volatile char mask=wmask;
+  mem_lock.lock();
+  if(waddr<0x80000000){
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+	mem_lock.unlock();
+	return;
+  }
+  volatile char mask=wmask;
   if(ITRACE_EN){
   	cout<<BOLDCYAN<<hex<<endl<<"mem write, waddr is "<<waddr<<endl<<"wdata is "<<wdata<<" mask is"<<(uint8_t)wmask<<RESET<<endl;
   }
-  if(mem_done==0){
+  if(1){
 	  if(waddr==SERIAL_PORT_BASE){
 		char a=(char)wdata;
 	  	cout<<BOLDGREEN<<a<<RESET;
-	        mem_done=1;
+	    mem_done=1;
+		mem_lock.unlock();
 		return;
 	  }
   	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
@@ -279,6 +303,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	        wdata = wdata>>8;
   	    }
 	        mem_done=1;
+		mem_lock.unlock();
   	    return;
   	  }  
   	  if((waddr==(VGA_CTL_BASE+4))){
@@ -290,7 +315,8 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
 				cout<<"!!!!\n";
   	        update_screen();
   	      }
-	        mem_done=1;
+	      mem_done=1;
+		  mem_lock.unlock();
 		  return;
   	  }
 	uint8_t mask=(uint8_t)wmask;
@@ -312,6 +338,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
 	  assert(0);
 	}
 	mem_done=1;
+	mem_lock.unlock();
   }
 }
 //----------------Verilator component----------------
@@ -343,7 +370,10 @@ void single_cycledown() {
 
 void reset(int n) {
 	  top->reset = 1;
-	    while (n -- > 0) single_cycle();
+	    while (n -- > 0){
+			single_cycle();
+			cyc_time++;
+		} 
 	      top->reset = 0;
 }
 //-----------------Log Module------------------------
@@ -422,9 +452,9 @@ int main(int argc, char** argv, char** env){
   svSetScope(scope);
 
   contextp->traceEverOn(true); //打开追踪功能
-  //tfp = new VerilatedVcdC; //初始化VCD对象指针
-  //top->trace(tfp, 0); //
-  //tfp->open("wave.vcd"); //设置输出的文件wave.vcd
+  tfp = new VerilatedVcdC; //初始化VCD对象指针
+  top->trace(tfp, 0); //
+  tfp->open("wave.vcd"); //设置输出的文件wave.vcd
 
 
   //int time=0;
@@ -436,6 +466,7 @@ int main(int argc, char** argv, char** env){
   init_keymap();
   init_screen();
 
+  dumpwave();
   reset(10);
 
   if(ITRACE_EN){
@@ -461,15 +492,6 @@ int main(int argc, char** argv, char** env){
     if(ITRACE_EN){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
     }
-
-
-
-
-
-
-
-
-
 
     single_cycleup();
     single_cycledown();
@@ -553,7 +575,7 @@ end:
   delete top;
 
   delete contextp;
-  //tfp->close();
+  tfp->close();
   delete pc_cmt1;
   delete pc_cmt2;
   delete pc ;

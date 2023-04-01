@@ -37,8 +37,8 @@ genwave:
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	verilator $(VERILATORFLAGS) --cc --exe -j 14  --build --top-module Ladder  -CFLAGS "$(CXXFLAGS)" -LDFLAGS "$(LDFLAGS)" -I./genrtl/ $(VSRCS) $(CSRCS)  --Mdir $(BUILD_DIR)
-	#verilator $(VERILATORFLAGS) --cc --exe -j 14  --build --trace --top-module Ladder  -CFLAGS "$(CXXFLAGS)" -LDFLAGS "$(LDFLAGS)" -I./genrtl/ $(VSRCS) $(CSRCS)  --Mdir $(BUILD_DIR)
+	#verilator $(VERILATORFLAGS) --cc --exe -j 14  --build --top-module Ladder  -CFLAGS "$(CXXFLAGS)" -LDFLAGS "$(LDFLAGS)" -I./genrtl/ $(VSRCS) $(CSRCS)  --Mdir $(BUILD_DIR)
+	verilator $(VERILATORFLAGS) --cc --exe -j 14  --build --trace --top-module Ladder  -CFLAGS "$(CXXFLAGS)" -LDFLAGS "$(LDFLAGS)" -I./genrtl/ $(VSRCS) $(CSRCS)  --Mdir $(BUILD_DIR)
 
 wave:
 	@echo $(IMAGE)

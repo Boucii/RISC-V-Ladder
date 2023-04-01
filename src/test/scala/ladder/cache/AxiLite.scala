@@ -13,7 +13,7 @@ object AxiLiteAddr {
 }
 
 class AxiLiteWriteData(val dataWidth: Int) extends Bundle {
-  require(dataWidth == 32 || dataWidth == 64, "AxiLite `dataWidth` must be 32 or 64")
+  //require(dataWidth == 32 || dataWidth == 64, "AxiLite `dataWidth` must be 32 or 64")
   val data = UInt(dataWidth.W)
   val strb = UInt((dataWidth / 8).W)
 }
@@ -23,7 +23,7 @@ object AxiLiteWriteData {
 }
 
 class AxiLiteReadData(val dataWidth: Int) extends Bundle {
-  require(dataWidth == 32 || dataWidth == 64, "AxiLite `dataWidth` must be 32 or 64")
+  //require(dataWidth == 32 || dataWidth == 64, "AxiLite `dataWidth` must be 32 or 64")
   val data = UInt(dataWidth.W)
   val resp = UInt(2.W)
 }

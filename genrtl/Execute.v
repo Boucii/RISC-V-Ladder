@@ -129,7 +129,6 @@ module Execute(
   output [1:0]  io_o_ex_res_packs_1_uop_mem_type,
   input  [3:0]  io_i_ROB_first_entry,
   input         io_dcache_io_data_valid,
-  output        io_dcache_io_addr_valid,
   input         io_dcache_io_addr_ready,
   output        io_dcache_io_Mwout,
   output [63:0] io_dcache_io_Maddr,
@@ -2152,7 +2151,6 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_12_branch_type; // @[Mux.scala 101:16]
   assign io_o_ex_res_packs_1_uop_mem_type = _alu1_io_i_select_to_commit_T_1 ? alu1_io_o_ex_res_pack_uop_mem_type :
     _io_o_ex_res_packs_1_uop_T_12_mem_type; // @[Mux.scala 101:16]
-  assign io_dcache_io_addr_valid = func_units_3_io_dcache_io_addr_valid; // @[execute.scala 68:38]
   assign io_dcache_io_Mwout = func_units_3_io_dcache_io_Mwout; // @[execute.scala 72:33]
   assign io_dcache_io_Maddr = func_units_3_io_dcache_io_Maddr; // @[execute.scala 73:33]
   assign io_dcache_io_Men = func_units_3_io_dcache_io_Men; // @[execute.scala 74:33]

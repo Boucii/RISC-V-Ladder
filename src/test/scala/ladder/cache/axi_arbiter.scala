@@ -3,7 +3,7 @@ package Ladder
 import chisel3._
 import chisel3.util._
 
-class Axi4Lite_Arbiter extends Module {
+class AXI4Lite_Arbiter extends Module {
   val io = IO(new Bundle {
     val in1 = Flipped(new AxiLiteMaster(64,128))
     val in2 = Flipped(new AxiLiteMaster(64,128))

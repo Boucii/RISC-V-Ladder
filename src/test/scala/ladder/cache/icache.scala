@@ -23,7 +23,7 @@ class Icache extends Module{
 //tag: 53 bits, index: 7 bits, offset: 4 bits
 val cpu_if1 = RegInit((0.U).asTypeOf(new IcacheIOreg()))
 val cpu_if2 = RegInit((0.U).asTypeOf(new IcacheIOreg()))
-val fetch_res_buf = RegInit(0.U(128.W))
+//val fetch_res_buf = RegInit(0.U(128.W))
 //icache components-------------------------------------
 val tags0 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
 val tags1 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
@@ -48,6 +48,8 @@ when(io.cpu_if.o_stall1){
     cpu_if1 := io.cpu_if
 }
 cpu_if2 := Mux(!io.cpu_if.o_stall2,cpu_if1,cpu_if2)
+/*
+fetch_res_buf := Mux(state===s_bus,io.mem_master.readData.bits.data,fetch_res_buf)
 fetch_res_buf := MuxCase(fetch_res_buf, Seq(
     //(!io.cpu_if.o_stall2) -> MuxCase(fetch_res_buf,Seq(
         (state === s_idle) -> MuxCase(0.U,Seq(
@@ -57,7 +59,10 @@ fetch_res_buf := MuxCase(fetch_res_buf, Seq(
         (state === s_bus) -> io.mem_master.readData.bits.data
     )
 )
-io.cpu_if.i_data := Mux(!cpu_if2.o_addr(3), fetch_res_buf(63,0),fetch_res_buf(127,64))
+*/
+val dout = Mux(hit_bank(0),data_array(0).io.o_rdata,data_array(1).io.o_rdata)
+val index2 = Wire(UInt(7.W))
+io.cpu_if.i_data := Mux(!cpu_if2.o_addr(3), dout(63,0),dout(127,64))
 io.cpu_if.i_data_valid := (state =/= s_bus)
 io.cpu_if.i_addr_ready := (state =/= s_bus)
 
@@ -68,22 +73,30 @@ hit_bank(0) := (valid0(index) & (tags0(index) === tag))
 hit_bank(1) := (valid1(index) & (tags1(index) === tag))
 
 hit := hit_bank(0) || hit_bank(1)
+/*
+victim := MuxCase(0.U,Seq(
+    (valid0(index2).asBool)    -> 0.U,
+    (!valid0(index2).asBool && valid1(index2).asBool)    -> 1.U ,
+    (!valid0(index2).asBool && !valid1(index2).asBool)    -> 0.U
+  )
+)*/
 victim := ~index(6)
+index2 := cpu_if2.o_addr(10,4)
 //connect data array
 for(i <- 0 to 1){
     data_array(i).io.i_ren := true.B
     data_array(i).io.i_wen := (next_state === s_idle) && (state === s_bus) && (i.U===victim)
     data_array(i).io.i_wstrb := 0xffff.U
-    data_array(i).io.i_addr := index
+    data_array(i).io.i_addr := Mux(state === s_bus,index2,index)
     data_array(i).io.i_wdata := io.mem_master.readData.bits.data
 }
 when((next_state === s_idle) && (state === s_bus) && (victim === 0.U)){
-    valid0(index) := true.B
-    tags0(index) := cpu_if1.o_addr(63,11)
+    valid0(index2) := true.B
+    tags0(index2) := cpu_if2.o_addr(63,11)
 }
 when((next_state === s_idle) && (state === s_bus) && (victim === 1.U)){
-    valid1(index) := true.B
-    tags1(index) := cpu_if1.o_addr(63,11)
+    valid1(index2) := true.B
+    tags1(index2) := cpu_if2.o_addr(63,11)
 }
 //state machine-----------------------------------------
 state := next_state
@@ -96,7 +109,7 @@ next_state := MuxCase(state,Seq(
 
 //axi control signals
 io.mem_master.readAddr.valid := (state === s_bus)
-io.mem_master.readAddr.bits.addr := cpu_if1.o_addr
+io.mem_master.readAddr.bits.addr := Cat(cpu_if2.o_addr(63,4),0.U(4.W))
 io.mem_master.readData.ready := (state === s_bus)
 
 io.mem_master.writeResp.ready := 0.U

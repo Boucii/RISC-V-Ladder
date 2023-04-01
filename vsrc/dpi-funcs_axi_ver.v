@@ -2,10 +2,10 @@ import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
 import "DPI-C" function void pmem_read_dpi(input longint raddr, output longint rdata);
 import "DPI-C" function void pmem_write_dpi(input longint waddr, input longint wdata, input byte wmask);
 
-module automatic dpic
+module automatic dpic_axi_ver
 (
     input wire clk,
-    input wire rst;
+    input wire rst,
     input wire  stop,
     
     //regfile dpi
@@ -123,6 +123,9 @@ initial set_gpr_ptr(regs);  // rf为通用寄存器的二维数组变量
 //we are setting 3 cycles of mem delay
   reg [63:0] mem_bufl;
   reg [63:0] mem_bufh;
+  reg [63:0] mem_waddr_buf;
+  reg [127:0] mem_wdata_buf;
+  reg [15:0] mem_strb_buf;
 
   reg[2:0] state;//idle,readaddr,writeaddr,writedata,
   always @(posedge clk) begin
@@ -136,7 +139,7 @@ initial set_gpr_ptr(regs);  // rf为通用寄存器的二维数组变量
             if(axi_readAddr_valid) begin
               state <= 1;
             end
-            else if(axi_readData_ready) begin
+            else if(axi_writeAddr_valid) begin
               state <=2;
             end else begin
               state <=0;
@@ -149,41 +152,53 @@ initial set_gpr_ptr(regs);  // rf为通用寄存器的二维数组变量
               state <=1;
             end
         end
-        3'b2:begin
+        3'h2:begin
             if(axi_writeData_valid) begin
               state <=3;
             end else begin
               state <=2;
             end
         end
-        3'b3: begin
+        3'h3: begin
           if(axi_writeResp_ready) begin
               state<=0;
             end else begin
               state<=3;
             end
         end
+		default: begin
+			  state <= state;
+		end
       endcase
   end
   end
 
-  assign  output wire        axi_readAddr_ready  = state == 0? 1, 0;
-  assign  output wire        axi_readData_valid  = state == 1? 1, 0;
-  assign  output wire[127:0] axi_readData_bits_data = state == 1? (mem_bufh,mem_bufl), 0;
-  assign  output wire[1:0]   axi_readData_bits_resp = state == 0;
-  assign  output wire        axi_writeAddr_ready = state == 0? 1, 0;
-  assign  output wire        axi_writeData_ready = state == 2? 1, 0;
-  assign  output wire        axi_writeResp_valid = state == 3? 1, 0;
-  assign  output wire[1:0]   axi_writeResp_bits  = state == 0;
+  assign  axi_readAddr_ready  = state == 0? 1: 0;
+  assign  axi_readData_valid  = state == 1? 1: 0;
+  assign  axi_readData_bits_data = state == 1? {mem_bufh,mem_bufl}: 0;
+  assign  axi_readData_bits_resp = 2'b0;
+  assign  axi_writeAddr_ready = state == 0? 1: 0;
+  assign  axi_writeData_ready = state == 2? 1: 0;
+  assign  axi_writeResp_valid = state == 3? 1: 0;
+  assign  axi_writeResp_bits  = 2'b0;
 
   always @(posedge clk) begin
-    if(state == 1) begin
-      pmem_read_dpi(Maddr, mem_bufl);
-      pmem_read_dpi(Maddr+8, mem_bufh);
+	  if(state == 0 && axi_writeAddr_valid) begin
+		   mem_waddr_buf <= axi_writeAddr_bits_addr;
+	  end
+	  if(state ==2 && axi_writeData_valid)begin
+		   mem_wdata_buf <= axi_writeData_bits_data;
+	  end
+  end
+
+  always @(posedge clk) begin
+    if(state == 0 && axi_readAddr_valid) begin
+      pmem_read_dpi(axi_readAddr_bits_addr, mem_bufl);
+      pmem_read_dpi((axi_readAddr_bits_addr+8), mem_bufh);
     end
     if(state == 3) begin
-      pmem_write_dpi(Maddr, axi_writeData_bits_data[63:0],axi_writeData_bits_strb[7:0]);
-      pmem_write_dpi(Maddr+8, axi_writeData_bits_data[127:64],axi_writeData_bits_strb[15:8]);
+      pmem_write_dpi(mem_waddr_buf, mem_wdata_buf[63:0],axi_writeData_bits_strb[7:0]);
+      pmem_write_dpi(mem_waddr_buf+8, mem_wdata_buf[127:64],axi_writeData_bits_strb[15:8]);
     end
     end
 endmodule

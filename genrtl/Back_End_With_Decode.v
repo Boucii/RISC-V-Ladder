@@ -25,7 +25,6 @@ module Back_End_With_Decode(
   output        io_o_pc_redirect_valid,
   output [63:0] io_o_pc_redirect_target,
   input         io_dcache_io_data_valid,
-  output        io_dcache_io_addr_valid,
   input         io_dcache_io_addr_ready,
   output        io_dcache_io_Mwout,
   output [63:0] io_dcache_io_Maddr,
@@ -950,7 +949,6 @@ module Back_End_With_Decode(
   wire [1:0] execute_io_o_ex_res_packs_1_uop_mem_type; // @[backend_with_decode.scala 45:24]
   wire [3:0] execute_io_i_ROB_first_entry; // @[backend_with_decode.scala 45:24]
   wire  execute_io_dcache_io_data_valid; // @[backend_with_decode.scala 45:24]
-  wire  execute_io_dcache_io_addr_valid; // @[backend_with_decode.scala 45:24]
   wire  execute_io_dcache_io_addr_ready; // @[backend_with_decode.scala 45:24]
   wire  execute_io_dcache_io_Mwout; // @[backend_with_decode.scala 45:24]
   wire [63:0] execute_io_dcache_io_Maddr; // @[backend_with_decode.scala 45:24]
@@ -2426,7 +2424,6 @@ module Back_End_With_Decode(
     .io_o_ex_res_packs_1_uop_mem_type(execute_io_o_ex_res_packs_1_uop_mem_type),
     .io_i_ROB_first_entry(execute_io_i_ROB_first_entry),
     .io_dcache_io_data_valid(execute_io_dcache_io_data_valid),
-    .io_dcache_io_addr_valid(execute_io_dcache_io_addr_valid),
     .io_dcache_io_addr_ready(execute_io_dcache_io_addr_ready),
     .io_dcache_io_Mwout(execute_io_dcache_io_Mwout),
     .io_dcache_io_Maddr(execute_io_dcache_io_Maddr),
@@ -3035,7 +3032,6 @@ module Back_End_With_Decode(
   assign io_o_stall = _rename_io_i_stall_T | rename_io_o_free_list_empty; // @[backend_with_decode.scala 156:66]
   assign io_o_pc_redirect_valid = csr_io_o_pc_redirect_valid; // @[backend_with_decode.scala 157:28]
   assign io_o_pc_redirect_target = csr_io_o_pc_redirect_target; // @[backend_with_decode.scala 158:29]
-  assign io_dcache_io_addr_valid = execute_io_dcache_io_addr_valid; // @[backend_with_decode.scala 112:38]
   assign io_dcache_io_Mwout = execute_io_dcache_io_Mwout; // @[backend_with_decode.scala 116:37]
   assign io_dcache_io_Maddr = execute_io_dcache_io_Maddr; // @[backend_with_decode.scala 117:37]
   assign io_dcache_io_Men = execute_io_dcache_io_Men; // @[backend_with_decode.scala 118:37]

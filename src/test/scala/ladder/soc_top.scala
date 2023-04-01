@@ -22,6 +22,7 @@ class Ladder extends Module {
   val dcache = Module(new Dcache())
   val axi_arbiter = Module(new AXI4Lite_Arbiter())
   val dpic = Module(new dpic_axi_ver())
+  dontTouch(icache.io)
 
   //connect front end input
   val last_branch_resolve_pack = RegInit(0.U.asTypeOf(new branch_resolve_pack()))
@@ -54,15 +55,15 @@ class Ladder extends Module {
 
   //back_end.io.dcache_io.data_valid  := dpic.io.data_valid//io.dcache_io.data_valid
   //back_end.io.dcache_io.MdataIn     := dpic.io.MdataIn//io.dcache_io.MdataIn
-  io.dcache_io.addr_valid          :=back_end.io.dcache_io.addr_valid
-  io.dcache_io.data_ready          :=back_end.io.dcache_io.data_ready
+  //io.dcache_io.addr_valid          :=back_end.io.dcache_io.addr_valid
+  //io.dcache_io.data_ready          :=back_end.io.dcache_io.data_ready
   //back_end.io.dcache_io.addr_ready := dpic.io.addr_ready //io.dcache_io.addr_ready
 
-  io.dcache_io.Mwout              :=back_end.io.dcache_io.Mwout
-  io.dcache_io.Maddr              :=back_end.io.dcache_io.Maddr
-  io.dcache_io.Men                :=back_end.io.dcache_io.Men
-  io.dcache_io.Mlen               :=back_end.io.dcache_io.Mlen
-  io.dcache_io.MdataOut           :=back_end.io.dcache_io.MdataOut
+  //io.dcache_io.Mwout              :=back_end.io.dcache_io.Mwout
+  //io.dcache_io.Maddr              :=back_end.io.dcache_io.Maddr
+  //io.dcache_io.Men                :=back_end.io.dcache_io.Men
+  //io.dcache_io.Mlen               :=back_end.io.dcache_io.Mlen
+  //io.dcache_io.MdataOut           :=back_end.io.dcache_io.MdataOut
 
   io.o_dbg_commit_packs := back_end.io.o_dbg_commit_packs
 
@@ -74,7 +75,7 @@ class Ladder extends Module {
   axi_arbiter.io.in2 <> dcache.io.mem_master
   
   //this is useless because we r using dpi-c
-  axi_arbiter.io.out :<>= io.axi_master
+  axi_arbiter.io.out <> io.axi_master
 
   //connect dpi-c ports
   dpic.io.clk := clock
@@ -82,26 +83,26 @@ class Ladder extends Module {
   dpic.io.stop := back_end.io.o_dbg_stop
 
   //output
-  axi_arbiter.io.mem_master.axi_readAddr_ready     :=  dpic.io.axi_readAddr_ready    
-  axi_arbiter.io.mem_master.axi_readData_valid     :=  dpic.io.axi_readData_valid    
-  axi_arbiter.io.mem_master.axi_readData_bits_data :=  dpic.io.axi_readData_bits_data
-  axi_arbiter.io.mem_master.axi_readData_bits_resp :=  dpic.io.axi_readData_bits_resp
-  axi_arbiter.io.mem_master.axi_writeAddr_ready    :=  dpic.io.axi_writeAddr_ready   
-  axi_arbiter.io.mem_master.axi_writeData_ready    :=  dpic.io.axi_writeData_ready   
-  axi_arbiter.io.mem_master.axi_writeResp_valid    :=  dpic.io.axi_writeResp_valid   
-  axi_arbiter.io.mem_master.axi_writeResp_bits     :=  dpic.io.axi_writeResp_bits    
+  axi_arbiter.io.out.readAddr.ready     :=  dpic.io.axi_readAddr_ready    
+  axi_arbiter.io.out.readData.valid     :=  dpic.io.axi_readData_valid    
+  axi_arbiter.io.out.readData.bits.data :=  dpic.io.axi_readData_bits_data
+  axi_arbiter.io.out.readData.bits.resp :=  dpic.io.axi_readData_bits_resp
+  axi_arbiter.io.out.writeAddr.ready    :=  dpic.io.axi_writeAddr_ready   
+  axi_arbiter.io.out.writeData.ready    :=  dpic.io.axi_writeData_ready   
+  axi_arbiter.io.out.writeResp.valid    :=  dpic.io.axi_writeResp_valid   
+  axi_arbiter.io.out.writeResp.bits     :=  dpic.io.axi_writeResp_bits    
   //input
-  dpic.io.axi_readAddr_valid       := axi_arbiter.io.mem_master.axi_readAddr_valid      
-  dpic.io.axi_readAddr_bits_addr   := axi_arbiter.io.mem_master.axi_readAddr_bits_addr  
-  dpic.io.axi_readAddr_bits_prot   := axi_arbiter.io.mem_master.axi_readAddr_bits_prot  
-  dpic.io.axi_readData_ready       := axi_arbiter.io.mem_master.axi_readData_ready      
-  dpic.io.axi_writeAddr_valid      := axi_arbiter.io.mem_master.axi_writeAddr_valid     
-  dpic.io.axi_writeAddr_bits_addr  := axi_arbiter.io.mem_master.axi_writeAddr_bits_addr 
-  dpic.io.axi_writeAddr_bits_prot  := axi_arbiter.io.mem_master.axi_writeAddr_bits_prot 
-  dpic.io.axi_writeData_valid      := axi_arbiter.io.mem_master.axi_writeData_valid     
-  dpic.io.axi_writeData_bits_data  := axi_arbiter.io.mem_master.axi_writeData_bits_data 
-  dpic.io.axi_writeData_bits_strb  := axi_arbiter.io.mem_master.axi_writeData_bits_strb 
-  dpic.io.axi_writeResp_ready      := axi_arbiter.io.mem_master.axi_writeResp_ready     
+  dpic.io.axi_readAddr_valid       := axi_arbiter.io.out.readAddr.valid      
+  dpic.io.axi_readAddr_bits_addr   := axi_arbiter.io.out.readAddr.bits.addr  
+  dpic.io.axi_readAddr_bits_prot   := axi_arbiter.io.out.readAddr.bits.prot  
+  dpic.io.axi_readData_ready       := axi_arbiter.io.out.readData.ready      
+  dpic.io.axi_writeAddr_valid      := axi_arbiter.io.out.writeAddr.valid     
+  dpic.io.axi_writeAddr_bits_addr  := axi_arbiter.io.out.writeAddr.bits.addr 
+  dpic.io.axi_writeAddr_bits_prot  := axi_arbiter.io.out.writeAddr.bits.prot 
+  dpic.io.axi_writeData_valid      := axi_arbiter.io.out.writeData.valid     
+  dpic.io.axi_writeData_bits_data  := axi_arbiter.io.out.writeData.bits.data 
+  dpic.io.axi_writeData_bits_strb  := axi_arbiter.io.out.writeData.bits.strb 
+  dpic.io.axi_writeResp_ready      := axi_arbiter.io.out.writeResp.ready     
 
   //dpic.io.data_ready := back_end.io.dcache_io.data_ready
   //dpic.io.addr_valid := back_end.io.dcache_io.addr_valid

@@ -7,19 +7,6 @@ import chisel3.util._
 import chisel3.util.experimental.decode._
 import chisel3.experimental.BundleLiterals._
 
-class DcacheIO extends Bundle{
-    val data_valid = Input(Bool())
-    val data_ready = Output(Bool())
-    val addr_valid = Output(Bool())
-    val addr_ready = Input(Bool())
-
-    val Mwout=Output((UInt(1.W)))
-    val Maddr=Output(UInt(64.W))
-    val Men=Output(Bool())
-    val Mlen=Output(UInt(32.W))
-    val MdataIn=Input(UInt(64.W))
-    val MdataOut=Output(UInt(64.W))
-}
 class DcacheIOreg extends Bundle{
     val data_ready = Bool()
     val addr_valid = Bool()
@@ -35,10 +22,12 @@ class Dcache extends Module{
         val mem_master = new AxiLiteMaster(64,128)
     })
 //uncache addrs
-val RTC_PORT_BASE 	=	0xa0000048.U
-val SERIAL_PORT_BASE= 	0xa00003f8.U
-val KBD_PORT_BASE 	=	0xa0000060.U 
-val VGA_CTL_BASE 	=   0xa0000100.U
+val RTC_PORT_BASE 	=	0xa0000048L.U(64.W)
+val SERIAL_PORT_BASE= 	0xa00003f8L.U(64.W)
+val KBD_PORT_BASE 	=	0xa0000060L.U(64.W) 
+val VGA_CTL_BASE 	=   0xa0000100L.U(64.W)
+val VGA_MEM_BLK_S     =   0xa1000000L.U(64.W)
+val VGA_MEM_BLK_E     =   0xa1000000L.U(64.W) + (400.U * 300.U)
 //dcache-----------------------------------------------
 //2 way associate cache, 128 sets, 16 bytes per line
 //4KB total, 64bits of paddr
@@ -100,7 +89,8 @@ uncache := Mux(
     (cpu_mem.Maddr === VGA_CTL_BASE)||
     (cpu_mem.Maddr === VGA_CTL_BASE+2.U)||
     (cpu_mem.Maddr === VGA_CTL_BASE+4.U)||
-    ((cpu_mem.Maddr >= 0xa1000000.U)&&(cpu_mem.Maddr <(400.U*300.U)))
+    ((cpu_mem.Maddr >= VGA_MEM_BLK_S)&&(cpu_mem.Maddr < VGA_MEM_BLK_E)),
+    true.B,false.B
 )
 //connect data array
 val strb = Wire(UInt(16.W))
@@ -166,7 +156,7 @@ next_write_state := MuxCase(s_widle,Seq(
 ))
 //axi control signals
 io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men)
-io.mem_master.readAddr.bits.addr := cpu_mem.Maddr
+io.mem_master.readAddr.bits.addr := Cat(cpu_mem.Maddr(63,4),0.U(4.W))
 io.mem_master.readData.ready := (state === s_bus)
 
 io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_addr)

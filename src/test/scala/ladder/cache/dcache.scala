@@ -33,6 +33,10 @@ val VGA_MEM_BLK_E     =   0xa1000000L.U(64.W) + (400.U * 300.U)
 //4KB total, 64bits of paddr
 //tag: 53 bits, index: 7 bits, offset: 4 bits
 val cpu_mem = RegInit((0.U).asTypeOf(new DcacheIOreg()))
+val last_req = RegInit((0.U).asTypeOf(new DcacheIOreg()))
+last_req := cpu_mem
+val new_req = !((last_req.Mwout===cpu_mem.Mwout)&&(last_req.Men===cpu_mem.Men)&&(last_req.Maddr===cpu_mem.Maddr)&&
+    (last_req.Mlen===cpu_mem.Mlen)&&(last_req.MdataOut===cpu_mem.MdataOut))
 //icache components-------------------------------------
 val tags0 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
 val tags1 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
@@ -80,7 +84,7 @@ io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_bus) -> Mux(cpu_mem.Maddr(3),io.mem_master.readData.bits.data(127,64),io.mem_master.readData.bits.data(63,0))
     )
 )*/
-io.cpu_mem.data_valid := (next_state =/= s_bus)
+io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)
 io.cpu_mem.addr_ready := state === s_idle 
 
 tag := cpu_mem.Maddr(63,11)
@@ -149,7 +153,8 @@ val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
 state := next_state
 next_state := MuxCase(state,Seq(
     (state === s_reset)                                                         -> s_idle,
-    (state === s_idle && (!hit) && cpu_mem.Men)                                 -> s_bus, 
+    //in a write mem, but the write in lsu is not immediately taken away,if we do not include this new req, the state will automatically go to sbus again.
+    (state === s_idle && (!hit) && cpu_mem.Men && new_req)                      -> s_bus, 
     (state === s_bus && write_done)                                             -> s_idle,
     (state === s_bus && read_done && !(should_write_back))                      -> s_idle,
     (state === s_bus && read_done && (should_write_back))                       -> s_bus

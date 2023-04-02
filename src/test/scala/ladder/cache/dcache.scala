@@ -58,17 +58,30 @@ should_write_back := (state === s_bus && io.mem_master.readData.ready && !uncach
     Mux(victim.asBool(), valid1(index).asBool(), valid0(index).asBool()) && Mux(victim.asBool, dirty1(index), dirty0(index)))
 
 //assign the parts
-cpu_mem := io.cpu_mem
+when(next_state===s_idle){
+  cpu_mem := io.cpu_mem
+}
+val read_data = Wire(UInt(128.W))
+read_data := MuxCase(0.U,Seq(
+    (state === s_idle) -> MuxCase(0.U,Seq(
+        hit_bank(0) -> data_array(0).io.o_rdata,
+        hit_bank(1) -> data_array(1).io.o_rdata
+    )),
+    (state === s_bus) -> io.mem_master.readData.bits.data
+    )
+)
+io.cpu_mem.MdataIn := read_data>>(cpu_mem.Maddr(3,0)<<3)
+/*
 io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_idle) -> MuxCase(0.U,Seq(
         hit_bank(0) -> data_array(0).io.o_rdata,
         hit_bank(1) -> data_array(1).io.o_rdata
     )),
-    (state === s_bus) ->io.mem_master.readData.bits.data
+    (state === s_bus) -> Mux(cpu_mem.Maddr(3),io.mem_master.readData.bits.data(127,64),io.mem_master.readData.bits.data(63,0))
     )
-)
-io.cpu_mem.data_valid := (state =/= s_bus)
-io.cpu_mem.addr_ready := (state === s_idle)
+)*/
+io.cpu_mem.data_valid := (next_state =/= s_bus)
+io.cpu_mem.addr_ready := state === s_idle 
 
 tag := cpu_mem.Maddr(63,11)
 index := cpu_mem.Maddr(10,4)
@@ -102,12 +115,16 @@ strb := MuxCase(0.U,Seq(
     (cpu_mem.Mlen === 8.U )-> 0x00ff.U,
     (cpu_mem.Mlen === 16.U) -> 0xffff.U
 ))
+val strb_aligned = Wire(UInt(16.W))
+val smt = Wire(UInt(4.W))
+smt := cpu_mem.Maddr(3,0)
+    strb_aligned := (strb << smt)
 for(i <- 0 to 1){
     data_array(i).io.i_ren := true.B
-    data_array(i).io.i_wen := cpu_mem.Mwout.asBool && hit
-    data_array(i).io.i_wstrb := Mux(hit,strb,0xffff.U)
+    data_array(i).io.i_wen := ((cpu_mem.Mwout.asBool && cpu_mem.Men && hit)||(state===s_bus && next_state===s_idle)) && (i.U===victim)
+    data_array(i).io.i_wstrb := Mux(hit,strb_aligned,0xffff.U)
     data_array(i).io.i_addr := index
-    data_array(i).io.i_wdata := Mux(hit,cpu_mem.MdataOut,io.mem_master.readData.bits.data)
+    data_array(i).io.i_wdata := Mux(hit,(cpu_mem.MdataOut<<(cpu_mem.Maddr(3,0)<<3)),io.mem_master.readData.bits.data)
 }
 //when there's a read that didnot hit, read mem and replace victim
 when((next_state === s_idle) && (state === s_bus) && (victim === 0.U) && (!cpu_mem.Mwout)){
@@ -132,10 +149,10 @@ val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
 state := next_state
 next_state := MuxCase(state,Seq(
     (state === s_reset)                                                         -> s_idle,
-    (state === s_idle && (!hit))                                                -> s_bus, 
-    (state === s_bus && write_done) -> s_idle,
-    (state === s_bus && read_done && !(should_write_back)) -> s_idle,
-    (state === s_bus && read_done && (should_write_back))  -> s_bus
+    (state === s_idle && (!hit) && cpu_mem.Men)                                 -> s_bus, 
+    (state === s_bus && write_done)                                             -> s_idle,
+    (state === s_bus && read_done && !(should_write_back))                      -> s_idle,
+    (state === s_bus && read_done && (should_write_back))                       -> s_bus
 ))
 //state machine for memwrite---------------------------
 //using not-write allocate, and write back policies,
@@ -159,7 +176,7 @@ io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_me
 io.mem_master.readAddr.bits.addr := Cat(cpu_mem.Maddr(63,4),0.U(4.W))
 io.mem_master.readData.ready := (state === s_bus)
 
-io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_addr)
+io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
 io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(tags0(index),0.U(11.W)),Cat(tags1(index),0.U(11.W))),cpu_mem.Maddr)
 io.mem_master.writeData.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
 io.mem_master.writeData.bits.data := Mux(!cpu_mem.Mwout, Mux(victim.asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,cpu_mem.MdataOut)

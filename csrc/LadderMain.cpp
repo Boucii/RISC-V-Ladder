@@ -150,7 +150,7 @@ void diff_check_regs(){
 	for(int i=0;i<32;i++){
 	  if(ref_gpr[i]!=cpu_gpr[i]){
 	      cout<<hex<<"\nError:Difftest failed at pc=0x"<< *pc<<"	"<<dec<<"in reg["<<i<<"]\n";
-	      cout<<hex<<"cpu_gpr="<<GREEN<<cpu_gpr[i]<<RESET<<"	and ref ="<<BOLDGREEN<<ref_gpr[i]<<dec<<RESET<<endl;
+	      cout<<hex<<"cpu_gpr=0x"<<GREEN<<cpu_gpr[i]<<RESET<<"	and ref =0x"<<BOLDGREEN<<ref_gpr[i]<<dec<<RESET<<endl;
 	      diff_pass=0;
 	      return;
 	  }
@@ -321,16 +321,21 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  }
 	uint8_t mask=(uint8_t)wmask;
 	if(mask==0){
-
+	  cout<<"mask=0"<<endl;
 	}else if(mask==1){
 	  pmem_write(wdata,waddr,1);
+	  cout<<"mask=1"<<endl;
 	}else if(mask==3){
 	  pmem_write(wdata,waddr,2);
+	  cout<<"mask=2"<<endl;
 	}else if(mask==7){
+	  cout<<"mask=7"<<endl;
 	  pmem_write(wdata,waddr,3);
-        }else if(mask==15){
-          pmem_write(wdata,waddr,4);
+    }else if(mask==15){
+	  cout<<"mask=15"<<endl;
+      pmem_write(wdata,waddr,4);
 	}else if(mask==255){
+	cout<<"mask=255"<<endl;
 	  pmem_write(wdata,waddr,8);
 	}
 	else{

@@ -29,16 +29,57 @@ class AXI4Lite_Arbiter extends Module {
     io.in1 <> DontCare
     io.in2 <> DontCare
     io.out <> DontCare
+    io.in1.readAddr.ready := 0.U
+    io.in1.readData.valid := 0.U
+    io.in1.writeAddr.ready := 0.U
+    io.in1.writeData.ready := 0.U
+    io.in1.writeResp.valid := 0.U
+    io.in2.readAddr.ready := 0.U
+    io.in2.readData.valid := 0.U
+    io.in2.writeAddr.ready := 0.U
+    io.in2.writeData.ready := 0.U
+    io.in2.writeResp.valid := 0.U
+    io.out.readAddr.valid := 0.U
+    io.out.readData.ready := 0.U
+    io.out.writeAddr.valid := 0.U
+    io.out.writeData.valid := 0.U
+    io.out.writeResp.ready := 0.U
   }.elsewhen(state === s_in1){
     io.in1 <> io.out
     io.in2 <> DontCare
+    io.in2.readAddr.ready := 0.U
+    io.in2.readData.valid := 0.U
+    io.in2.writeAddr.ready := 0.U
+    io.in2.writeData.ready := 0.U
+    io.in2.writeResp.valid := 0.U
+
   }.elsewhen(state === s_in2){
     io.in2 <> io.out
     io.in1 <> DontCare
+    io.in1.readAddr.ready := 0.U
+    io.in1.readData.valid := 0.U
+    io.in1.writeAddr.ready := 0.U
+    io.in1.writeData.ready := 0.U
+    io.in1.writeResp.valid := 0.U
   }.otherwise{
     io.in1 <> DontCare
     io.in2 <> DontCare
     io.out <> DontCare
+    io.in1.readAddr.ready := 0.U
+    io.in1.readData.valid := 0.U
+    io.in1.writeAddr.ready := 0.U
+    io.in1.writeData.ready := 0.U
+    io.in1.writeResp.valid := 0.U
+    io.in2.readAddr.ready := 0.U
+    io.in2.readData.valid := 0.U
+    io.in2.writeAddr.ready := 0.U
+    io.in2.writeData.ready := 0.U
+    io.in2.writeResp.valid := 0.U
+    io.out.readAddr.valid := 0.U
+    io.out.readData.ready := 0.U
+    io.out.writeAddr.valid := 0.U
+    io.out.writeData.valid := 0.U
+    io.out.writeResp.ready := 0.U
   }
 }
 /*

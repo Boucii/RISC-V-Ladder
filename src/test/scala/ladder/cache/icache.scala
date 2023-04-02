@@ -35,6 +35,7 @@ val tag    = Wire(UInt(53.W))
 val index  = Wire(UInt(7.W))
 val offset = Wire(UInt(4.W))
 val hit_bank    = Wire(Vec(2,Bool()))
+val hit_bank2    = Wire(Vec(2,Bool()))
 val hit         = Wire(Bool())
 val victim = Wire(UInt(1.W))
 //-----------------------------------------------
@@ -60,9 +61,14 @@ fetch_res_buf := MuxCase(fetch_res_buf, Seq(
     )
 )
 */
-val dout = Mux(hit_bank(0),data_array(0).io.o_rdata,data_array(1).io.o_rdata)
+val last_stall = RegInit(false.B)
+val out_reg = RegInit(0.U(128.W))
+val dout = Mux(hit_bank2(0),data_array(0).io.o_rdata,data_array(1).io.o_rdata)
+val dout2 = Mux(last_stall,out_reg,dout)
 val index2 = Wire(UInt(7.W))
-io.cpu_if.i_data := Mux(!cpu_if2.o_addr(3), dout(63,0),dout(127,64))
+last_stall := io.cpu_if.o_stall2
+out_reg := Mux(state===s_bus,io.mem_master.readData.bits.data,dout2)
+io.cpu_if.i_data := Mux(!cpu_if2.o_addr(3), dout2(63,0),dout2(127,64))
 io.cpu_if.i_data_valid := (state =/= s_bus)
 io.cpu_if.i_addr_ready := (state =/= s_bus)
 
@@ -71,16 +77,17 @@ index := cpu_if1.o_addr(10,4)
 offset := cpu_if1.o_addr(3,0)
 hit_bank(0) := (valid0(index) & (tags0(index) === tag)) 
 hit_bank(1) := (valid1(index) & (tags1(index) === tag))
+hit_bank2(0) := (valid0(index2) & (tags0(index2) === tag)) 
+hit_bank2(1) := (valid1(index2) & (tags1(index2) === tag))
 
 hit := hit_bank(0) || hit_bank(1)
-/*
 victim := MuxCase(0.U,Seq(
     (valid0(index2).asBool)    -> 0.U,
     (!valid0(index2).asBool && valid1(index2).asBool)    -> 1.U ,
     (!valid0(index2).asBool && !valid1(index2).asBool)    -> 0.U
   )
-)*/
-victim := ~index(6)
+)
+//victim := ~index(6)
 index2 := cpu_if2.o_addr(10,4)
 //connect data array
 for(i <- 0 to 1){

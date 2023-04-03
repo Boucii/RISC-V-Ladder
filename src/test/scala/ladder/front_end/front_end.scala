@@ -54,8 +54,8 @@ class Front_End extends Module
     io.icache_io.o_addr := Cat(pc_gen.io.o_pc(63,3),0.U(3.W))
     io.icache_io.o_addr_valid := front_end_control.io.o_stage1_stall
       //io.icache_io.o_rwen := pc_gen.io.o_stage1_flush
-    io.icache_io.o_stall1 := front_end_control.io.o_stage1_stall
-    io.icache_io.o_stall2 := front_end_control.io.o_stage2_stall
+    io.icache_io.o_stall1 := front_end_control.io.o_stage1_stall||front_end_control.io.o_stage1_flush
+    io.icache_io.o_stall2 := front_end_control.io.o_stage2_stall||front_end_control.io.o_stage1_flush
 
     bpu.io.i_addr := pc_gen.io.o_pc
     bpu.io.i_branch_presolve_pack := branch_presolve.io.o_branch_presolve_pack

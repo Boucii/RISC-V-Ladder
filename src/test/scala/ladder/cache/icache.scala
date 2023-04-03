@@ -82,9 +82,9 @@ hit_bank2(1) := (valid1(index2) & (tags1(index2) === tag))
 
 hit := hit_bank(0) || hit_bank(1)
 victim := MuxCase(0.U,Seq(
-    (valid0(index2).asBool)    -> 0.U,
-    (!valid0(index2).asBool && valid1(index2).asBool)    -> 1.U ,
-    (!valid0(index2).asBool && !valid1(index2).asBool)    -> 0.U
+    (!valid0(index2).asBool)    -> 0.U,
+    (valid0(index2).asBool && !valid1(index2).asBool)    -> 1.U ,
+    (valid0(index2).asBool && valid1(index2).asBool)    -> 0.U
   )
 )
 //victim := ~index(6)

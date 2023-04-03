@@ -37,6 +37,11 @@ val last_req = RegInit((0.U).asTypeOf(new DcacheIOreg()))
 last_req := cpu_mem
 val new_req = !((last_req.Mwout===cpu_mem.Mwout)&&(last_req.Men===cpu_mem.Men)&&(last_req.Maddr===cpu_mem.Maddr)&&
     (last_req.Mlen===cpu_mem.Mlen)&&(last_req.MdataOut===cpu_mem.MdataOut))
+//the lsu policy is, when write, once give the data to mem, it can go forward, it doesnt has to wait for write to finish.
+//if we dont have this signal, if an new req comes before the old one finishes, it will see the datavalid signal of the old, 
+//and mistaken is as the new one was done.
+val same_req = !((io.cpu_mem.Mwout===cpu_mem.Mwout)&&(io.cpu_mem.Men===cpu_mem.Men)&&(io.cpu_mem.Maddr===cpu_mem.Maddr)&&
+    (io.cpu_mem.Mlen===cpu_mem.Mlen)&&(io.cpu_mem.MdataOut===cpu_mem.MdataOut))
 //icache components-------------------------------------
 val tags0 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
 val tags1 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
@@ -54,11 +59,18 @@ val hit         = Wire(Bool())
 val victim = Reg(UInt(1.W))
 val uncache = Wire(Bool())
 //----------------------------------------------------------------
+//state machine for memwrite---------------------------
+//using not-write allocate, and write back policies,
+//we only write back to mem on a read not hit, after the read data being fetched 
+val s_wreset :: s_widle :: s_bus_addr :: s_bus_data :: s_bus_resp :: Nil = Enum(5)
+val write_state = RegInit(s_wreset)
+val next_write_state = Wire(UInt(3.W))
+
 val s_reset :: s_idle :: s_bus :: Nil = Enum(3)
 val state = RegInit(s_reset)
 val next_state = Wire(UInt(2.W))
 val should_write_back = Wire(Bool())
-should_write_back := (state === s_bus && io.mem_master.readData.ready && !uncache &&
+should_write_back := (state === s_bus && io.mem_master.readData.valid && io.mem_master.readData.ready && !uncache &&
     Mux(victim.asBool(), valid1(index).asBool(), valid0(index).asBool()) && Mux(victim.asBool, dirty1(index), dirty0(index)))
 
 //assign the parts
@@ -84,7 +96,7 @@ io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_bus) -> Mux(cpu_mem.Maddr(3),io.mem_master.readData.bits.data(127,64),io.mem_master.readData.bits.data(63,0))
     )
 )*/
-io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)
+io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout)
 io.cpu_mem.addr_ready := state === s_idle 
 
 tag := cpu_mem.Maddr(63,11)
@@ -94,9 +106,9 @@ hit_bank(0) := (valid0(index) & (tags0(index) === tag))
 hit_bank(1) := (valid1(index) & (tags1(index) === tag))
 hit := (hit_bank(0) || hit_bank(1)) && !uncache
 victim := MuxCase(0.U,Seq(
-    (valid0(index).asBool)    -> 0.U,
-    (!valid0(index).asBool && valid1(index).asBool)    -> 1.U ,
-    (!valid0(index).asBool && !valid1(index).asBool)    -> 0.U
+    (!valid0(index).asBool)    -> 0.U,
+    (valid0(index).asBool && !valid1(index).asBool)    -> 1.U ,
+    (valid0(index).asBool && valid1(index).asBool)    -> 0.U
 )
 )
 uncache := Mux(
@@ -125,7 +137,7 @@ smt := cpu_mem.Maddr(3,0)
     strb_aligned := (strb << smt)
 for(i <- 0 to 1){
     data_array(i).io.i_ren := true.B
-    data_array(i).io.i_wen := ((cpu_mem.Mwout.asBool && cpu_mem.Men && hit)||(state===s_bus && next_state===s_idle)) && (i.U===victim)
+    data_array(i).io.i_wen := (cpu_mem.Mwout.asBool && cpu_mem.Men && hit_bank(i))||((!cpu_mem.Mwout.asBool && state===s_bus && next_state===s_idle) && (i.U===victim))
     data_array(i).io.i_wstrb := Mux(hit,strb_aligned,0xffff.U)
     data_array(i).io.i_addr := index
     data_array(i).io.i_wdata := Mux(hit,(cpu_mem.MdataOut<<(cpu_mem.Maddr(3,0)<<3)),io.mem_master.readData.bits.data)
@@ -147,6 +159,13 @@ when(cpu_mem.Mwout.asBool && hit_bank(0)){
 when(cpu_mem.Mwout.asBool && hit_bank(1)){
     dirty1(index) := true.B
 }
+when(!cpu_mem.Mwout && next_write_state===s_widle && write_state=/=s_widle && hit_bank(0)){
+    dirty0(index) := true.B
+}
+when(!cpu_mem.Mwout && next_write_state===s_widle && write_state=/=s_widle && hit_bank(1)){
+    dirty1(index) := true.B
+}
+
 //state machine-----------------------------------------
 val write_done = (io.mem_master.writeResp.valid && io.mem_master.writeResp.ready)
 val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
@@ -159,15 +178,9 @@ next_state := MuxCase(state,Seq(
     (state === s_bus && read_done && !(should_write_back))                      -> s_idle,
     (state === s_bus && read_done && (should_write_back))                       -> s_bus
 ))
-//state machine for memwrite---------------------------
-//using not-write allocate, and write back policies,
-//we only write back to mem on a read not hit, after the read data being fetched 
-val s_wreset :: s_bus_addr :: s_bus_data :: s_bus_resp :: s_widle :: Nil = Enum(5)
-val write_state = RegInit(s_wreset)
-val next_write_state = Wire(UInt(3.W))
 
 write_state := next_write_state
-next_write_state := MuxCase(s_widle,Seq(
+next_write_state := MuxCase(write_state,Seq(
     (write_state === s_wreset)                                                  -> s_widle,
     (write_state === s_bus_addr && (io.mem_master.writeAddr.ready))             -> s_bus_data,
     (write_state === s_bus_data && (io.mem_master.writeData.ready))             -> s_bus_resp,
@@ -177,9 +190,9 @@ next_write_state := MuxCase(s_widle,Seq(
     (write_state === s_widle && should_write_back)                              -> s_bus_addr
 ))
 //axi control signals
-io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men)
+io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men) && (write_state===s_widle)
 io.mem_master.readAddr.bits.addr := Cat(cpu_mem.Maddr(63,4),0.U(4.W))
-io.mem_master.readData.ready := (state === s_bus)
+io.mem_master.readData.ready := (state === s_bus) && (write_state===s_widle)
 
 io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
 io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(tags0(index),0.U(11.W)),Cat(tags1(index),0.U(11.W))),cpu_mem.Maddr)

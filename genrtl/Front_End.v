@@ -354,8 +354,8 @@ module Front_End(
   );
   assign io_icache_io_o_addr = {pc_gen_io_o_pc[63:3],3'h0}; // @[Cat.scala 33:92]
   assign io_icache_io_o_addr_valid = front_end_control_io_o_stage1_stall; // @[front_end.scala 55:31]
-  assign io_icache_io_o_stall1 = front_end_control_io_o_stage1_stall; // @[front_end.scala 57:27]
-  assign io_icache_io_o_stall2 = front_end_control_io_o_stage2_stall; // @[front_end.scala 58:27]
+  assign io_icache_io_o_stall1 = front_end_control_io_o_stage1_stall | front_end_control_io_o_stage1_flush; // @[front_end.scala 57:65]
+  assign io_icache_io_o_stall2 = front_end_control_io_o_stage2_stall | front_end_control_io_o_stage1_flush; // @[front_end.scala 58:65]
   assign io_o_fetch_pack_valid = fetch_queue_io_out_valid; // @[front_end.scala 94:21]
   assign io_o_fetch_pack_bits_valids_0 = fetch_queue_io_out_bits_valids_0; // @[front_end.scala 94:21]
   assign io_o_fetch_pack_bits_valids_1 = fetch_queue_io_out_bits_valids_1; // @[front_end.scala 94:21]

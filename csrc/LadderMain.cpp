@@ -17,10 +17,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  1
+#define GTK_EN_CYC  -1
 #define DIFFTEST_EN 1
-#define ITRACE_EN 1
-#define GTK_EN 1
+#define ITRACE_EN 0
+#define GTK_EN 0
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000
@@ -182,12 +182,12 @@ void dump_gpr() {
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   mem_lock.lock();
-  cout<<"memread "<<hex<<raddr<<endl;
+  //cout<<"memread "<<hex<<raddr<<endl;
   //if(mem_done==0){
   if(1){
-  cout<<"memread "<<hex<<raddr<<endl;
+  //cout<<"memread "<<hex<<raddr<<endl;
 	if(raddr==RTC_PORT_BASE){
-		//printf("reading the rtc\n");
+		printf("reading the rtc\n");
 		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)(timeus.tv_sec*1000000+timeus.tv_usec);
@@ -232,8 +232,8 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 	mem_lock.unlock();
 			return;
 	}
-	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+SCRN_W*SCRN_H))){
-		cout<<"memread "<<hex<<raddr<<endl;
+	if((raddr>=0xa1000000)&&(raddr<=(0xa1000000+SCRN_W*SCRN_H*4))){
+		//cout<<"memread "<<hex<<raddr<<endl;
       		last_skip_for_mem =1;
 			*rdata = vmem[raddr-0xa1000000];
 	mem_lock.unlock();
@@ -242,7 +242,7 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 	//instruction fetch
 	//this is for possible inst fetch on a mispredicted path that will
 	//later be flushed, so it's fine.
-	if(raddr<0x80000000||raddr>0x88000000){
+	if(raddr<0x80000000){
 		*rdata = 0;
 		cout<<"inst fetch out of bound, be mindful! addr="<<hex<<raddr<<endl;
   		mem_done=1;
@@ -283,7 +283,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
 			  static int ss=0;
 			  ss++;
-			  //printf("mem,ss=%d\n",ss);
+			  printf("mem,ss=%d\n",ss);
 		int len=0;
 		if((uint8_t)wmask==0){
 				len =0;
@@ -321,21 +321,21 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  }
 	uint8_t mask=(uint8_t)wmask;
 	if(mask==0){
-	  cout<<"mask=0"<<endl;
+	  //cout<<"mask=0"<<endl;
 	}else if(mask==1){
 	  pmem_write(wdata,waddr,1);
-	  cout<<"mask=1"<<endl;
+	  //cout<<"mask=1"<<endl;
 	}else if(mask==3){
 	  pmem_write(wdata,waddr,2);
-	  cout<<"mask=2"<<endl;
+	  //cout<<"mask=2"<<endl;
 	}else if(mask==7){
-	  cout<<"mask=7"<<endl;
+	  //cout<<"mask=7"<<endl;
 	  pmem_write(wdata,waddr,3);
     }else if(mask==15){
-	  cout<<"mask=15"<<endl;
+	  //cout<<"mask=15"<<endl;
       pmem_write(wdata,waddr,4);
 	}else if(mask==255){
-	cout<<"mask=255"<<endl;
+	//cout<<"mask=255"<<endl;
 	  pmem_write(wdata,waddr,8);
 	}
 	else{

@@ -32,7 +32,7 @@ uint64_t pmem_read(int addr){
   return lo0+lo1+lo2+lo3+lo4+lo5+lo6+lo7;
 }
 int pmem_write(uint64_t content,uint64_t addr,uint32_t len){
-  std::cout<<"mem write: 0x"<<std::hex<<addr<< "  content: "<<content<<"len="<<len<<"\n";
+  //std::cout<<"mem write: 0x"<<std::hex<<addr<< "  content: "<<content<<"len="<<len<<"\n";
   int base_addr=addr-0x80000000;
   if(len){
   mem[addr-0x80000000]=content;

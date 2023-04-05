@@ -27,7 +27,7 @@ val SERIAL_PORT_BASE= 	0xa00003f8L.U(64.W)
 val KBD_PORT_BASE 	=	0xa0000060L.U(64.W) 
 val VGA_CTL_BASE 	=   0xa0000100L.U(64.W)
 val VGA_MEM_BLK_S     =   0xa1000000L.U(64.W)
-val VGA_MEM_BLK_E     =   0xa1000000L.U(64.W) + (400.U * 300.U)
+val VGA_MEM_BLK_E     =   0xa1000000L.U(64.W) + (400.U * 300.U * 4.U)
 //dcache-----------------------------------------------
 //2 way associate cache, 128 sets, 16 bytes per line
 //4KB total, 64bits of paddr
@@ -58,6 +58,8 @@ val hit_bank    = Wire(Vec(2,Bool()))
 val hit         = Wire(Bool())
 val victim = Reg(UInt(1.W))
 val uncache = Wire(Bool())
+val read_from_mem_buf = RegInit(0.U(128.W))
+val write_back_is_finishing = Wire(Bool())
 //----------------------------------------------------------------
 //state machine for memwrite---------------------------
 //using not-write allocate, and write back policies,
@@ -69,10 +71,19 @@ val next_write_state = Wire(UInt(3.W))
 val s_reset :: s_idle :: s_bus :: Nil = Enum(3)
 val state = RegInit(s_reset)
 val next_state = Wire(UInt(2.W))
+
+val write_done = (io.mem_master.writeResp.valid && io.mem_master.writeResp.ready)
+val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
+
 val should_write_back = Wire(Bool())
 should_write_back := (state === s_bus && io.mem_master.readData.valid && io.mem_master.readData.ready && !uncache &&
     Mux(victim.asBool(), valid1(index).asBool(), valid0(index).asBool()) && Mux(victim.asBool, dirty1(index), dirty0(index)))
 
+//in current structure, when need to write back victim, the datavalid to lsu will not turn into valid before writeback is finished.
+//we can optimize it=> valid fetch before writeback.
+//this reg is used to hold the fetched data until writeback of victim is finished, so then we can write the fetched data into the victim dataarray row.
+read_from_mem_buf := Mux(io.mem_master.readData.valid,io.mem_master.readData.bits.data,read_from_mem_buf)
+write_back_is_finishing := write_done && !cpu_mem.Mwout && cpu_mem.Men
 //assign the parts
 when(next_state===s_idle){
   cpu_mem := io.cpu_mem
@@ -96,14 +107,15 @@ io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_bus) -> Mux(cpu_mem.Maddr(3),io.mem_master.readData.bits.data(127,64),io.mem_master.readData.bits.data(63,0))
     )
 )*/
-io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout)
+//when write back, only when s_widle, the data is written into the dataarray
+io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout) && (write_state===s_widle)
 io.cpu_mem.addr_ready := state === s_idle 
 
 tag := cpu_mem.Maddr(63,11)
 index := cpu_mem.Maddr(10,4)
 offset := cpu_mem.Maddr(3,0)
-hit_bank(0) := (valid0(index) & (tags0(index) === tag))
-hit_bank(1) := (valid1(index) & (tags1(index) === tag))
+hit_bank(0) := ((valid0(index) & (tags0(index) === tag)).asBool() && (!uncache))
+hit_bank(1) := ((valid1(index) & (tags1(index) === tag)).asBool() && (!uncache))
 hit := (hit_bank(0) || hit_bank(1)) && !uncache
 victim := MuxCase(0.U,Seq(
     (!valid0(index).asBool)    -> 0.U,
@@ -140,7 +152,7 @@ for(i <- 0 to 1){
     data_array(i).io.i_wen := (cpu_mem.Mwout.asBool && cpu_mem.Men && hit_bank(i))||((!cpu_mem.Mwout.asBool && state===s_bus && next_state===s_idle) && (i.U===victim))
     data_array(i).io.i_wstrb := Mux(hit,strb_aligned,0xffff.U)
     data_array(i).io.i_addr := index
-    data_array(i).io.i_wdata := Mux(hit,(cpu_mem.MdataOut<<(cpu_mem.Maddr(3,0)<<3)),io.mem_master.readData.bits.data)
+    data_array(i).io.i_wdata := Mux(write_back_is_finishing,read_from_mem_buf,Mux(hit,(cpu_mem.MdataOut<<(cpu_mem.Maddr(3,0)<<3)),io.mem_master.readData.bits.data))
 }
 //when there's a read that didnot hit, read mem and replace victim
 when((next_state === s_idle) && (state === s_bus) && (victim === 0.U) && (!cpu_mem.Mwout)){
@@ -167,8 +179,8 @@ when(!cpu_mem.Mwout && next_write_state===s_widle && write_state=/=s_widle && hi
 }
 
 //state machine-----------------------------------------
-val write_done = (io.mem_master.writeResp.valid && io.mem_master.writeResp.ready)
-val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
+
+
 state := next_state
 next_state := MuxCase(state,Seq(
     (state === s_reset)                                                         -> s_idle,
@@ -195,7 +207,7 @@ io.mem_master.readAddr.bits.addr := Cat(cpu_mem.Maddr(63,4),0.U(4.W))
 io.mem_master.readData.ready := (state === s_bus) && (write_state===s_widle)
 
 io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
-io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(tags0(index),0.U(11.W)),Cat(tags1(index),0.U(11.W))),cpu_mem.Maddr)
+io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(Seq(tags0(index),index,0.U(4.W))),Cat(Seq(tags1(index),index,0.U(4.W)))),cpu_mem.Maddr)
 io.mem_master.writeData.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
 io.mem_master.writeData.bits.data := Mux(!cpu_mem.Mwout, Mux(victim.asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,cpu_mem.MdataOut)
 io.mem_master.writeData.bits.strb := Mux(!cpu_mem.Mwout,0xffff.U,strb)

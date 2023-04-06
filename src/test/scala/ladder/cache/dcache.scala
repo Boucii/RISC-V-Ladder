@@ -203,7 +203,7 @@ next_write_state := MuxCase(write_state,Seq(
 ))
 //axi control signals
 io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men) && (write_state===s_widle)
-io.mem_master.readAddr.bits.addr := Cat(cpu_mem.Maddr(63,4),0.U(4.W))
+io.mem_master.readAddr.bits.addr := Mux(uncache,cpu_mem.Maddr,Cat(cpu_mem.Maddr(63,4),0.U(4.W)))
 io.mem_master.readData.ready := (state === s_bus) && (write_state===s_widle)
 
 io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)

@@ -823,7 +823,8 @@ module Dcache(
   wire [127:0] data_array_1_io_i_wdata; // @[dcache.scala 52:36]
   wire [127:0] data_array_1_io_o_rdata; // @[dcache.scala 52:36]
   wire [17:0] _VGA_MEM_BLK_E_T = 9'h190 * 9'h12c; // @[dcache.scala 30:56]
-  wire [63:0] _GEN_3335 = {{46'd0}, _VGA_MEM_BLK_E_T}; // @[dcache.scala 30:47]
+  wire [20:0] _VGA_MEM_BLK_E_T_1 = _VGA_MEM_BLK_E_T * 3'h4; // @[dcache.scala 30:64]
+  wire [63:0] _GEN_3335 = {{43'd0}, _VGA_MEM_BLK_E_T_1}; // @[dcache.scala 30:47]
   wire [63:0] VGA_MEM_BLK_E = 64'ha1000000 + _GEN_3335; // @[dcache.scala 30:47]
   reg  cpu_mem_Mwout; // @[dcache.scala 35:22]
   reg [63:0] cpu_mem_Maddr; // @[dcache.scala 35:22]
@@ -4258,6 +4259,7 @@ module Dcache(
   wire  _GEN_3204 = _GEN_3461 | _GEN_2820; // @[dcache.scala 178:{19,19}]
   wire  _GEN_3205 = _GEN_3462 | _GEN_2821; // @[dcache.scala 178:{19,19}]
   wire  _GEN_3206 = _GEN_3463 | _GEN_2822; // @[dcache.scala 178:{19,19}]
+  wire [63:0] _io_mem_master_readAddr_bits_addr_T_1 = {cpu_mem_Maddr[63:4],4'h0}; // @[Cat.scala 33:92]
   wire [63:0] _io_mem_master_writeAddr_bits_addr_T_3 = {_GEN_646,index,4'h0}; // @[Cat.scala 33:92]
   wire [63:0] _io_mem_master_writeAddr_bits_addr_T_4 = {_GEN_774,index,4'h0}; // @[Cat.scala 33:92]
   wire [63:0] _io_mem_master_writeAddr_bits_addr_T_5 = _data_array_0_io_i_wen_T_9 ?
@@ -4287,7 +4289,7 @@ module Dcache(
   assign io_cpu_mem_MdataIn = _io_cpu_mem_MdataIn_T_2[63:0]; // @[dcache.scala 100:20]
   assign io_mem_master_readAddr_valid = _should_write_back_T & _write_back_is_finishing_T & cpu_mem_Men &
     _io_cpu_mem_data_valid_T_6; // @[dcache.scala 205:88]
-  assign io_mem_master_readAddr_bits_addr = {cpu_mem_Maddr[63:4],4'h0}; // @[Cat.scala 33:92]
+  assign io_mem_master_readAddr_bits_addr = uncache ? cpu_mem_Maddr : _io_mem_master_readAddr_bits_addr_T_1; // @[dcache.scala 206:40]
   assign io_mem_master_readData_ready = _should_write_back_T & _io_cpu_mem_data_valid_T_6; // @[dcache.scala 207:51]
   assign io_mem_master_writeAddr_valid = _next_write_state_T_1 | _next_write_state_T_3; // @[dcache.scala 209:62]
   assign io_mem_master_writeAddr_bits_addr = _write_back_is_finishing_T ? _io_mem_master_writeAddr_bits_addr_T_5 :

@@ -17,7 +17,7 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  -1
+#define GTK_EN_CYC  200000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 #define GTK_EN 0
@@ -63,6 +63,7 @@ uint64_t *pc_cmt1 = new uint64_t;
 uint64_t *pc_cmt2 = new uint64_t;
 uint64_t *pc = new uint64_t;
 uint64_t *last_ref_pc = new uint64_t;
+int stop=0;
 
 int cyc_time=0;
 int last_skip_for_mem = 0;
@@ -181,6 +182,13 @@ void dump_gpr() {
   }
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
+	bool uncache = (raddr==(RTC_PORT_BASE+8))||(raddr==(RTC_PORT_BASE+12))||(raddr==(KBD_PORT_BASE+8))||
+	  (raddr==(VGA_CTL_BASE+8))||(raddr==(VGA_CTL_BASE+12));//||(raddr=(0xa1000004+SCRN_W*SCRN_H*4));
+	    if(uncache){
+	printf("uncache1!!!!!addris=%llx \n",raddr);
+	*rdata=0;
+	return;
+  }
   mem_lock.lock();
   //cout<<"memread "<<hex<<raddr<<endl;
   //if(mem_done==0){
@@ -550,7 +558,7 @@ int main(int argc, char** argv, char** env){
 		}
 	    first_cycle =0;
         }
-	if(diff_pass==0){
+	if(diff_pass==0 || stop){
     single_cycleup();
     single_cycledown();
     single_cycleup();

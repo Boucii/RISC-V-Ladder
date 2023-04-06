@@ -17,7 +17,7 @@ int mem_init(){
 
 
 uint64_t pmem_read(int addr){
- // std::cout<<"mem read: 0x"<<std::hex<<addr<< "\n";
+  //std::cout<<"mem read: 0x"<<std::hex<<addr<< "\n";
   int base_addr=addr-0x80000000;
   uint64_t lo0=(uint64_t)mem[base_addr];
   uint64_t lo1=((uint64_t)mem[base_addr+1])<<8;

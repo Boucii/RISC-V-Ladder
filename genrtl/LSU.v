@@ -198,8 +198,8 @@ module LSU(
   wire  _uop_dst_value_T_17 = loadu & len == 4'h8 & io_dcache_io_data_valid; // @[execute_unit.scala 298:29]
   wire  _uop_dst_value_T_19 = ~loadu; // @[execute_unit.scala 299:10]
   wire  _uop_dst_value_T_22 = ~loadu & _uop_dst_value_T & io_dcache_io_data_valid; // @[execute_unit.scala 299:35]
-  wire [55:0] _uop_dst_value_T_27 = {48'hffffffffffff,io_dcache_io_MdataIn[7:0]}; // @[Cat.scala 33:92]
-  wire [55:0] _uop_dst_value_T_28 = ~io_dcache_io_MdataIn[7] ? {{48'd0}, io_dcache_io_MdataIn[7:0]} :
+  wire [63:0] _uop_dst_value_T_27 = {56'hffffffffffffff,io_dcache_io_MdataIn[7:0]}; // @[Cat.scala 33:92]
+  wire [63:0] _uop_dst_value_T_28 = ~io_dcache_io_MdataIn[7] ? {{56'd0}, io_dcache_io_MdataIn[7:0]} :
     _uop_dst_value_T_27; // @[execute_unit.scala 299:69]
   wire  _uop_dst_value_T_32 = _uop_dst_value_T_19 & _uop_dst_value_T_5 & io_dcache_io_data_valid; // @[execute_unit.scala 300:35]
   wire [63:0] _uop_dst_value_T_37 = {48'hffffffffffff,io_dcache_io_MdataIn[15:0]}; // @[Cat.scala 33:92]
@@ -213,7 +213,7 @@ module LSU(
   wire [63:0] _uop_dst_value_T_53 = _uop_dst_value_T_52 ? io_dcache_io_MdataIn : uop_dst_value; // @[Mux.scala 101:16]
   wire [63:0] _uop_dst_value_T_54 = _uop_dst_value_T_42 ? _uop_dst_value_T_48 : _uop_dst_value_T_53; // @[Mux.scala 101:16]
   wire [63:0] _uop_dst_value_T_55 = _uop_dst_value_T_32 ? _uop_dst_value_T_38 : _uop_dst_value_T_54; // @[Mux.scala 101:16]
-  wire [63:0] _uop_dst_value_T_56 = _uop_dst_value_T_22 ? {{8'd0}, _uop_dst_value_T_28} : _uop_dst_value_T_55; // @[Mux.scala 101:16]
+  wire [63:0] _uop_dst_value_T_56 = _uop_dst_value_T_22 ? _uop_dst_value_T_28 : _uop_dst_value_T_55; // @[Mux.scala 101:16]
   wire [63:0] _uop_dst_value_T_57 = _uop_dst_value_T_17 ? {{32'd0}, io_dcache_io_MdataIn[31:0]} : _uop_dst_value_T_56; // @[Mux.scala 101:16]
   wire [63:0] _addr_T_2 = uop_src1_value + uop_src2_value; // @[execute_unit.scala 311:54]
   wire [63:0] _addr_T_4 = uop_src1_value + uop_imm; // @[execute_unit.scala 311:84]

@@ -296,7 +296,7 @@ class LSU extends Function_Unit(
         (loadu && len===2.U && io.dcache_io.data_valid) -> Cat(0.U(48.W),io.dcache_io.MdataIn(15,0)),
         (loadu && len===4.U && io.dcache_io.data_valid) ->Cat(0.U(31.W),io.dcache_io.MdataIn(31,0)),
         (loadu && len===8.U && io.dcache_io.data_valid) ->io.dcache_io.MdataIn(31,0),
-        (!loadu && len===1.U(4.W) && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
+        (!loadu && len===1.U(4.W) && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
         (!loadu && len===2.U(4.W) && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
         (!loadu && len===4.U(4.W) && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
         (!loadu && len===8.U(4.W) && io.dcache_io.data_valid) -> io.dcache_io.MdataIn
@@ -320,7 +320,7 @@ class LSU extends Function_Unit(
             (len === 2.U) ->  Cat(0.U(48.W),io.dcache_io.MdataIn(15,0)),
             (len === 4.U) ->  Cat(0.U(31.W),io.dcache_io.MdataIn(31,0)),
           )),                                                                        
-        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
+        (!loadu && len===1.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(7)=/=1.U, (io.dcache_io.MdataIn)(7,0),Cat(0xffffffffffffffL.U, (io.dcache_io.MdataIn(7,0)))),
         (!loadu && len===2.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(15)=/=1.U,(io.dcache_io.MdataIn)(15,0),Cat(0xffffffffffffL.U,(io.dcache_io.MdataIn(15,0)))),
         (!loadu && len===4.U && io.dcache_io.data_valid) -> Mux((io.dcache_io.MdataIn)(31)=/=1.U,(io.dcache_io.MdataIn)(31,0),Cat(0xffffffffL.U,    (io.dcache_io.MdataIn(31,0)))),
         (!loadu && len===8.U && io.dcache_io.data_valid) -> io.dcache_io.MdataIn

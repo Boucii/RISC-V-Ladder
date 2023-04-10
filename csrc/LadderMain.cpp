@@ -17,10 +17,10 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  200000
+#define GTK_EN_CYC  800000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
-#define GTK_EN 0
+#define GTK_EN 1
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000

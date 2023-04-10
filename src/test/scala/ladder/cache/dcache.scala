@@ -33,15 +33,16 @@ val VGA_MEM_BLK_E     =   0xa1000000L.U(64.W) + (400.U * 300.U * 4.U)
 //4KB total, 64bits of paddr
 //tag: 53 bits, index: 7 bits, offset: 4 bits
 val cpu_mem = RegInit((0.U).asTypeOf(new DcacheIOreg()))
+val last_cpumem_w = RegInit(false.B)
+val initial_addr = RegInit(0.U(64.W))
+val initial_len = RegInit(0.U(32.W))
 val last_req = RegInit((0.U).asTypeOf(new DcacheIOreg()))
-last_req := cpu_mem
-val new_req = !((last_req.Mwout===cpu_mem.Mwout)&&(last_req.Men===cpu_mem.Men)&&(last_req.Maddr===cpu_mem.Maddr)&&
-    (last_req.Mlen===cpu_mem.Mlen)&&(last_req.MdataOut===cpu_mem.MdataOut))
+last_req := Mux(last_cpumem_w,cpu_mem,last_req)
+val new_req = !((last_req.Mwout===cpu_mem.Mwout)&&(last_req.Men===cpu_mem.Men)&&(last_req.Maddr===initial_addr)&&
+    (last_req.Mlen===initial_len)&&(last_req.MdataOut===cpu_mem.MdataOut))
 //the lsu policy is, when write, once give the data to mem, it can go forward, it doesnt has to wait for write to finish.
 //if we dont have this signal, if an new req comes before the old one finishes, it will see the datavalid signal of the old, 
 //and mistaken is as the new one was done.
-val same_req = !((io.cpu_mem.Mwout===cpu_mem.Mwout)&&(io.cpu_mem.Men===cpu_mem.Men)&&(io.cpu_mem.Maddr===cpu_mem.Maddr)&&
-    (io.cpu_mem.Mlen===cpu_mem.Mlen)&&(io.cpu_mem.MdataOut===cpu_mem.MdataOut))
 //icache components-------------------------------------
 val tags0 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
 val tags1 = RegInit(VecInit(Seq.fill(128)(0.U(53.W))))//tag array
@@ -60,6 +61,17 @@ val victim = Reg(UInt(1.W))
 val uncache = Wire(Bool())
 val read_from_mem_buf = RegInit(0.U(128.W))
 val write_back_is_finishing = Wire(Bool())
+val read_data = Wire(UInt(128.W))
+//crossline cache access---------------------------------------------
+val crossline = Wire(Bool())
+val crossline_read_buf = Wire(UInt(128.W))
+val last_crossline_read_buf = RegInit(0.U(128.W))
+val initial_offset = RegInit(0.U(4.W))
+val bytes_to_blk_bound = 16.U-offset
+val initial_bytes_to_bound = 16.U-initial_offset
+val crossline_read_data = Wire(UInt(128.W))
+val crossline_buf_cond = Wire(Bool())
+val last_crossline_buf_cond = RegInit(false.B)
 //----------------------------------------------------------------
 //state machine for memwrite---------------------------
 //using not-write allocate, and write back policies,
@@ -79,25 +91,52 @@ val should_write_back = Wire(Bool())
 should_write_back := (state === s_bus && io.mem_master.readData.valid && io.mem_master.readData.ready && !uncache &&
     Mux(victim.asBool(), valid1(index).asBool(), valid0(index).asBool()) && Mux(victim.asBool, dirty1(index), dirty0(index)))
 
+val newinio=Wire(Bool())
+newinio := !((io.cpu_mem.Mwout===cpu_mem.Mwout)&&(io.cpu_mem.Men===cpu_mem.Men)&&(io.cpu_mem.Maddr===initial_addr)&&
+    (io.cpu_mem.Mlen===initial_len)&&(io.cpu_mem.MdataOut===cpu_mem.MdataOut))
+last_cpumem_w := (next_state===s_idle && !crossline && newinio)
 //in current structure, when need to write back victim, the datavalid to lsu will not turn into valid before writeback is finished.
 //we can optimize it=> valid fetch before writeback.
 //this reg is used to hold the fetched data until writeback of victim is finished, so then we can write the fetched data into the victim dataarray row.
 read_from_mem_buf := Mux(io.mem_master.readData.valid,io.mem_master.readData.bits.data,read_from_mem_buf)
+
+crossline_buf_cond := last_crossline_buf_cond || (crossline&&(read_done||write_done))
+last_crossline_buf_cond := crossline && hit
+crossline := (((offset+cpu_mem.Mlen)&(0x10.U))(4).asBool)&&((offset+cpu_mem.Mlen)(3,0)=/=0.U)&&(!new_req)
+val last_hit_bank0 = RegInit(false.B)
+last_hit_bank0 := hit_bank(0)
+val first_half_data=Wire(UInt(128.W))
+first_half_data := Mux(read_done&&crossline,io.mem_master.readData.bits.data,Mux(last_hit_bank0,data_array(0).io.o_rdata,data_array(1).io.o_rdata))
+when(crossline_buf_cond){
+  crossline_read_buf:=first_half_data>>(initial_offset<<3)
+}.otherwise{
+  crossline_read_buf:=last_crossline_read_buf
+}
+last_crossline_read_buf := crossline_read_buf
+
 write_back_is_finishing := write_done && !cpu_mem.Mwout && cpu_mem.Men
 //assign the parts
-when(next_state===s_idle){
+when(next_state===s_idle && !crossline && newinio){
   cpu_mem := io.cpu_mem
+  initial_offset := io.cpu_mem.Maddr(3,0)//duplicate
+  initial_len := io.cpu_mem.Mlen
+  initial_addr := io.cpu_mem.Maddr
 }
-val read_data = Wire(UInt(128.W))
-read_data := MuxCase(0.U,Seq(
+//when(crossline && new_req &&(hit||read_done||write_done)){
+when(crossline  &&(hit||read_done||write_done)){
+  cpu_mem.Maddr := cpu_mem.Maddr+bytes_to_blk_bound
+  cpu_mem.Mlen := cpu_mem.Mlen-bytes_to_blk_bound
+}
+read_data := MuxCase(0.U,Seq(//this is ugly and coincidental, cause hit readout data next cyc
     (state === s_idle) -> MuxCase(0.U,Seq(
         hit_bank(0) -> data_array(0).io.o_rdata,
         hit_bank(1) -> data_array(1).io.o_rdata
     )),
-    (state === s_bus) -> io.mem_master.readData.bits.data
+    (state === s_bus && io.mem_master.readData.valid) -> io.mem_master.readData.bits.data
     )
 )
-io.cpu_mem.MdataIn := read_data>>(cpu_mem.Maddr(3,0)<<3)
+crossline_read_data := MuxCase(0.U,Seq.tabulate(15)(i=>(i+1)).map(i=>((initial_bytes_to_bound===i.U)->(Cat(read_data,crossline_read_buf(i*8-1,0))))))
+io.cpu_mem.MdataIn := Mux(initial_offset=/=cpu_mem.Maddr(3,0),crossline_read_data,read_data>>(cpu_mem.Maddr(3,0)<<3))
 /*
 io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_idle) -> MuxCase(0.U,Seq(
@@ -108,8 +147,8 @@ io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     )
 )*/
 //when write back, only when s_widle, the data is written into the dataarray
-io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout) && (write_state===s_widle)
-io.cpu_mem.addr_ready := state === s_idle 
+io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout) && (write_state===s_widle) && (!crossline)
+io.cpu_mem.addr_ready := state === s_idle && !crossline
 
 tag := cpu_mem.Maddr(63,11)
 index := cpu_mem.Maddr(10,4)
@@ -185,7 +224,7 @@ state := next_state
 next_state := MuxCase(state,Seq(
     (state === s_reset)                                                         -> s_idle,
     //in a write mem, but the write in lsu is not immediately taken away,if we do not include this new req, the state will automatically go to sbus again.
-    (state === s_idle && (!hit) && cpu_mem.Men && new_req)                      -> s_bus, 
+    (state === s_idle && (!hit) && cpu_mem.Men && (new_req||(!new_req&&(cpu_mem.Maddr=/=initial_addr))))                      -> s_bus, 
     (state === s_bus && write_done)                                             -> s_idle,
     (state === s_bus && read_done && !(should_write_back))                      -> s_idle,
     (state === s_bus && read_done && (should_write_back))                       -> s_bus
@@ -210,7 +249,7 @@ io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === 
 io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(Seq(tags0(index),index,0.U(4.W))),Cat(Seq(tags1(index),index,0.U(4.W)))),cpu_mem.Maddr)
 io.mem_master.writeData.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
 io.mem_master.writeData.bits.data := Mux(!cpu_mem.Mwout, Mux(victim.asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,cpu_mem.MdataOut)
-io.mem_master.writeData.bits.strb := Mux(!cpu_mem.Mwout,0xffff.U,strb)
+io.mem_master.writeData.bits.strb := Mux(!cpu_mem.Mwout,0xffff.U,strb)//???shift
 io.mem_master.writeResp.ready := (write_state === s_bus_resp)
 
 io.mem_master.readAddr.bits.prot := 0.U

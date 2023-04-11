@@ -17,7 +17,7 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC 27100000 //2400000
+#define GTK_EN_CYC 47800000//27100000 //2400000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 #define GTK_EN 1
@@ -291,7 +291,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
 			  static int ss=0;
 			  ss++;
-			  printf("mem,ss=%d\n",ss);
+			  //printf("mem,ss=%d\n",ss);
 		int len=0;
 		if((uint8_t)wmask==0){
 				len =0;

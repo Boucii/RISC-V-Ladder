@@ -89,7 +89,7 @@ val write_done = (io.mem_master.writeResp.valid && io.mem_master.writeResp.ready
 val read_done = (io.mem_master.readData.valid && io.mem_master.readData.ready)
 
 val should_write_back = Wire(Bool())
-should_write_back := (state === s_bus && io.mem_master.readData.valid && io.mem_master.readData.ready && !uncache &&
+should_write_back := (state === s_bus && io.mem_master.readData.valid && io.mem_master.readData.ready && //!uncache &&
     Mux(victim.asBool(), valid1(index).asBool(), valid0(index).asBool()) && Mux(victim.asBool, dirty1(index), dirty0(index)))
 
 val newinio=Wire(Bool())

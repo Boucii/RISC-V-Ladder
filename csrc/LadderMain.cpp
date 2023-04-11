@@ -17,7 +17,7 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC 47800000//27100000 //2400000
+#define GTK_EN_CYC  0//47800000//27100000 //2400000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 #define GTK_EN 1
@@ -26,6 +26,7 @@
 //#define MAX_TIME 300000
 #define RESET_VECTOR 0x80000000
 #define COMMIT_TIME_OUT 1500
+#define MAX_WAVE_CYC 100000
 #define SCRN_H 300
 #define SCRN_W 400
 
@@ -68,6 +69,7 @@ int stop=0;
 int cyc_time=0;
 int last_skip_for_mem = 0;
 int cyc_do_not_have_commit =0;
+int wave_cycle = 0;
 
 struct timeval timeus;
 
@@ -498,6 +500,16 @@ int main(int argc, char** argv, char** env){
   float IPC=0;
   int commit_inst_count=0;
   while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>COMMIT_TIME_OUT)) {
+	wave_cycle++;
+	if(wave_cycle>=MAX_WAVE_CYC){
+		wave_cycle=0;
+		if(!remove("/home/qin/ysyx-workbench/npc/wave.vcd")){
+			cout<<RED<<"remove unsuccessful!\n"<<reset<<endl;
+		}
+  	tfp = new VerilatedVcdC; //初始化VCD对象指针
+  	top->trace(tfp, 0); //
+  	tfp->open("wave.vcd"); //设置输出的文件wave.vcd
+	}
 	if(cyc_time%100000==0){
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
 		cout<<hex<<top->io_o_dbg_commit_packs_0_uop_pc<<dec<<endl;

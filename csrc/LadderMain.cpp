@@ -17,10 +17,12 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
+//#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
+uint64_t GTK_EN_CYC = 0;
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
-#define GTK_EN 1
+//#define GTK_EN 1
+int GTK_EN = 0;
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000
@@ -467,6 +469,7 @@ int main(int argc, char** argv, char** env){
   svSetScope(scope);
 
   contextp->traceEverOn(true); //打开追踪功能
+  free(tfp);
   tfp = new VerilatedVcdC; //初始化VCD对象指针
   top->trace(tfp, 0); //
   tfp->open("wave.vcd"); //设置输出的文件wave.vcd
@@ -511,6 +514,18 @@ int main(int argc, char** argv, char** env){
   	tfp->open("wave.vcd"); //设置输出的文件wave.vcd
 	}
 	if(cyc_time%100000==0){
+		string cmd = "";
+		cin>>cmd;
+		if(cmd=="on"){
+			cout<<BOLDGREEN<<"\n\nturning on wavefrom now!\n\n"<<reset;
+			GTK_EN = 1;
+			GTK_EN_CYC = 1;
+		}
+		if(cmd=="off"){
+			cout<<BOLDGREEN<<"\n\nturning off wavefrom now!\n\n"<<reset;
+			GTK_EN = 0;
+			GTK_EN_CYC=9999999999;
+		}
         cout<<dec<<"\ncycle "<<cyc_time<<" passed\n";
 		cout<<hex<<top->io_o_dbg_commit_packs_0_uop_pc<<dec<<endl;
 	}

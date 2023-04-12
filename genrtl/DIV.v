@@ -217,7 +217,7 @@ module DIV(
   assign divider_io_i_dividend = io_i_select ? io_i_uop_src1_value : uop_src1_value; // @[execute_unit.scala 632:20]
   assign divider_io_i_divisor = io_i_select ? io_i_uop_src2_value : uop_src2_value; // @[execute_unit.scala 632:20]
   assign divider_io_i_div_valid = next_state == 2'h1 & _T_1; // @[execute_unit.scala 669:53]
-  assign divider_io_i_divw = uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 671:40]
+  assign divider_io_i_divw = next_uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 671:45]
   assign divider_io_i_div_signed = _next_uop_dst_value_T_1 | next_uop_inst[14:12] == 3'h4; // @[execute_unit.scala 673:69]
   assign divider_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 670:38]
   always @(posedge clock) begin

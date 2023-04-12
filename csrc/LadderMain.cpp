@@ -17,7 +17,7 @@
 //#include <svdpi.h>
 #include "VLadder__Dpi.h"
 
-#define GTK_EN_CYC  0//47800000//27100000 //2400000
+#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 #define GTK_EN 1
@@ -293,7 +293,7 @@ extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   	  if((waddr>=0xa1000000)&&(waddr<=(0xa1000000+SCRN_H*SCRN_W*4))){
 			  static int ss=0;
 			  ss++;
-			  //printf("mem,ss=%d\n",ss);
+			  printf("mem,ss=%d\n",ss);
 		int len=0;
 		if((uint8_t)wmask==0){
 				len =0;
@@ -501,7 +501,7 @@ int main(int argc, char** argv, char** env){
   int commit_inst_count=0;
   while (cyc_time<MAX_TIME && !(cyc_do_not_have_commit>COMMIT_TIME_OUT)) {
 	wave_cycle++;
-	if(wave_cycle>=MAX_WAVE_CYC){
+	if(wave_cycle>=MAX_WAVE_CYC && GTK_EN && cyc_time>GTK_EN_CYC &&GTK_EN_CYC>=0){
 		wave_cycle=0;
 		if(!remove("/home/qin/ysyx-workbench/npc/wave.vcd")){
 			cout<<RED<<"remove unsuccessful!\n"<<reset<<endl;

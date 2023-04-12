@@ -668,7 +668,7 @@ class DIV extends Function_Unit(){
 
     divider.io.i_div_valid := (next_state===s_BUSY) && (!div_finished)
     divider.io.i_flush := next_state === s_FREE
-    divider.io.i_divw := (uop.inst(6,0)==="b0111011".U)
+    divider.io.i_divw := (next_uop.inst(6,0)==="b0111011".U)
 
     divider.io.i_div_signed := Mux(next_uop.inst(14,12)=== "b110".U || next_uop.inst(14,12)=== "b100".U,true.B,false.B)
 

@@ -18,11 +18,11 @@
 #include "VLadder__Dpi.h"
 
 //#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
-uint64_t GTK_EN_CYC = 0;
+uint64_t GTK_EN_CYC = 1;
 #define DIFFTEST_EN 1
-#define ITRACE_EN 0
+#define ITRACE_EN 1
 //#define GTK_EN 1
-int GTK_EN = 0;
+int GTK_EN = 1;
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000
@@ -189,7 +189,7 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 	bool uncache = (raddr==(RTC_PORT_BASE+8))||(raddr==(RTC_PORT_BASE+12))||(raddr==(KBD_PORT_BASE+8))||
 	  (raddr==(VGA_CTL_BASE+8))||(raddr==(VGA_CTL_BASE+12));//||(raddr=(0xa1000004+SCRN_W*SCRN_H*4));
 	    if(uncache){
-	printf("uncache1!!!!!addris=%llx \n",raddr);
+	//printf("uncache1!!!!!addris=%llx \n",raddr);
 	*rdata=0;
 	return;
   }
@@ -199,7 +199,7 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
   if(1){
   //cout<<"memread "<<hex<<raddr<<endl;
 	if(raddr==RTC_PORT_BASE){
-		printf("reading the rtc\n");
+		//printf("reading the rtc\n");
 		last_skip_for_mem = 1;
   		gettimeofday(&timeus,NULL);
   		*rdata=(uint32_t)(timeus.tv_sec*1000000+timeus.tv_usec);
@@ -515,7 +515,7 @@ int main(int argc, char** argv, char** env){
 	}
 	if(cyc_time%100000==0){
 		string cmd = "";
-		cin>>cmd;
+		cout<<"cmd="<<cmd;
 		if(cmd=="on"){
 			cout<<BOLDGREEN<<"\n\nturning on wavefrom now!\n\n"<<reset;
 			GTK_EN = 1;

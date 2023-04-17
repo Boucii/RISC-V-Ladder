@@ -110,7 +110,7 @@ last_hit_bank0 := hit_bank(0)
 val first_half_data=Wire(UInt(128.W))
 first_half_data := Mux(read_done&&crossline,io.mem_master.readData.bits.data,Mux(last_hit_bank0,data_array(0).io.o_rdata,data_array(1).io.o_rdata))
 when(crossline_buf_cond){
-  crossline_read_buf:=first_half_data>>(initial_offset<<3)
+  crossline_read_buf:=Mux(uncache,first_half_data,first_half_data>>(initial_offset<<3))
 }.otherwise{
   crossline_read_buf:=last_crossline_read_buf
 }
@@ -138,7 +138,7 @@ read_data := MuxCase(0.U,Seq(//this is ugly and coincidental, cause hit readout 
     )
 )
 crossline_read_data := MuxCase(0.U,Seq.tabulate(15)(i=>(i+1)).map(i=>((initial_bytes_to_bound===i.U)->(Cat(read_data,crossline_read_buf(i*8-1,0))))))
-io.cpu_mem.MdataIn := Mux(initial_offset=/=cpu_mem.Maddr(3,0),crossline_read_data,read_data>>(cpu_mem.Maddr(3,0)<<3))
+io.cpu_mem.MdataIn := Mux(initial_offset=/=cpu_mem.Maddr(3,0),crossline_read_data,Mux(uncache,read_data,read_data>>(cpu_mem.Maddr(3,0)<<3)))
 /*
 io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     (state === s_idle) -> MuxCase(0.U,Seq(

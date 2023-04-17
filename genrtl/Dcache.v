@@ -2453,9 +2453,10 @@ module Dcache(
   reg  last_hit_bank0; // @[dcache.scala 108:29]
   wire [127:0] _first_half_data_T_1 = last_hit_bank0 ? data_array_0_io_o_rdata : data_array_1_io_o_rdata; // @[dcache.scala 111:81]
   wire [127:0] first_half_data = read_done & crossline ? io_mem_master_readData_bits_data : _first_half_data_T_1; // @[dcache.scala 111:23]
-  wire [6:0] _crossline_read_buf_T = {initial_offset, 3'h0}; // @[dcache.scala 113:55]
-  wire [127:0] _crossline_read_buf_T_1 = first_half_data >> _crossline_read_buf_T; // @[dcache.scala 113:38]
-  wire [127:0] crossline_read_buf = crossline_buf_cond ? _crossline_read_buf_T_1 : last_crossline_read_buf; // @[dcache.scala 112:25 113:21 115:21]
+  wire [6:0] _crossline_read_buf_T = {initial_offset, 3'h0}; // @[dcache.scala 113:83]
+  wire [127:0] _crossline_read_buf_T_1 = first_half_data >> _crossline_read_buf_T; // @[dcache.scala 113:66]
+  wire [127:0] _crossline_read_buf_T_2 = uncache ? first_half_data : _crossline_read_buf_T_1; // @[dcache.scala 113:26]
+  wire [127:0] crossline_read_buf = crossline_buf_cond ? _crossline_read_buf_T_2 : last_crossline_read_buf; // @[dcache.scala 112:25 113:21 115:21]
   wire  _write_back_is_finishing_T = ~cpu_mem_Mwout; // @[dcache.scala 119:42]
   wire  write_back_is_finishing = write_done & ~cpu_mem_Mwout & cpu_mem_Men; // @[dcache.scala 119:57]
   wire [63:0] _GEN_3346 = {{59'd0}, bytes_to_blk_bound}; // @[dcache.scala 129:33]
@@ -2525,10 +2526,11 @@ module Dcache(
     _crossline_read_data_T_57; // @[Mux.scala 101:16]
   wire [247:0] _crossline_read_data_T_59 = _crossline_read_data_T ? {{112'd0}, _crossline_read_data_T_2} :
     _crossline_read_data_T_58; // @[Mux.scala 101:16]
-  wire [6:0] _io_cpu_mem_MdataIn_T_3 = {offset, 3'h0}; // @[dcache.scala 141:113]
-  wire [127:0] _io_cpu_mem_MdataIn_T_4 = read_data >> _io_cpu_mem_MdataIn_T_3; // @[dcache.scala 141:92]
+  wire [6:0] _io_cpu_mem_MdataIn_T_3 = {offset, 3'h0}; // @[dcache.scala 141:135]
+  wire [127:0] _io_cpu_mem_MdataIn_T_4 = read_data >> _io_cpu_mem_MdataIn_T_3; // @[dcache.scala 141:114]
+  wire [127:0] _io_cpu_mem_MdataIn_T_5 = uncache ? read_data : _io_cpu_mem_MdataIn_T_4; // @[dcache.scala 141:86]
   wire [127:0] crossline_read_data = _crossline_read_data_T_59[127:0]; // @[dcache.scala 140:21 72:31]
-  wire [127:0] _io_cpu_mem_MdataIn_T_5 = initial_offset != offset ? crossline_read_data : _io_cpu_mem_MdataIn_T_4; // @[dcache.scala 141:26]
+  wire [127:0] _io_cpu_mem_MdataIn_T_6 = initial_offset != offset ? crossline_read_data : _io_cpu_mem_MdataIn_T_5; // @[dcache.scala 141:26]
   wire  _io_cpu_mem_data_valid_T = next_state != 2'h2; // @[dcache.scala 152:38]
   wire  _io_cpu_mem_data_valid_T_6 = write_state == 3'h1; // @[dcache.scala 152:109]
   wire  _victim_T_1 = ~_GEN_255; // @[dcache.scala 162:6]
@@ -4392,7 +4394,7 @@ module Dcache(
   assign io_cpu_mem_data_valid = next_state != 2'h2 & _next_state_T_5 & cpu_mem_Men & _write_back_is_finishing_T &
     write_state == 3'h1 & _last_cpumem_w_T_1 & ~last_crossline_buf_cond & ~last_writeback_cross_done; // @[dcache.scala 152:167]
   assign io_cpu_mem_addr_ready = _next_state_T_1 & _last_cpumem_w_T_1; // @[dcache.scala 153:43]
-  assign io_cpu_mem_MdataIn = _io_cpu_mem_MdataIn_T_5[63:0]; // @[dcache.scala 141:20]
+  assign io_cpu_mem_MdataIn = _io_cpu_mem_MdataIn_T_6[63:0]; // @[dcache.scala 141:20]
   assign io_mem_master_readAddr_valid = _should_write_back_T & _write_back_is_finishing_T & cpu_mem_Men &
     _io_cpu_mem_data_valid_T_6; // @[dcache.scala 246:88]
   assign io_mem_master_readAddr_bits_addr = uncache ? cpu_mem_Maddr : _io_mem_master_readAddr_bits_addr_T_1; // @[dcache.scala 247:40]
@@ -10262,7 +10264,15 @@ module Dcache(
     if (reset) begin // @[dcache.scala 68:38]
       last_crossline_read_buf <= 128'h0; // @[dcache.scala 68:38]
     end else if (crossline_buf_cond) begin // @[dcache.scala 112:25]
-      last_crossline_read_buf <= _crossline_read_buf_T_1; // @[dcache.scala 113:21]
+      if (uncache) begin // @[dcache.scala 113:26]
+        if (read_done & crossline) begin // @[dcache.scala 111:23]
+          last_crossline_read_buf <= io_mem_master_readData_bits_data;
+        end else begin
+          last_crossline_read_buf <= _first_half_data_T_1;
+        end
+      end else begin
+        last_crossline_read_buf <= _crossline_read_buf_T_1;
+      end
     end
     if (reset) begin // @[dcache.scala 69:29]
       initial_offset <= 4'h0; // @[dcache.scala 69:29]

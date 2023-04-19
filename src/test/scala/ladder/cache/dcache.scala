@@ -73,6 +73,10 @@ val crossline_read_data = Wire(UInt(128.W))
 val crossline_buf_cond = Wire(Bool())
 val last_crossline_buf_cond = RegInit(false.B)
 val last_writeback_cross_done =RegInit(false.B)
+//fence.i access-----------------------------------------------------
+val flushing = RegInit(false.B)
+val should_flush = Wire(Bool())
+val flush_counter = RegInit(0.U(8.W))//len(index)+len(waynum)  
 //----------------------------------------------------------------
 //state machine for memwrite---------------------------
 //using not-write allocate, and write back policies,
@@ -118,7 +122,7 @@ last_crossline_read_buf := crossline_read_buf
 
 write_back_is_finishing := write_done && !cpu_mem.Mwout && cpu_mem.Men
 //assign the parts
-when(next_state===s_idle && !crossline && newinio){
+when(next_state===s_idle && !crossline && newinio && !flushing){
   cpu_mem := io.cpu_mem
   initial_offset := io.cpu_mem.Maddr(3,0)//duplicate
   initial_len := io.cpu_mem.Mlen
@@ -174,6 +178,19 @@ uncache := Mux(
     ((cpu_mem.Maddr >= VGA_MEM_BLK_S)&&(cpu_mem.Maddr < VGA_MEM_BLK_E)),
     true.B,false.B
 )
+when(io.cpu_mem.flush && !flushing && (!io.cpu_mem.flush_done)){
+  flushing := true.B
+}.elsewhen(flush_counter=== 0xff.U && (write_done||(!should_flush))){
+  flushing := false.B
+}.otherwise{
+  flushing := flushing
+}
+should_flush := Mux(flush_counter(0).asBool(), valid1(flush_counter(7,1)).asBool(), valid0(flush_counter(7,1)).asBool()) && Mux(flush_counter(0).asBool, dirty1(flush_counter(7,1)), dirty0(flush_counter(7,1)))
+when((write_done||(!should_flush)) && flushing){
+  flush_counter:=flush_counter+1.U
+}
+io.cpu_mem.flush_done := (flush_counter===0xff.U && (write_done||(!should_flush)))
+
 //connect data array
 val strb = Wire(UInt(16.W))
 strb := MuxCase(0.U,Seq(
@@ -190,18 +207,18 @@ smt := cpu_mem.Maddr(3,0)
     strb_aligned := (strb << smt)
 for(i <- 0 to 1){
     data_array(i).io.i_ren := true.B
-    data_array(i).io.i_wen := (cpu_mem.Mwout.asBool && cpu_mem.Men && hit_bank(i))||((!cpu_mem.Mwout.asBool && state===s_bus && next_state===s_idle) && (i.U===victim))
-    data_array(i).io.i_wstrb := Mux(hit,strb_aligned,0xffff.U)
-    data_array(i).io.i_addr := index
+    data_array(i).io.i_wen := ((cpu_mem.Mwout.asBool && cpu_mem.Men && hit_bank(i))||((!cpu_mem.Mwout.asBool && state===s_bus && next_state===s_idle) && (i.U===victim)))&&(!flushing)
+    data_array(i).io.i_wstrb := Mux(flushing,0xffff.U,Mux(hit,strb_aligned,0xffff.U))
+    data_array(i).io.i_addr := Mux(flushing,flush_counter(7,1),index)
     data_array(i).io.i_wdata := Mux(write_back_is_finishing,read_from_mem_buf,Mux(hit,(cpu_mem.MdataOut<<(cpu_mem.Maddr(3,0)<<3)),io.mem_master.readData.bits.data))
 }
 //when there's a read that didnot hit, read mem and replace victim
-when((next_state === s_idle) && (state === s_bus) && (victim === 0.U) && (!cpu_mem.Mwout)){
+when(!flushing && (next_state === s_idle) && (state === s_bus) && (victim === 0.U) && (!cpu_mem.Mwout)){
     valid0(index) := true.B
     dirty0(index) := false.B
     tags0(index) := cpu_mem.Maddr(63,11)
 }
-when((next_state === s_idle) && (state === s_bus) && (victim === 1.U) && (!cpu_mem.Mwout)){
+when(!flushing && ((next_state === s_idle) && (state === s_bus) && (victim === 1.U) && (!cpu_mem.Mwout))){
     valid1(index) := true.B
     dirty1(index) := false.B
     tags1(index) := cpu_mem.Maddr(63,11)
@@ -217,6 +234,14 @@ when(!cpu_mem.Mwout && next_write_state===s_widle && write_state=/=s_widle && hi
 }
 when(!cpu_mem.Mwout && next_write_state===s_widle && write_state=/=s_widle && hit_bank(1)){
     dirty1(index) := true.B
+}
+when(write_done && flushing && !flush_counter(0)){
+    valid0(flush_counter(7,1)) := false.B
+    dirty0(flush_counter(7,1)) := false.B
+}
+when(write_done && flushing && flush_counter(0)){
+    valid1(flush_counter(7,1)) := false.B
+    dirty1(flush_counter(7,1)) := false.B
 }
 
 //state machine-----------------------------------------
@@ -238,9 +263,10 @@ next_write_state := MuxCase(write_state,Seq(
     (write_state === s_bus_addr && (io.mem_master.writeAddr.ready))             -> s_bus_data,
     (write_state === s_bus_data && (io.mem_master.writeData.ready))             -> s_bus_resp,
     (write_state === s_bus_resp && (io.mem_master.writeResp.valid))             -> s_widle,
-    (write_state === s_widle && (next_state =/= s_bus))                         -> s_widle,
+    (write_state === s_widle && (next_state =/= s_bus) && (!flushing))          -> s_widle,
     (write_state === s_widle && !hit && cpu_mem.Mwout.asBool)                   -> s_bus_addr,
-    (write_state === s_widle && should_write_back)                              -> s_bus_addr
+    (write_state === s_widle && should_write_back)                              -> s_bus_addr,
+    (write_state === s_widle && should_flush)                                       -> s_bus_addr
 ))
 //axi control signals
 io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men) && (write_state===s_widle)
@@ -248,10 +274,13 @@ io.mem_master.readAddr.bits.addr := Mux(uncache,cpu_mem.Maddr,Cat(cpu_mem.Maddr(
 io.mem_master.readData.ready := (state === s_bus) && (write_state===s_widle)
 
 io.mem_master.writeAddr.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
-io.mem_master.writeAddr.bits.addr := Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(Seq(tags0(index),index,0.U(4.W))),Cat(Seq(tags1(index),index,0.U(4.W)))),cpu_mem.Maddr)
+io.mem_master.writeAddr.bits.addr := Mux(flushing,Mux(!flush_counter(0).asBool,Cat(Seq(tags0(flush_counter(7,1)),flush_counter(7,1),0.U(4.W))),Cat(Seq(tags1(flush_counter(7,1)),flush_counter(7,1),0.U(4.W)))),
+  Mux(!cpu_mem.Mwout,Mux(!victim.asBool,Cat(Seq(tags0(index),index,0.U(4.W))),Cat(Seq(tags1(index),index,0.U(4.W)))),cpu_mem.Maddr))
 io.mem_master.writeData.valid := (write_state === s_bus_addr)||(write_state === s_bus_data)
-io.mem_master.writeData.bits.data := Mux(!cpu_mem.Mwout, Mux(victim.asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,cpu_mem.MdataOut)
-io.mem_master.writeData.bits.strb := Mux(!cpu_mem.Mwout,0xffff.U,strb)//???shift
+io.mem_master.writeData.bits.data := Mux(flushing,
+  Mux(flush_counter(0).asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,
+  Mux(!cpu_mem.Mwout, Mux(victim.asBool,data_array(1).io.o_rdata,data_array(0).io.o_rdata) ,cpu_mem.MdataOut))
+io.mem_master.writeData.bits.strb := Mux(flushing||(!cpu_mem.Mwout),0xffff.U,strb)//???shift
 io.mem_master.writeResp.ready := (write_state === s_bus_resp)
 
 io.mem_master.readAddr.bits.prot := 0.U

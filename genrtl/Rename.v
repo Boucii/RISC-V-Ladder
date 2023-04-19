@@ -24,7 +24,7 @@ module Rename(
   input  [2:0]   io_i_decode_packs_0_op2_sel,
   input  [4:0]   io_i_decode_packs_0_alu_sel,
   input  [3:0]   io_i_decode_packs_0_branch_type,
-  input  [1:0]   io_i_decode_packs_0_mem_type,
+  input  [2:0]   io_i_decode_packs_0_mem_type,
   input          io_i_decode_packs_1_valid,
   input  [31:0]  io_i_decode_packs_1_pc,
   input  [31:0]  io_i_decode_packs_1_inst,
@@ -48,7 +48,7 @@ module Rename(
   input  [2:0]   io_i_decode_packs_1_op2_sel,
   input  [4:0]   io_i_decode_packs_1_alu_sel,
   input  [3:0]   io_i_decode_packs_1_branch_type,
-  input  [1:0]   io_i_decode_packs_1_mem_type,
+  input  [2:0]   io_i_decode_packs_1_mem_type,
   input          io_i_commit_packs_0_valid,
   input  [6:0]   io_i_commit_packs_0_uop_phy_dst,
   input  [6:0]   io_i_commit_packs_0_uop_stale_dst,
@@ -94,7 +94,7 @@ module Rename(
   output [2:0]   io_o_rename_packs_0_op2_sel,
   output [4:0]   io_o_rename_packs_0_alu_sel,
   output [3:0]   io_o_rename_packs_0_branch_type,
-  output [1:0]   io_o_rename_packs_0_mem_type,
+  output [2:0]   io_o_rename_packs_0_mem_type,
   output         io_o_rename_packs_1_valid,
   output [31:0]  io_o_rename_packs_1_pc,
   output [31:0]  io_o_rename_packs_1_inst,
@@ -122,7 +122,7 @@ module Rename(
   output [2:0]   io_o_rename_packs_1_op2_sel,
   output [4:0]   io_o_rename_packs_1_alu_sel,
   output [3:0]   io_o_rename_packs_1_branch_type,
-  output [1:0]   io_o_rename_packs_1_mem_type,
+  output [2:0]   io_o_rename_packs_1_mem_type,
   output [127:0] io_o_written_back_table,
   input          io_i_exception,
   input          io_i_stall,
@@ -322,7 +322,7 @@ module Rename(
   reg [2:0] uops_0_op2_sel; // @[rename.scala 41:23]
   reg [4:0] uops_0_alu_sel; // @[rename.scala 41:23]
   reg [3:0] uops_0_branch_type; // @[rename.scala 41:23]
-  reg [1:0] uops_0_mem_type; // @[rename.scala 41:23]
+  reg [2:0] uops_0_mem_type; // @[rename.scala 41:23]
   reg  uops_1_valid; // @[rename.scala 41:23]
   reg [31:0] uops_1_pc; // @[rename.scala 41:23]
   reg [31:0] uops_1_inst; // @[rename.scala 41:23]
@@ -346,7 +346,7 @@ module Rename(
   reg [2:0] uops_1_op2_sel; // @[rename.scala 41:23]
   reg [4:0] uops_1_alu_sel; // @[rename.scala 41:23]
   reg [3:0] uops_1_branch_type; // @[rename.scala 41:23]
-  reg [1:0] uops_1_mem_type; // @[rename.scala 41:23]
+  reg [2:0] uops_1_mem_type; // @[rename.scala 41:23]
   wire  _uops_0_T_1 = ~io_i_decode_packs_0_valid & io_i_decode_packs_1_valid; // @[rename.scala 42:74]
   wire  _rename_table_io_i_rename_req_packs_0_arch_rs1_T = ~invalidify; // @[rename.scala 51:80]
   wire  _rename_table_io_i_rename_req_packs_0_arch_rs1_T_3 = uops_0_valid & ~invalidify & ~io_i_stall; // @[rename.scala 51:92]
@@ -802,7 +802,7 @@ module Rename(
       end
     end
     if (reset) begin // @[rename.scala 41:23]
-      uops_0_mem_type <= 2'h0; // @[rename.scala 41:23]
+      uops_0_mem_type <= 3'h0; // @[rename.scala 41:23]
     end else if (!(io_i_stall)) begin // @[rename.scala 42:19]
       if (~io_i_decode_packs_0_valid & io_i_decode_packs_1_valid) begin // @[rename.scala 42:44]
         uops_0_mem_type <= io_i_decode_packs_1_mem_type;
@@ -1021,7 +1021,7 @@ module Rename(
       end
     end
     if (reset) begin // @[rename.scala 41:23]
-      uops_1_mem_type <= 2'h0; // @[rename.scala 41:23]
+      uops_1_mem_type <= 3'h0; // @[rename.scala 41:23]
     end else if (!(io_i_stall)) begin // @[rename.scala 43:19]
       if (_uops_0_T_1) begin // @[rename.scala 43:44]
         uops_1_mem_type <= io_i_decode_packs_0_mem_type;
@@ -1113,7 +1113,7 @@ initial begin
   _RAND_22 = {1{`RANDOM}};
   uops_0_branch_type = _RAND_22[3:0];
   _RAND_23 = {1{`RANDOM}};
-  uops_0_mem_type = _RAND_23[1:0];
+  uops_0_mem_type = _RAND_23[2:0];
   _RAND_24 = {1{`RANDOM}};
   uops_1_valid = _RAND_24[0:0];
   _RAND_25 = {1{`RANDOM}};
@@ -1161,7 +1161,7 @@ initial begin
   _RAND_46 = {1{`RANDOM}};
   uops_1_branch_type = _RAND_46[3:0];
   _RAND_47 = {1{`RANDOM}};
-  uops_1_mem_type = _RAND_47[1:0];
+  uops_1_mem_type = _RAND_47[2:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

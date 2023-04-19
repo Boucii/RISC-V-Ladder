@@ -54,9 +54,10 @@ trait consts{
     val BR_JR  = 8.U(4.W)
 
 //Mem_Type
-    val MEM_N       = 0.U(2.W)
-    val MEM_W       = 1.U(2.W)
-    val MEM_R       = 2.U(2.W)
+    val MEM_N       = 0.U(3.W)
+    val MEM_W       = 1.U(3.W)
+    val MEM_R       = 2.U(3.W)
+    val MEM_FENCEI  = 3.U(3.W)
 
 //INST_TYPE
     val R_TYPE = 0.U(7.W)

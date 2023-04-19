@@ -46,6 +46,9 @@ class DcacheIO extends Bundle{
     val Mlen=Output(UInt(32.W))
     val MdataIn=Input(UInt(64.W))
     val MdataOut=Output(UInt(64.W))
+
+    val flush_done = Input(Bool())
+    val flush = Output(Bool())
 }
 
 class branch_predict_pack extends Bundle
@@ -176,7 +179,7 @@ class uop extends Bundle() with params{
     val alu_sel = UInt(5.W)//??select alu functions
 
     val branch_type = UInt(4.W)
-    val mem_type = UInt(2.W)
+    val mem_type = UInt(3.W)
 }
 /*
   // RS1 Operand Select Signal

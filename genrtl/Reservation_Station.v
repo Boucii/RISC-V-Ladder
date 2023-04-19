@@ -29,7 +29,7 @@ module Reservation_Station(
   input  [2:0]   io_i_dispatch_packs_0_op2_sel,
   input  [4:0]   io_i_dispatch_packs_0_alu_sel,
   input  [3:0]   io_i_dispatch_packs_0_branch_type,
-  input  [1:0]   io_i_dispatch_packs_0_mem_type,
+  input  [2:0]   io_i_dispatch_packs_0_mem_type,
   input          io_i_dispatch_packs_1_valid,
   input  [31:0]  io_i_dispatch_packs_1_pc,
   input  [31:0]  io_i_dispatch_packs_1_inst,
@@ -58,7 +58,7 @@ module Reservation_Station(
   input  [2:0]   io_i_dispatch_packs_1_op2_sel,
   input  [4:0]   io_i_dispatch_packs_1_alu_sel,
   input  [3:0]   io_i_dispatch_packs_1_branch_type,
-  input  [1:0]   io_i_dispatch_packs_1_mem_type,
+  input  [2:0]   io_i_dispatch_packs_1_mem_type,
   output         io_o_issue_packs_0_valid,
   output [31:0]  io_o_issue_packs_0_pc,
   output [31:0]  io_o_issue_packs_0_inst,
@@ -87,7 +87,7 @@ module Reservation_Station(
   output [2:0]   io_o_issue_packs_0_op2_sel,
   output [4:0]   io_o_issue_packs_0_alu_sel,
   output [3:0]   io_o_issue_packs_0_branch_type,
-  output [1:0]   io_o_issue_packs_0_mem_type,
+  output [2:0]   io_o_issue_packs_0_mem_type,
   output         io_o_issue_packs_1_valid,
   output [31:0]  io_o_issue_packs_1_pc,
   output [31:0]  io_o_issue_packs_1_inst,
@@ -116,7 +116,7 @@ module Reservation_Station(
   output [2:0]   io_o_issue_packs_1_op2_sel,
   output [4:0]   io_o_issue_packs_1_alu_sel,
   output [3:0]   io_o_issue_packs_1_branch_type,
-  output [1:0]   io_o_issue_packs_1_mem_type,
+  output [2:0]   io_o_issue_packs_1_mem_type,
   input  [127:0] io_i_wakeup_port,
   input          io_i_ex_res_packs_0_valid,
   input  [6:0]   io_i_ex_res_packs_0_uop_func_code,
@@ -179,7 +179,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_0_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_0_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_0_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_0_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_0_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_0_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_0_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_0_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -207,7 +207,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_0_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_0_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_0_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_0_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_0_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_0_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_0_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_0_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -252,7 +252,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_1_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_1_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_1_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_1_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_1_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_1_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_1_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_1_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -280,7 +280,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_1_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_1_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_1_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_1_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_1_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_1_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_1_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_1_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -325,7 +325,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_2_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_2_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_2_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_2_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_2_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_2_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_2_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_2_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -353,7 +353,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_2_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_2_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_2_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_2_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_2_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_2_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_2_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_2_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -398,7 +398,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_3_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_3_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_3_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_3_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_3_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_3_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_3_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_3_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -426,7 +426,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_3_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_3_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_3_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_3_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_3_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_3_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_3_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_3_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -471,7 +471,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_4_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_4_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_4_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_4_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_4_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_4_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_4_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_4_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -499,7 +499,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_4_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_4_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_4_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_4_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_4_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_4_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_4_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_4_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -544,7 +544,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_5_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_5_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_5_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_5_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_5_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_5_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_5_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_5_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -572,7 +572,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_5_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_5_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_5_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_5_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_5_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_5_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_5_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_5_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -617,7 +617,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_6_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_6_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_6_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_6_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_6_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_6_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_6_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_6_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -645,7 +645,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_6_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_6_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_6_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_6_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_6_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_6_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_6_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_6_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -690,7 +690,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_7_io_i_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_7_io_i_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_7_io_i_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_7_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_7_io_i_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_7_io_o_uop_pc; // @[reservation_station.scala 39:56]
   wire [31:0] reservation_station_7_io_o_uop_inst; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_7_io_o_uop_func_code; // @[reservation_station.scala 39:56]
@@ -718,7 +718,7 @@ module Reservation_Station(
   wire [2:0] reservation_station_7_io_o_uop_op2_sel; // @[reservation_station.scala 39:56]
   wire [4:0] reservation_station_7_io_o_uop_alu_sel; // @[reservation_station.scala 39:56]
   wire [3:0] reservation_station_7_io_o_uop_branch_type; // @[reservation_station.scala 39:56]
-  wire [1:0] reservation_station_7_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
+  wire [2:0] reservation_station_7_io_o_uop_mem_type; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_7_io_i_exe_dst1; // @[reservation_station.scala 39:56]
   wire [6:0] reservation_station_7_io_i_exe_dst2; // @[reservation_station.scala 39:56]
   wire [63:0] reservation_station_7_io_i_exe_value1; // @[reservation_station.scala 39:56]
@@ -939,7 +939,7 @@ module Reservation_Station(
     reservation_station_0_io_o_uop_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_8_branch_type = _issue1_func_code_T_7 ? reservation_station_7_io_o_uop_branch_type :
     reservation_station_0_io_o_uop_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_8_mem_type = _issue1_func_code_T_7 ? reservation_station_7_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_8_mem_type = _issue1_func_code_T_7 ? reservation_station_7_io_o_uop_mem_type :
     reservation_station_0_io_o_uop_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_9_pc = _issue1_func_code_T_6 ? reservation_station_6_io_o_uop_pc :
     _io_o_issue_packs_0_T_8_pc; // @[Mux.scala 101:16]
@@ -996,7 +996,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_8_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_9_branch_type = _issue1_func_code_T_6 ? reservation_station_6_io_o_uop_branch_type :
     _io_o_issue_packs_0_T_8_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_9_mem_type = _issue1_func_code_T_6 ? reservation_station_6_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_9_mem_type = _issue1_func_code_T_6 ? reservation_station_6_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_8_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_10_pc = _issue1_func_code_T_5 ? reservation_station_5_io_o_uop_pc :
     _io_o_issue_packs_0_T_9_pc; // @[Mux.scala 101:16]
@@ -1053,7 +1053,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_9_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_10_branch_type = _issue1_func_code_T_5 ? reservation_station_5_io_o_uop_branch_type
      : _io_o_issue_packs_0_T_9_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_10_mem_type = _issue1_func_code_T_5 ? reservation_station_5_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_10_mem_type = _issue1_func_code_T_5 ? reservation_station_5_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_9_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_11_pc = _issue1_func_code_T_4 ? reservation_station_4_io_o_uop_pc :
     _io_o_issue_packs_0_T_10_pc; // @[Mux.scala 101:16]
@@ -1110,7 +1110,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_10_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_11_branch_type = _issue1_func_code_T_4 ? reservation_station_4_io_o_uop_branch_type
      : _io_o_issue_packs_0_T_10_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_11_mem_type = _issue1_func_code_T_4 ? reservation_station_4_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_11_mem_type = _issue1_func_code_T_4 ? reservation_station_4_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_10_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_12_pc = _issue1_func_code_T_3 ? reservation_station_3_io_o_uop_pc :
     _io_o_issue_packs_0_T_11_pc; // @[Mux.scala 101:16]
@@ -1167,7 +1167,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_11_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_12_branch_type = _issue1_func_code_T_3 ? reservation_station_3_io_o_uop_branch_type
      : _io_o_issue_packs_0_T_11_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_12_mem_type = _issue1_func_code_T_3 ? reservation_station_3_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_12_mem_type = _issue1_func_code_T_3 ? reservation_station_3_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_11_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_13_pc = _issue1_func_code_T_2 ? reservation_station_2_io_o_uop_pc :
     _io_o_issue_packs_0_T_12_pc; // @[Mux.scala 101:16]
@@ -1224,7 +1224,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_12_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_13_branch_type = _issue1_func_code_T_2 ? reservation_station_2_io_o_uop_branch_type
      : _io_o_issue_packs_0_T_12_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_13_mem_type = _issue1_func_code_T_2 ? reservation_station_2_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_13_mem_type = _issue1_func_code_T_2 ? reservation_station_2_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_12_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_0_T_14_pc = _issue1_func_code_T_1 ? reservation_station_1_io_o_uop_pc :
     _io_o_issue_packs_0_T_13_pc; // @[Mux.scala 101:16]
@@ -1281,7 +1281,7 @@ module Reservation_Station(
     _io_o_issue_packs_0_T_13_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_0_T_14_branch_type = _issue1_func_code_T_1 ? reservation_station_1_io_o_uop_branch_type
      : _io_o_issue_packs_0_T_13_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_0_T_14_mem_type = _issue1_func_code_T_1 ? reservation_station_1_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_0_T_14_mem_type = _issue1_func_code_T_1 ? reservation_station_1_io_o_uop_mem_type :
     _io_o_issue_packs_0_T_13_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_issue_packs_1_T = 3'h0 == issue2_idx; // @[reservation_station.scala 108:103]
   wire  _io_o_issue_packs_1_T_1 = 3'h1 == issue2_idx; // @[reservation_station.scala 108:103]
@@ -1348,7 +1348,7 @@ module Reservation_Station(
     reservation_station_0_io_o_uop_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_8_branch_type = _io_o_issue_packs_1_T_7 ? reservation_station_7_io_o_uop_branch_type
      : reservation_station_0_io_o_uop_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_8_mem_type = _io_o_issue_packs_1_T_7 ? reservation_station_7_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_8_mem_type = _io_o_issue_packs_1_T_7 ? reservation_station_7_io_o_uop_mem_type :
     reservation_station_0_io_o_uop_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_9_pc = _io_o_issue_packs_1_T_6 ? reservation_station_6_io_o_uop_pc :
     _io_o_issue_packs_1_T_8_pc; // @[Mux.scala 101:16]
@@ -1405,7 +1405,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_8_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_9_branch_type = _io_o_issue_packs_1_T_6 ? reservation_station_6_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_8_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_9_mem_type = _io_o_issue_packs_1_T_6 ? reservation_station_6_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_9_mem_type = _io_o_issue_packs_1_T_6 ? reservation_station_6_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_8_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_10_pc = _io_o_issue_packs_1_T_5 ? reservation_station_5_io_o_uop_pc :
     _io_o_issue_packs_1_T_9_pc; // @[Mux.scala 101:16]
@@ -1462,7 +1462,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_9_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_10_branch_type = _io_o_issue_packs_1_T_5 ? reservation_station_5_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_9_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_10_mem_type = _io_o_issue_packs_1_T_5 ? reservation_station_5_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_10_mem_type = _io_o_issue_packs_1_T_5 ? reservation_station_5_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_9_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_11_pc = _io_o_issue_packs_1_T_4 ? reservation_station_4_io_o_uop_pc :
     _io_o_issue_packs_1_T_10_pc; // @[Mux.scala 101:16]
@@ -1519,7 +1519,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_10_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_11_branch_type = _io_o_issue_packs_1_T_4 ? reservation_station_4_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_10_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_11_mem_type = _io_o_issue_packs_1_T_4 ? reservation_station_4_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_11_mem_type = _io_o_issue_packs_1_T_4 ? reservation_station_4_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_10_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_12_pc = _io_o_issue_packs_1_T_3 ? reservation_station_3_io_o_uop_pc :
     _io_o_issue_packs_1_T_11_pc; // @[Mux.scala 101:16]
@@ -1576,7 +1576,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_11_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_12_branch_type = _io_o_issue_packs_1_T_3 ? reservation_station_3_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_11_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_12_mem_type = _io_o_issue_packs_1_T_3 ? reservation_station_3_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_12_mem_type = _io_o_issue_packs_1_T_3 ? reservation_station_3_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_11_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_13_pc = _io_o_issue_packs_1_T_2 ? reservation_station_2_io_o_uop_pc :
     _io_o_issue_packs_1_T_12_pc; // @[Mux.scala 101:16]
@@ -1633,7 +1633,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_12_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_13_branch_type = _io_o_issue_packs_1_T_2 ? reservation_station_2_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_12_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_13_mem_type = _io_o_issue_packs_1_T_2 ? reservation_station_2_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_13_mem_type = _io_o_issue_packs_1_T_2 ? reservation_station_2_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_12_mem_type; // @[Mux.scala 101:16]
   wire [31:0] _io_o_issue_packs_1_T_14_pc = _io_o_issue_packs_1_T_1 ? reservation_station_1_io_o_uop_pc :
     _io_o_issue_packs_1_T_13_pc; // @[Mux.scala 101:16]
@@ -1690,7 +1690,7 @@ module Reservation_Station(
     _io_o_issue_packs_1_T_13_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_issue_packs_1_T_14_branch_type = _io_o_issue_packs_1_T_1 ? reservation_station_1_io_o_uop_branch_type
      : _io_o_issue_packs_1_T_13_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_issue_packs_1_T_14_mem_type = _io_o_issue_packs_1_T_1 ? reservation_station_1_io_o_uop_mem_type :
+  wire [2:0] _io_o_issue_packs_1_T_14_mem_type = _io_o_issue_packs_1_T_1 ? reservation_station_1_io_o_uop_mem_type :
     _io_o_issue_packs_1_T_13_mem_type; // @[Mux.scala 101:16]
   wire  _reservation_station_0_io_i_write_slot_T = 3'h0 == write_idx1; // @[reservation_station.scala 119:14]
   wire  _reservation_station_0_io_i_write_slot_T_2 = 3'h0 == write_idx1 & write_idx1 != 3'h7; // @[reservation_station.scala 119:29]

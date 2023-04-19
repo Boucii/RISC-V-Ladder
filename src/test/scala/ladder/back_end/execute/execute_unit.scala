@@ -342,6 +342,7 @@ class LSU extends Function_Unit(
     io.dcache_io.Men := !(uop.mem_type === MEM_N)
     io.dcache_io.Mlen := len
     io.dcache_io.MdataOut := uop.src2_value
+    io.dcache_io.flush := (uop.mem_type === MEM_FENCEI)&&(!ready_to_commit)&&(uop.valid)
 
 
 
@@ -349,6 +350,7 @@ class LSU extends Function_Unit(
     next_ready_to_commit:=MuxCase(ready_to_commit,Seq(
         (state===s_BUSY && io.dcache_io.addr_ready && uop.mem_type===MEM_W && addr_given)->true.B,
         (state===s_BUSY && io.dcache_io.data_valid && uop.mem_type===MEM_R && addr_given)->true.B,
+        (state===s_BUSY && io.dcache_io.flush_done && uop.mem_type===MEM_FENCEI)->true.B,
         (state===s_FREE) ->false.B 
     ))
     io.o_available := Mux(state === s_BUSY, false.B,true.B) && ((io.i_select_to_commit && uop.valid) || !uop.valid)

@@ -38,7 +38,7 @@ module Reservation_Station_Slot(
   input  [2:0]   io_i_uop_op2_sel,
   input  [4:0]   io_i_uop_alu_sel,
   input  [3:0]   io_i_uop_branch_type,
-  input  [1:0]   io_i_uop_mem_type,
+  input  [2:0]   io_i_uop_mem_type,
   output [31:0]  io_o_uop_pc,
   output [31:0]  io_o_uop_inst,
   output [6:0]   io_o_uop_func_code,
@@ -66,7 +66,7 @@ module Reservation_Station_Slot(
   output [2:0]   io_o_uop_op2_sel,
   output [4:0]   io_o_uop_alu_sel,
   output [3:0]   io_o_uop_branch_type,
-  output [1:0]   io_o_uop_mem_type,
+  output [2:0]   io_o_uop_mem_type,
   input  [6:0]   io_i_exe_dst1,
   input  [6:0]   io_i_exe_dst2,
   input  [63:0]  io_i_exe_value1,
@@ -135,7 +135,7 @@ module Reservation_Station_Slot(
   reg [2:0] uop_op2_sel; // @[reservation_station_slot.scala 39:22]
   reg [4:0] uop_alu_sel; // @[reservation_station_slot.scala 39:22]
   reg [3:0] uop_branch_type; // @[reservation_station_slot.scala 39:22]
-  reg [1:0] uop_mem_type; // @[reservation_station_slot.scala 39:22]
+  reg [2:0] uop_mem_type; // @[reservation_station_slot.scala 39:22]
   reg  valid; // @[reservation_station_slot.scala 42:24]
   wire  _flush_T_14 = io_i_branch_resolve_pack_rob_idx[2:0] > uop_rob_idx[2:0] & (io_i_branch_resolve_pack_rob_idx[3] ^
     uop_rob_idx[3]); // @[reservation_station_slot.scala 49:99]
@@ -448,7 +448,7 @@ module Reservation_Station_Slot(
       end
     end
     if (reset) begin // @[reservation_station_slot.scala 39:22]
-      uop_mem_type <= 2'h0; // @[reservation_station_slot.scala 39:22]
+      uop_mem_type <= 3'h0; // @[reservation_station_slot.scala 39:22]
     end else if (!(flush)) begin // @[reservation_station_slot.scala 59:16]
       if (io_i_write_slot) begin // @[reservation_station_slot.scala 61:32]
         uop_mem_type <= io_i_uop_mem_type; // @[reservation_station_slot.scala 62:12]
@@ -617,7 +617,7 @@ initial begin
   _RAND_27 = {1{`RANDOM}};
   uop_branch_type = _RAND_27[3:0];
   _RAND_28 = {1{`RANDOM}};
-  uop_mem_type = _RAND_28[1:0];
+  uop_mem_type = _RAND_28[2:0];
   _RAND_29 = {1{`RANDOM}};
   valid = _RAND_29[0:0];
   _RAND_30 = {1{`RANDOM}};

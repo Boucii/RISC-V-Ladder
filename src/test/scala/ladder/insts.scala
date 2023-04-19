@@ -52,7 +52,7 @@ object decode_table extends consts{
     OR     -> List(Y,    BitPat(FU_ALU),       Y,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_OR),      BitPat(BR_N),             BitPat(MEM_N)), 
     AND    -> List(Y,    BitPat(FU_ALU),       Y,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_AND),     BitPat(BR_N),             BitPat(MEM_N)), 
 //  FENCE  -> List(Y,    BitPat(FU_MEM),       Y,        BitPat(N,    )    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
-//  FENCE.I-> List(Y,    BitPat(FU_MEM),       Y,        BitPat(N,    )    BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
+    FENCE_I-> List(Y,    BitPat(FU_MEM),       Y,        BitPat(N_TYPE),    BitPat(SRC_N),     BitPat(SRC_N),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_FENCEI)), 
 
     MUL    -> List(Y,    BitPat(FU_MUL),       Y,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 
     MULH   -> List(Y,    BitPat(FU_MUL),       Y,        BitPat(R_TYPE),   BitPat(SRC_RS),     BitPat(SRC_RS),   BitPat(ALU_NONE),    BitPat(BR_N),             BitPat(MEM_N)), 

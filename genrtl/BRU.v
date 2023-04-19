@@ -37,7 +37,7 @@ module BRU(
   input  [2:0]  io_i_uop_op2_sel,
   input  [4:0]  io_i_uop_alu_sel,
   input  [3:0]  io_i_uop_branch_type,
-  input  [1:0]  io_i_uop_mem_type,
+  input  [2:0]  io_i_uop_mem_type,
   input         io_i_select,
   input         io_i_select_to_commit,
   output        io_o_ex_res_pack_valid,
@@ -70,7 +70,7 @@ module BRU(
   output [2:0]  io_o_ex_res_pack_uop_op2_sel,
   output [4:0]  io_o_ex_res_pack_uop_alu_sel,
   output [3:0]  io_o_ex_res_pack_uop_branch_type,
-  output [1:0]  io_o_ex_res_pack_uop_mem_type,
+  output [2:0]  io_o_ex_res_pack_uop_mem_type,
   output        io_o_available,
   input         io_i_exception
 );
@@ -135,7 +135,7 @@ module BRU(
   reg [2:0] uop_op2_sel; // @[execute_unit.scala 153:23]
   reg [4:0] uop_alu_sel; // @[execute_unit.scala 153:23]
   reg [3:0] uop_branch_type; // @[execute_unit.scala 153:23]
-  reg [1:0] uop_mem_type; // @[execute_unit.scala 153:23]
+  reg [2:0] uop_mem_type; // @[execute_unit.scala 153:23]
   wire [31:0] _io_o_ex_res_pack_uop_dst_value_T_1 = uop_pc + 32'h4; // @[execute_unit.scala 163:46]
   wire  br_eq = uop_src1_value == uop_src2_value; // @[execute_unit.scala 168:21]
   wire  br_ltu = uop_src1_value < uop_src2_value; // @[execute_unit.scala 169:30]
@@ -376,7 +376,7 @@ module BRU(
       uop_branch_type <= io_i_uop_branch_type;
     end
     if (reset) begin // @[execute_unit.scala 153:23]
-      uop_mem_type <= 2'h0; // @[execute_unit.scala 153:23]
+      uop_mem_type <= 3'h0; // @[execute_unit.scala 153:23]
     end else if (io_i_select) begin // @[execute_unit.scala 155:20]
       uop_mem_type <= io_i_uop_mem_type;
     end
@@ -476,7 +476,7 @@ initial begin
   _RAND_28 = {1{`RANDOM}};
   uop_branch_type = _RAND_28[3:0];
   _RAND_29 = {1{`RANDOM}};
-  uop_mem_type = _RAND_29[1:0];
+  uop_mem_type = _RAND_29[2:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

@@ -20,7 +20,7 @@
 //#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
 uint64_t GTK_EN_CYC = 1;
 #define DIFFTEST_EN 1
-#define ITRACE_EN 1
+#define ITRACE_EN 0
 //#define GTK_EN 1
 int GTK_EN = 1;
 #define LOG_EN 0
@@ -272,11 +272,11 @@ extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 extern "C" void pmem_write_dpi(long long waddr, long long wdata, char wmask) {
   mem_lock.lock();
   if(waddr<0x80000000){
- 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
- 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
- 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
- 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
- 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<" .\n";
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<RESET<<endl;
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<RESET<<endl;
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<RESET<<endl;
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<RESET<<endl;
+ 	cout<<RED<<"memwrite illegally on "<<hex<<waddr<<RESET<<endl;
 	mem_lock.unlock();
 	return;
   }

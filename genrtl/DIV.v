@@ -29,7 +29,7 @@ module DIV(
   input  [2:0]  io_i_uop_op2_sel,
   input  [4:0]  io_i_uop_alu_sel,
   input  [3:0]  io_i_uop_branch_type,
-  input  [1:0]  io_i_uop_mem_type,
+  input  [2:0]  io_i_uop_mem_type,
   input         io_i_select,
   input         io_i_select_to_commit,
   output        io_o_ex_res_pack_valid,
@@ -62,7 +62,7 @@ module DIV(
   output [2:0]  io_o_ex_res_pack_uop_op2_sel,
   output [4:0]  io_o_ex_res_pack_uop_alu_sel,
   output [3:0]  io_o_ex_res_pack_uop_branch_type,
-  output [1:0]  io_o_ex_res_pack_uop_mem_type,
+  output [2:0]  io_o_ex_res_pack_uop_mem_type,
   output        io_o_available,
   input         io_i_exception,
   input         io_i_rollback_valid,
@@ -102,71 +102,71 @@ module DIV(
   reg [31:0] _RAND_30;
   reg [31:0] _RAND_31;
 `endif // RANDOMIZE_REG_INIT
-  wire  divider_clock; // @[execute_unit.scala 639:25]
-  wire  divider_reset; // @[execute_unit.scala 639:25]
-  wire [63:0] divider_io_i_dividend; // @[execute_unit.scala 639:25]
-  wire [63:0] divider_io_i_divisor; // @[execute_unit.scala 639:25]
-  wire  divider_io_i_div_valid; // @[execute_unit.scala 639:25]
-  wire  divider_io_i_divw; // @[execute_unit.scala 639:25]
-  wire  divider_io_i_div_signed; // @[execute_unit.scala 639:25]
-  wire  divider_io_i_flush; // @[execute_unit.scala 639:25]
-  wire  divider_io_o_out_valid; // @[execute_unit.scala 639:25]
-  wire [63:0] divider_io_o_quotient; // @[execute_unit.scala 639:25]
-  wire [63:0] divider_io_o_remainder; // @[execute_unit.scala 639:25]
-  reg  uop_valid; // @[execute_unit.scala 617:23]
-  reg [31:0] uop_pc; // @[execute_unit.scala 617:23]
-  reg [31:0] uop_inst; // @[execute_unit.scala 617:23]
-  reg [6:0] uop_func_code; // @[execute_unit.scala 617:23]
-  reg  uop_branch_predict_pack_valid; // @[execute_unit.scala 617:23]
-  reg [63:0] uop_branch_predict_pack_target; // @[execute_unit.scala 617:23]
-  reg [3:0] uop_branch_predict_pack_branch_type; // @[execute_unit.scala 617:23]
-  reg  uop_branch_predict_pack_select; // @[execute_unit.scala 617:23]
-  reg  uop_branch_predict_pack_taken; // @[execute_unit.scala 617:23]
-  reg [6:0] uop_phy_dst; // @[execute_unit.scala 617:23]
-  reg [6:0] uop_stale_dst; // @[execute_unit.scala 617:23]
-  reg [4:0] uop_arch_dst; // @[execute_unit.scala 617:23]
-  reg [2:0] uop_inst_type; // @[execute_unit.scala 617:23]
-  reg  uop_regWen; // @[execute_unit.scala 617:23]
-  reg  uop_src1_valid; // @[execute_unit.scala 617:23]
-  reg [6:0] uop_phy_rs1; // @[execute_unit.scala 617:23]
-  reg [4:0] uop_arch_rs1; // @[execute_unit.scala 617:23]
-  reg  uop_src2_valid; // @[execute_unit.scala 617:23]
-  reg [6:0] uop_phy_rs2; // @[execute_unit.scala 617:23]
-  reg [4:0] uop_arch_rs2; // @[execute_unit.scala 617:23]
-  reg [3:0] uop_rob_idx; // @[execute_unit.scala 617:23]
-  reg [63:0] uop_imm; // @[execute_unit.scala 617:23]
-  reg [63:0] uop_dst_value; // @[execute_unit.scala 617:23]
-  reg [63:0] uop_src1_value; // @[execute_unit.scala 617:23]
-  reg [63:0] uop_src2_value; // @[execute_unit.scala 617:23]
-  reg [2:0] uop_op1_sel; // @[execute_unit.scala 617:23]
-  reg [2:0] uop_op2_sel; // @[execute_unit.scala 617:23]
-  reg [4:0] uop_alu_sel; // @[execute_unit.scala 617:23]
-  reg [3:0] uop_branch_type; // @[execute_unit.scala 617:23]
-  reg [1:0] uop_mem_type; // @[execute_unit.scala 617:23]
-  reg  state; // @[execute_unit.scala 619:24]
-  wire  _next_state_T_13 = io_i_rollback_rob_idx[2:0] > uop_rob_idx[2:0] & (io_i_rollback_rob_idx[3] ^ uop_rob_idx[3]); // @[execute_unit.scala 626:90]
+  wire  divider_clock; // @[execute_unit.scala 641:25]
+  wire  divider_reset; // @[execute_unit.scala 641:25]
+  wire [63:0] divider_io_i_dividend; // @[execute_unit.scala 641:25]
+  wire [63:0] divider_io_i_divisor; // @[execute_unit.scala 641:25]
+  wire  divider_io_i_div_valid; // @[execute_unit.scala 641:25]
+  wire  divider_io_i_divw; // @[execute_unit.scala 641:25]
+  wire  divider_io_i_div_signed; // @[execute_unit.scala 641:25]
+  wire  divider_io_i_flush; // @[execute_unit.scala 641:25]
+  wire  divider_io_o_out_valid; // @[execute_unit.scala 641:25]
+  wire [63:0] divider_io_o_quotient; // @[execute_unit.scala 641:25]
+  wire [63:0] divider_io_o_remainder; // @[execute_unit.scala 641:25]
+  reg  uop_valid; // @[execute_unit.scala 619:23]
+  reg [31:0] uop_pc; // @[execute_unit.scala 619:23]
+  reg [31:0] uop_inst; // @[execute_unit.scala 619:23]
+  reg [6:0] uop_func_code; // @[execute_unit.scala 619:23]
+  reg  uop_branch_predict_pack_valid; // @[execute_unit.scala 619:23]
+  reg [63:0] uop_branch_predict_pack_target; // @[execute_unit.scala 619:23]
+  reg [3:0] uop_branch_predict_pack_branch_type; // @[execute_unit.scala 619:23]
+  reg  uop_branch_predict_pack_select; // @[execute_unit.scala 619:23]
+  reg  uop_branch_predict_pack_taken; // @[execute_unit.scala 619:23]
+  reg [6:0] uop_phy_dst; // @[execute_unit.scala 619:23]
+  reg [6:0] uop_stale_dst; // @[execute_unit.scala 619:23]
+  reg [4:0] uop_arch_dst; // @[execute_unit.scala 619:23]
+  reg [2:0] uop_inst_type; // @[execute_unit.scala 619:23]
+  reg  uop_regWen; // @[execute_unit.scala 619:23]
+  reg  uop_src1_valid; // @[execute_unit.scala 619:23]
+  reg [6:0] uop_phy_rs1; // @[execute_unit.scala 619:23]
+  reg [4:0] uop_arch_rs1; // @[execute_unit.scala 619:23]
+  reg  uop_src2_valid; // @[execute_unit.scala 619:23]
+  reg [6:0] uop_phy_rs2; // @[execute_unit.scala 619:23]
+  reg [4:0] uop_arch_rs2; // @[execute_unit.scala 619:23]
+  reg [3:0] uop_rob_idx; // @[execute_unit.scala 619:23]
+  reg [63:0] uop_imm; // @[execute_unit.scala 619:23]
+  reg [63:0] uop_dst_value; // @[execute_unit.scala 619:23]
+  reg [63:0] uop_src1_value; // @[execute_unit.scala 619:23]
+  reg [63:0] uop_src2_value; // @[execute_unit.scala 619:23]
+  reg [2:0] uop_op1_sel; // @[execute_unit.scala 619:23]
+  reg [2:0] uop_op2_sel; // @[execute_unit.scala 619:23]
+  reg [4:0] uop_alu_sel; // @[execute_unit.scala 619:23]
+  reg [3:0] uop_branch_type; // @[execute_unit.scala 619:23]
+  reg [2:0] uop_mem_type; // @[execute_unit.scala 619:23]
+  reg  state; // @[execute_unit.scala 621:24]
+  wire  _next_state_T_13 = io_i_rollback_rob_idx[2:0] > uop_rob_idx[2:0] & (io_i_rollback_rob_idx[3] ^ uop_rob_idx[3]); // @[execute_unit.scala 628:90]
   wire  _next_state_T_15 = io_i_rollback_valid & (io_i_rollback_rob_idx[2:0] < uop_rob_idx[2:0] & io_i_rollback_rob_idx[
-    3] == uop_rob_idx[3] | _next_state_T_13); // @[execute_unit.scala 625:30]
-  wire  _next_state_T_16 = ~io_i_exception; // @[execute_unit.scala 627:10]
-  wire  _next_state_T_19 = ~io_i_exception & ~state & io_i_select; // @[execute_unit.scala 627:50]
-  wire  _next_state_T_23 = _next_state_T_16 & state & io_i_select_to_commit; // @[execute_unit.scala 628:50]
+    3] == uop_rob_idx[3] | _next_state_T_13); // @[execute_unit.scala 627:30]
+  wire  _next_state_T_16 = ~io_i_exception; // @[execute_unit.scala 629:10]
+  wire  _next_state_T_19 = ~io_i_exception & ~state & io_i_select; // @[execute_unit.scala 629:50]
+  wire  _next_state_T_23 = _next_state_T_16 & state & io_i_select_to_commit; // @[execute_unit.scala 630:50]
   wire  _next_state_T_24 = _next_state_T_23 ? 1'h0 : state; // @[Mux.scala 101:16]
   wire  _next_state_T_26 = _next_state_T_15 ? 1'h0 : _next_state_T_19 | _next_state_T_24; // @[Mux.scala 101:16]
   wire  _next_state_T_27 = io_i_exception ? 1'h0 : _next_state_T_26; // @[Mux.scala 101:16]
-  wire [31:0] next_uop_inst = io_i_select ? io_i_uop_inst : uop_inst; // @[execute_unit.scala 632:20]
-  wire [63:0] _next_uop_T_dst_value = io_i_select ? 64'h0 : uop_dst_value; // @[execute_unit.scala 632:20]
-  wire [1:0] next_state = {{1'd0}, _next_state_T_27}; // @[execute_unit.scala 620:26 623:16]
-  reg  div_finished; // @[execute_unit.scala 640:29]
+  wire [31:0] next_uop_inst = io_i_select ? io_i_uop_inst : uop_inst; // @[execute_unit.scala 634:20]
+  wire [63:0] _next_uop_T_dst_value = io_i_select ? 64'h0 : uop_dst_value; // @[execute_unit.scala 634:20]
+  wire [1:0] next_state = {{1'd0}, _next_state_T_27}; // @[execute_unit.scala 622:26 625:16]
+  reg  div_finished; // @[execute_unit.scala 642:29]
   wire  _next_div_finished_T_17 = _next_state_T_15 ? 1'h0 : divider_io_o_out_valid | div_finished; // @[Mux.scala 101:16]
   wire  _next_div_finished_T_18 = io_i_exception ? 1'h0 : _next_div_finished_T_17; // @[Mux.scala 101:16]
   wire  next_div_finished = io_i_select_to_commit ? 1'h0 : _next_div_finished_T_18; // @[Mux.scala 101:16]
-  wire  _T_1 = ~div_finished; // @[execute_unit.scala 662:31]
-  wire  _next_uop_dst_value_T_1 = next_uop_inst[14:12] == 3'h6; // @[execute_unit.scala 663:51]
+  wire  _T_1 = ~div_finished; // @[execute_unit.scala 664:31]
+  wire  _next_uop_dst_value_T_1 = next_uop_inst[14:12] == 3'h6; // @[execute_unit.scala 665:51]
   wire [63:0] _next_uop_dst_value_T_5 = next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7 ?
-    divider_io_o_remainder : divider_io_o_quotient; // @[execute_unit.scala 663:30]
-  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 681:26]
-  wire [1:0] _GEN_2 = reset ? 2'h0 : next_state; // @[execute_unit.scala 619:{24,24} 621:11]
-  Divider divider ( // @[execute_unit.scala 639:25]
+    divider_io_o_remainder : divider_io_o_quotient; // @[execute_unit.scala 665:30]
+  wire  _io_o_available_T_1 = state ? 1'h0 : 1'h1; // @[execute_unit.scala 683:26]
+  wire [1:0] _GEN_2 = reset ? 2'h0 : next_state; // @[execute_unit.scala 621:{24,24} 623:11]
+  Divider divider ( // @[execute_unit.scala 641:25]
     .clock(divider_clock),
     .reset(divider_reset),
     .io_i_dividend(divider_io_i_dividend),
@@ -179,209 +179,209 @@ module DIV(
     .io_o_quotient(divider_io_o_quotient),
     .io_o_remainder(divider_io_o_remainder)
   );
-  assign io_o_ex_res_pack_valid = div_finished; // @[execute_unit.scala 679:28]
-  assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_func_code = uop_func_code; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_valid = uop_branch_predict_pack_valid; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_target = uop_branch_predict_pack_target; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_branch_type = uop_branch_predict_pack_branch_type; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_select = uop_branch_predict_pack_select; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_predict_pack_taken = uop_branch_predict_pack_taken; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_phy_dst = uop_phy_dst; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_stale_dst = uop_stale_dst; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_arch_dst = uop_arch_dst; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_inst_type = uop_inst_type; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_regWen = uop_regWen; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_src1_valid = uop_src1_valid; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_phy_rs1 = uop_phy_rs1; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_arch_rs1 = uop_arch_rs1; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_src2_valid = uop_src2_valid; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_phy_rs2 = uop_phy_rs2; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_arch_rs2 = uop_arch_rs2; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_imm = uop_imm; // @[execute_unit.scala 634:26]
+  assign io_o_ex_res_pack_valid = div_finished; // @[execute_unit.scala 681:28]
+  assign io_o_ex_res_pack_uop_valid = uop_valid; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_pc = uop_pc; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_inst = uop_inst; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_func_code = uop_func_code; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_valid = uop_branch_predict_pack_valid; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_target = uop_branch_predict_pack_target; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_branch_type = uop_branch_predict_pack_branch_type; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_select = uop_branch_predict_pack_select; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_predict_pack_taken = uop_branch_predict_pack_taken; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_phy_dst = uop_phy_dst; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_stale_dst = uop_stale_dst; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_arch_dst = uop_arch_dst; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_inst_type = uop_inst_type; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_regWen = uop_regWen; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_src1_valid = uop_src1_valid; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_phy_rs1 = uop_phy_rs1; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_arch_rs1 = uop_arch_rs1; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_src2_valid = uop_src2_valid; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_phy_rs2 = uop_phy_rs2; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_arch_rs2 = uop_arch_rs2; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_rob_idx = uop_rob_idx; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_imm = uop_imm; // @[execute_unit.scala 636:26]
   assign io_o_ex_res_pack_uop_dst_value = next_div_finished & ~div_finished ? _next_uop_dst_value_T_5 :
-    _next_uop_T_dst_value; // @[execute_unit.scala 632:14 662:45 663:25]
-  assign io_o_ex_res_pack_uop_src1_value = uop_src1_value; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_src2_value = uop_src2_value; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_op1_sel = uop_op1_sel; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_op2_sel = uop_op2_sel; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 634:26]
-  assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 634:26]
-  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 681:61]
+    _next_uop_T_dst_value; // @[execute_unit.scala 634:14 664:45 665:25]
+  assign io_o_ex_res_pack_uop_src1_value = uop_src1_value; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_src2_value = uop_src2_value; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_op1_sel = uop_op1_sel; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_op2_sel = uop_op2_sel; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_alu_sel = uop_alu_sel; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_branch_type = uop_branch_type; // @[execute_unit.scala 636:26]
+  assign io_o_ex_res_pack_uop_mem_type = uop_mem_type; // @[execute_unit.scala 636:26]
+  assign io_o_available = _io_o_available_T_1 & (io_i_select_to_commit & uop_valid | ~uop_valid); // @[execute_unit.scala 683:61]
   assign divider_clock = clock;
   assign divider_reset = reset;
-  assign divider_io_i_dividend = io_i_select ? io_i_uop_src1_value : uop_src1_value; // @[execute_unit.scala 632:20]
-  assign divider_io_i_divisor = io_i_select ? io_i_uop_src2_value : uop_src2_value; // @[execute_unit.scala 632:20]
-  assign divider_io_i_div_valid = next_state == 2'h1 & _T_1; // @[execute_unit.scala 669:53]
-  assign divider_io_i_divw = next_uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 671:45]
-  assign divider_io_i_div_signed = _next_uop_dst_value_T_1 | next_uop_inst[14:12] == 3'h4; // @[execute_unit.scala 673:69]
-  assign divider_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 670:38]
+  assign divider_io_i_dividend = io_i_select ? io_i_uop_src1_value : uop_src1_value; // @[execute_unit.scala 634:20]
+  assign divider_io_i_divisor = io_i_select ? io_i_uop_src2_value : uop_src2_value; // @[execute_unit.scala 634:20]
+  assign divider_io_i_div_valid = next_state == 2'h1 & _T_1; // @[execute_unit.scala 671:53]
+  assign divider_io_i_divw = next_uop_inst[6:0] == 7'h3b; // @[execute_unit.scala 673:45]
+  assign divider_io_i_div_signed = _next_uop_dst_value_T_1 | next_uop_inst[14:12] == 3'h4; // @[execute_unit.scala 675:69]
+  assign divider_io_i_flush = next_state == 2'h0; // @[execute_unit.scala 672:38]
   always @(posedge clock) begin
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_valid <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (next_state == 2'h0) begin // @[execute_unit.scala 635:32]
-      uop_valid <= 1'h0; // @[execute_unit.scala 636:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_valid <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (next_state == 2'h0) begin // @[execute_unit.scala 637:32]
+      uop_valid <= 1'h0; // @[execute_unit.scala 638:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_valid <= io_i_uop_valid;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_pc <= 32'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_pc <= 32'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_pc <= io_i_uop_pc;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_inst <= 32'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_inst <= 32'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_inst <= io_i_uop_inst;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_func_code <= 7'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_func_code <= 7'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_func_code <= io_i_uop_func_code;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_predict_pack_valid <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_predict_pack_valid <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_predict_pack_valid <= io_i_uop_branch_predict_pack_valid;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_predict_pack_target <= 64'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_predict_pack_target <= 64'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_predict_pack_target <= io_i_uop_branch_predict_pack_target;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_predict_pack_branch_type <= 4'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_predict_pack_branch_type <= 4'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_predict_pack_branch_type <= io_i_uop_branch_predict_pack_branch_type;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_predict_pack_select <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_predict_pack_select <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_predict_pack_select <= io_i_uop_branch_predict_pack_select;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_predict_pack_taken <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_predict_pack_taken <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_predict_pack_taken <= io_i_uop_branch_predict_pack_taken;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_phy_dst <= 7'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_phy_dst <= 7'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_phy_dst <= io_i_uop_phy_dst;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_stale_dst <= 7'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_stale_dst <= 7'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_stale_dst <= io_i_uop_stale_dst;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_arch_dst <= 5'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_arch_dst <= 5'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_arch_dst <= io_i_uop_arch_dst;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_inst_type <= 3'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_inst_type <= 3'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_inst_type <= io_i_uop_inst_type;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_regWen <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_regWen <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_regWen <= io_i_uop_regWen;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_src1_valid <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_src1_valid <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_src1_valid <= io_i_uop_src1_valid;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_phy_rs1 <= 7'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_phy_rs1 <= 7'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_phy_rs1 <= io_i_uop_phy_rs1;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_arch_rs1 <= 5'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_arch_rs1 <= 5'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_arch_rs1 <= io_i_uop_arch_rs1;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_src2_valid <= 1'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_src2_valid <= 1'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_src2_valid <= io_i_uop_src2_valid;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_phy_rs2 <= 7'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_phy_rs2 <= 7'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_phy_rs2 <= io_i_uop_phy_rs2;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_arch_rs2 <= 5'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_arch_rs2 <= 5'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_arch_rs2 <= io_i_uop_arch_rs2;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_rob_idx <= 4'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_rob_idx <= 4'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_rob_idx <= io_i_uop_rob_idx;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_imm <= 64'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_imm <= 64'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_imm <= io_i_uop_imm;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_dst_value <= 64'h0; // @[execute_unit.scala 617:23]
-    end else if (next_div_finished & ~div_finished) begin // @[execute_unit.scala 662:45]
-      if (next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7) begin // @[execute_unit.scala 663:30]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_dst_value <= 64'h0; // @[execute_unit.scala 619:23]
+    end else if (next_div_finished & ~div_finished) begin // @[execute_unit.scala 664:45]
+      if (next_uop_inst[14:12] == 3'h6 | next_uop_inst[14:12] == 3'h7) begin // @[execute_unit.scala 665:30]
         uop_dst_value <= divider_io_o_remainder;
       end else begin
         uop_dst_value <= divider_io_o_quotient;
       end
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_dst_value <= 64'h0;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_src1_value <= 64'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_src1_value <= 64'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_src1_value <= io_i_uop_src1_value;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_src2_value <= 64'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_src2_value <= 64'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_src2_value <= io_i_uop_src2_value;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_op1_sel <= 3'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_op1_sel <= 3'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_op1_sel <= io_i_uop_op1_sel;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_op2_sel <= 3'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_op2_sel <= 3'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_op2_sel <= io_i_uop_op2_sel;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_alu_sel <= 5'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_alu_sel <= 5'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_alu_sel <= io_i_uop_alu_sel;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_branch_type <= 4'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_branch_type <= 4'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_branch_type <= io_i_uop_branch_type;
     end
-    if (reset) begin // @[execute_unit.scala 617:23]
-      uop_mem_type <= 2'h0; // @[execute_unit.scala 617:23]
-    end else if (io_i_select) begin // @[execute_unit.scala 632:20]
+    if (reset) begin // @[execute_unit.scala 619:23]
+      uop_mem_type <= 3'h0; // @[execute_unit.scala 619:23]
+    end else if (io_i_select) begin // @[execute_unit.scala 634:20]
       uop_mem_type <= io_i_uop_mem_type;
     end
-    state <= _GEN_2[0]; // @[execute_unit.scala 619:{24,24} 621:11]
-    if (reset) begin // @[execute_unit.scala 640:29]
-      div_finished <= 1'h0; // @[execute_unit.scala 640:29]
+    state <= _GEN_2[0]; // @[execute_unit.scala 621:{24,24} 623:11]
+    if (reset) begin // @[execute_unit.scala 642:29]
+      div_finished <= 1'h0; // @[execute_unit.scala 642:29]
     end else if (io_i_select_to_commit) begin // @[Mux.scala 101:16]
       div_finished <= 1'h0;
     end else if (io_i_exception) begin // @[Mux.scala 101:16]
@@ -487,7 +487,7 @@ initial begin
   _RAND_28 = {1{`RANDOM}};
   uop_branch_type = _RAND_28[3:0];
   _RAND_29 = {1{`RANDOM}};
-  uop_mem_type = _RAND_29[1:0];
+  uop_mem_type = _RAND_29[2:0];
   _RAND_30 = {1{`RANDOM}};
   state = _RAND_30[0:0];
   _RAND_31 = {1{`RANDOM}};

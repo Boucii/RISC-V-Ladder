@@ -67,13 +67,15 @@ class Execute extends Module with consts{
     lsu.io.dcache_io.MdataIn         := io.dcache_io.MdataIn  
     io.dcache_io.addr_valid          :=lsu.io.dcache_io.addr_valid  
     io.dcache_io.data_ready          :=lsu.io.dcache_io.data_ready
-    lsu.io.dcache_io.addr_ready := io.dcache_io.addr_ready
+    lsu.io.dcache_io.addr_ready      := io.dcache_io.addr_ready
+    lsu.io.dcache_io.flush_done      := io.dcache_io.flush_done
 
     io.dcache_io.Mwout          :=lsu.io.dcache_io.Mwout  
     io.dcache_io.Maddr          :=lsu.io.dcache_io.Maddr  
     io.dcache_io.Men            :=lsu.io.dcache_io.Men    
     io.dcache_io.Mlen           :=lsu.io.dcache_io.Mlen   
     io.dcache_io.MdataOut       :=lsu.io.dcache_io.MdataOut
+    io.dcache_io.flush          :=lsu.io.dcache_io.flush
 
     for(i <- 0 until 7){
         io.o_available_funcs(i):=0.U

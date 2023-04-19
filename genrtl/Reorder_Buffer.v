@@ -30,7 +30,7 @@ module Reorder_Buffer(
   input  [2:0]  io_i_rob_allocation_reqs_0_uop_op2_sel,
   input  [4:0]  io_i_rob_allocation_reqs_0_uop_alu_sel,
   input  [3:0]  io_i_rob_allocation_reqs_0_uop_branch_type,
-  input  [1:0]  io_i_rob_allocation_reqs_0_uop_mem_type,
+  input  [2:0]  io_i_rob_allocation_reqs_0_uop_mem_type,
   input         io_i_rob_allocation_reqs_1_valid,
   input         io_i_rob_allocation_reqs_1_uop_valid,
   input  [31:0] io_i_rob_allocation_reqs_1_uop_pc,
@@ -59,7 +59,7 @@ module Reorder_Buffer(
   input  [2:0]  io_i_rob_allocation_reqs_1_uop_op2_sel,
   input  [4:0]  io_i_rob_allocation_reqs_1_uop_alu_sel,
   input  [3:0]  io_i_rob_allocation_reqs_1_uop_branch_type,
-  input  [1:0]  io_i_rob_allocation_reqs_1_uop_mem_type,
+  input  [2:0]  io_i_rob_allocation_reqs_1_uop_mem_type,
   output [3:0]  io_o_rob_allocation_ress_0_rob_idx,
   output [3:0]  io_o_rob_allocation_ress_1_rob_idx,
   output        io_o_rollback_packs_0_valid,
@@ -100,7 +100,7 @@ module Reorder_Buffer(
   input  [2:0]  io_i_ex_res_packs_0_uop_op2_sel,
   input  [4:0]  io_i_ex_res_packs_0_uop_alu_sel,
   input  [3:0]  io_i_ex_res_packs_0_uop_branch_type,
-  input  [1:0]  io_i_ex_res_packs_0_uop_mem_type,
+  input  [2:0]  io_i_ex_res_packs_0_uop_mem_type,
   input         io_i_ex_res_packs_1_valid,
   input         io_i_ex_res_packs_1_uop_valid,
   input  [31:0] io_i_ex_res_packs_1_uop_pc,
@@ -131,7 +131,7 @@ module Reorder_Buffer(
   input  [2:0]  io_i_ex_res_packs_1_uop_op2_sel,
   input  [4:0]  io_i_ex_res_packs_1_uop_alu_sel,
   input  [3:0]  io_i_ex_res_packs_1_uop_branch_type,
-  input  [1:0]  io_i_ex_res_packs_1_uop_mem_type,
+  input  [2:0]  io_i_ex_res_packs_1_uop_mem_type,
   input         io_i_branch_resolve_pack_valid,
   input         io_i_branch_resolve_pack_mispred,
   input  [3:0]  io_i_branch_resolve_pack_rob_idx,
@@ -165,7 +165,7 @@ module Reorder_Buffer(
   output [2:0]  io_o_commit_packs_0_uop_op2_sel,
   output [4:0]  io_o_commit_packs_0_uop_alu_sel,
   output [3:0]  io_o_commit_packs_0_uop_branch_type,
-  output [1:0]  io_o_commit_packs_0_uop_mem_type,
+  output [2:0]  io_o_commit_packs_0_uop_mem_type,
   output        io_o_commit_packs_1_valid,
   output        io_o_commit_packs_1_uop_valid,
   output [31:0] io_o_commit_packs_1_uop_pc,
@@ -196,7 +196,7 @@ module Reorder_Buffer(
   output [2:0]  io_o_commit_packs_1_uop_op2_sel,
   output [4:0]  io_o_commit_packs_1_uop_alu_sel,
   output [3:0]  io_o_commit_packs_1_uop_branch_type,
-  output [1:0]  io_o_commit_packs_1_uop_mem_type,
+  output [2:0]  io_o_commit_packs_1_uop_mem_type,
   output [3:0]  io_o_rob_head,
   input         io_i_interrupt,
   input         io_i_csr_pc_redirect,
@@ -541,7 +541,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_0_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_0_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_0_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_0_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_0_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_1_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_1_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_1_inst; // @[rob.scala 86:26]
@@ -571,7 +571,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_1_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_1_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_1_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_1_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_1_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_2_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_2_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_2_inst; // @[rob.scala 86:26]
@@ -601,7 +601,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_2_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_2_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_2_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_2_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_2_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_3_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_3_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_3_inst; // @[rob.scala 86:26]
@@ -631,7 +631,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_3_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_3_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_3_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_3_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_3_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_4_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_4_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_4_inst; // @[rob.scala 86:26]
@@ -661,7 +661,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_4_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_4_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_4_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_4_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_4_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_5_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_5_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_5_inst; // @[rob.scala 86:26]
@@ -691,7 +691,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_5_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_5_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_5_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_5_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_5_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_6_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_6_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_6_inst; // @[rob.scala 86:26]
@@ -721,7 +721,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_6_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_6_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_6_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_6_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_6_mem_type; // @[rob.scala 86:26]
   reg  rob_uop_7_valid; // @[rob.scala 86:26]
   reg [31:0] rob_uop_7_pc; // @[rob.scala 86:26]
   reg [31:0] rob_uop_7_inst; // @[rob.scala 86:26]
@@ -751,7 +751,7 @@ module Reorder_Buffer(
   reg [2:0] rob_uop_7_op2_sel; // @[rob.scala 86:26]
   reg [4:0] rob_uop_7_alu_sel; // @[rob.scala 86:26]
   reg [3:0] rob_uop_7_branch_type; // @[rob.scala 86:26]
-  reg [1:0] rob_uop_7_mem_type; // @[rob.scala 86:26]
+  reg [2:0] rob_uop_7_mem_type; // @[rob.scala 86:26]
   reg  rob_done_0; // @[rob.scala 88:27]
   reg  rob_done_1; // @[rob.scala 88:27]
   reg  rob_done_2; // @[rob.scala 88:27]
@@ -994,12 +994,12 @@ module Reorder_Buffer(
   wire [3:0] _GEN_332 = 3'h4 == commit_ptr[2:0] ? rob_uop_4_branch_type : _GEN_331; // @[rob.scala 113:{32,32}]
   wire [3:0] _GEN_333 = 3'h5 == commit_ptr[2:0] ? rob_uop_5_branch_type : _GEN_332; // @[rob.scala 113:{32,32}]
   wire [3:0] _GEN_334 = 3'h6 == commit_ptr[2:0] ? rob_uop_6_branch_type : _GEN_333; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_337 = 3'h1 == commit_ptr[2:0] ? rob_uop_1_mem_type : rob_uop_0_mem_type; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_338 = 3'h2 == commit_ptr[2:0] ? rob_uop_2_mem_type : _GEN_337; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_339 = 3'h3 == commit_ptr[2:0] ? rob_uop_3_mem_type : _GEN_338; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_340 = 3'h4 == commit_ptr[2:0] ? rob_uop_4_mem_type : _GEN_339; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_341 = 3'h5 == commit_ptr[2:0] ? rob_uop_5_mem_type : _GEN_340; // @[rob.scala 113:{32,32}]
-  wire [1:0] _GEN_342 = 3'h6 == commit_ptr[2:0] ? rob_uop_6_mem_type : _GEN_341; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_337 = 3'h1 == commit_ptr[2:0] ? rob_uop_1_mem_type : rob_uop_0_mem_type; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_338 = 3'h2 == commit_ptr[2:0] ? rob_uop_2_mem_type : _GEN_337; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_339 = 3'h3 == commit_ptr[2:0] ? rob_uop_3_mem_type : _GEN_338; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_340 = 3'h4 == commit_ptr[2:0] ? rob_uop_4_mem_type : _GEN_339; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_341 = 3'h5 == commit_ptr[2:0] ? rob_uop_5_mem_type : _GEN_340; // @[rob.scala 113:{32,32}]
+  wire [2:0] _GEN_342 = 3'h6 == commit_ptr[2:0] ? rob_uop_6_mem_type : _GEN_341; // @[rob.scala 113:{32,32}]
   wire  _io_o_commit_packs_0_uop_dst_value_T_2 = io_i_ex_res_packs_0_valid & io_i_ex_res_packs_0_uop_rob_idx ==
     commit_ptr; // @[rob.scala 115:37]
   wire  _io_o_commit_packs_0_uop_dst_value_T_4 = io_i_ex_res_packs_1_valid & io_i_ex_res_packs_1_uop_rob_idx ==
@@ -1174,12 +1174,12 @@ module Reorder_Buffer(
   wire [3:0] _GEN_588 = 3'h4 == _next_can_commit_1_T_1[2:0] ? rob_uop_4_branch_type : _GEN_587; // @[rob.scala 118:{32,32}]
   wire [3:0] _GEN_589 = 3'h5 == _next_can_commit_1_T_1[2:0] ? rob_uop_5_branch_type : _GEN_588; // @[rob.scala 118:{32,32}]
   wire [3:0] _GEN_590 = 3'h6 == _next_can_commit_1_T_1[2:0] ? rob_uop_6_branch_type : _GEN_589; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_593 = 3'h1 == _next_can_commit_1_T_1[2:0] ? rob_uop_1_mem_type : rob_uop_0_mem_type; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_594 = 3'h2 == _next_can_commit_1_T_1[2:0] ? rob_uop_2_mem_type : _GEN_593; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_595 = 3'h3 == _next_can_commit_1_T_1[2:0] ? rob_uop_3_mem_type : _GEN_594; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_596 = 3'h4 == _next_can_commit_1_T_1[2:0] ? rob_uop_4_mem_type : _GEN_595; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_597 = 3'h5 == _next_can_commit_1_T_1[2:0] ? rob_uop_5_mem_type : _GEN_596; // @[rob.scala 118:{32,32}]
-  wire [1:0] _GEN_598 = 3'h6 == _next_can_commit_1_T_1[2:0] ? rob_uop_6_mem_type : _GEN_597; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_593 = 3'h1 == _next_can_commit_1_T_1[2:0] ? rob_uop_1_mem_type : rob_uop_0_mem_type; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_594 = 3'h2 == _next_can_commit_1_T_1[2:0] ? rob_uop_2_mem_type : _GEN_593; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_595 = 3'h3 == _next_can_commit_1_T_1[2:0] ? rob_uop_3_mem_type : _GEN_594; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_596 = 3'h4 == _next_can_commit_1_T_1[2:0] ? rob_uop_4_mem_type : _GEN_595; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_597 = 3'h5 == _next_can_commit_1_T_1[2:0] ? rob_uop_5_mem_type : _GEN_596; // @[rob.scala 118:{32,32}]
+  wire [2:0] _GEN_598 = 3'h6 == _next_can_commit_1_T_1[2:0] ? rob_uop_6_mem_type : _GEN_597; // @[rob.scala 118:{32,32}]
   wire  _io_o_commit_packs_1_uop_dst_value_T_6 = io_i_ex_res_packs_0_valid & io_i_ex_res_packs_0_uop_rob_idx ==
     _next_can_commit_1_T_1; // @[rob.scala 120:37]
   wire  _io_o_commit_packs_1_uop_dst_value_T_10 = io_i_ex_res_packs_1_valid & io_i_ex_res_packs_1_uop_rob_idx ==
@@ -1514,14 +1514,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_1341 = 3'h5 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_branch_type : rob_uop_5_branch_type; // @[rob.scala 141:{31,31} 86:26]
   wire [3:0] _GEN_1342 = 3'h6 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_branch_type : rob_uop_6_branch_type; // @[rob.scala 141:{31,31} 86:26]
   wire [3:0] _GEN_1343 = 3'h7 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_branch_type : rob_uop_7_branch_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1344 = 3'h0 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_0_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1345 = 3'h1 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_1_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1346 = 3'h2 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_2_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1347 = 3'h3 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_3_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1348 = 3'h4 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_4_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1349 = 3'h5 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_5_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1350 = 3'h6 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_6_mem_type; // @[rob.scala 141:{31,31} 86:26]
-  wire [1:0] _GEN_1351 = 3'h7 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_7_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1344 = 3'h0 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_0_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1345 = 3'h1 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_1_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1346 = 3'h2 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_2_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1347 = 3'h3 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_3_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1348 = 3'h4 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_4_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1349 = 3'h5 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_5_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1350 = 3'h6 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_6_mem_type; // @[rob.scala 141:{31,31} 86:26]
+  wire [2:0] _GEN_1351 = 3'h7 == allocate_ptr[2:0] ? io_i_rob_allocation_reqs_0_uop_mem_type : rob_uop_7_mem_type; // @[rob.scala 141:{31,31} 86:26]
   wire  _GEN_1352 = 3'h0 == allocate_ptr[2:0] | rob_valid_0; // @[rob.scala 142:{33,33} 85:28]
   wire  _GEN_1353 = 3'h1 == allocate_ptr[2:0] | rob_valid_1; // @[rob.scala 142:{33,33} 85:28]
   wire  _GEN_1354 = 3'h2 == allocate_ptr[2:0] | rob_valid_2; // @[rob.scala 142:{33,33} 85:28]
@@ -1786,14 +1786,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_1605 = 3'h5 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_branch_type : _GEN_1341; // @[rob.scala 144:{35,35}]
   wire [3:0] _GEN_1606 = 3'h6 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_branch_type : _GEN_1342; // @[rob.scala 144:{35,35}]
   wire [3:0] _GEN_1607 = 3'h7 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_branch_type : _GEN_1343; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1608 = 3'h0 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1344; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1609 = 3'h1 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1345; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1610 = 3'h2 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1346; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1611 = 3'h3 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1347; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1612 = 3'h4 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1348; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1613 = 3'h5 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1349; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1614 = 3'h6 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1350; // @[rob.scala 144:{35,35}]
-  wire [1:0] _GEN_1615 = 3'h7 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1351; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1608 = 3'h0 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1344; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1609 = 3'h1 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1345; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1610 = 3'h2 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1346; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1611 = 3'h3 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1347; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1612 = 3'h4 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1348; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1613 = 3'h5 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1349; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1614 = 3'h6 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1350; // @[rob.scala 144:{35,35}]
+  wire [2:0] _GEN_1615 = 3'h7 == _is_full_T_6[2:0] ? io_i_rob_allocation_reqs_1_uop_mem_type : _GEN_1351; // @[rob.scala 144:{35,35}]
   wire  _GEN_1616 = 3'h0 == _is_full_T_6[2:0] | _GEN_1352; // @[rob.scala 145:{37,37}]
   wire  _GEN_1617 = 3'h1 == _is_full_T_6[2:0] | _GEN_1353; // @[rob.scala 145:{37,37}]
   wire  _GEN_1618 = 3'h2 == _is_full_T_6[2:0] | _GEN_1354; // @[rob.scala 145:{37,37}]
@@ -1867,7 +1867,7 @@ module Reorder_Buffer(
     io_i_rob_allocation_reqs_1_uop_alu_sel; // @[rob.scala 149:37]
   wire [3:0] _rob_uop_T_branch_type = io_i_rob_allocation_reqs_0_valid ? io_i_rob_allocation_reqs_0_uop_branch_type :
     io_i_rob_allocation_reqs_1_uop_branch_type; // @[rob.scala 149:37]
-  wire [1:0] _rob_uop_T_mem_type = io_i_rob_allocation_reqs_0_valid ? io_i_rob_allocation_reqs_0_uop_mem_type :
+  wire [2:0] _rob_uop_T_mem_type = io_i_rob_allocation_reqs_0_valid ? io_i_rob_allocation_reqs_0_uop_mem_type :
     io_i_rob_allocation_reqs_1_uop_mem_type; // @[rob.scala 149:37]
   wire  _GEN_1632 = 3'h0 == allocate_ptr[2:0] ? _rob_uop_T_valid : rob_uop_0_valid; // @[rob.scala 149:{31,31} 86:26]
   wire  _GEN_1633 = 3'h1 == allocate_ptr[2:0] ? _rob_uop_T_valid : rob_uop_1_valid; // @[rob.scala 149:{31,31} 86:26]
@@ -2125,14 +2125,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_1869 = 3'h5 == allocate_ptr[2:0] ? _rob_uop_T_branch_type : rob_uop_5_branch_type; // @[rob.scala 149:{31,31} 86:26]
   wire [3:0] _GEN_1870 = 3'h6 == allocate_ptr[2:0] ? _rob_uop_T_branch_type : rob_uop_6_branch_type; // @[rob.scala 149:{31,31} 86:26]
   wire [3:0] _GEN_1871 = 3'h7 == allocate_ptr[2:0] ? _rob_uop_T_branch_type : rob_uop_7_branch_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1872 = 3'h0 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_0_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1873 = 3'h1 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_1_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1874 = 3'h2 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_2_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1875 = 3'h3 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_3_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1876 = 3'h4 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_4_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1877 = 3'h5 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_5_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1878 = 3'h6 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_6_mem_type; // @[rob.scala 149:{31,31} 86:26]
-  wire [1:0] _GEN_1879 = 3'h7 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_7_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1872 = 3'h0 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_0_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1873 = 3'h1 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_1_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1874 = 3'h2 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_2_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1875 = 3'h3 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_3_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1876 = 3'h4 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_4_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1877 = 3'h5 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_5_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1878 = 3'h6 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_6_mem_type; // @[rob.scala 149:{31,31} 86:26]
+  wire [2:0] _GEN_1879 = 3'h7 == allocate_ptr[2:0] ? _rob_uop_T_mem_type : rob_uop_7_mem_type; // @[rob.scala 149:{31,31} 86:26]
   wire  _GEN_1896 = need_to_rbk_dispatch ? _GEN_1632 : rob_uop_0_valid; // @[rob.scala 148:89 86:26]
   wire  _GEN_1897 = need_to_rbk_dispatch ? _GEN_1633 : rob_uop_1_valid; // @[rob.scala 148:89 86:26]
   wire  _GEN_1898 = need_to_rbk_dispatch ? _GEN_1634 : rob_uop_2_valid; // @[rob.scala 148:89 86:26]
@@ -2365,14 +2365,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_2133 = need_to_rbk_dispatch ? _GEN_1869 : rob_uop_5_branch_type; // @[rob.scala 148:89 86:26]
   wire [3:0] _GEN_2134 = need_to_rbk_dispatch ? _GEN_1870 : rob_uop_6_branch_type; // @[rob.scala 148:89 86:26]
   wire [3:0] _GEN_2135 = need_to_rbk_dispatch ? _GEN_1871 : rob_uop_7_branch_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2136 = need_to_rbk_dispatch ? _GEN_1872 : rob_uop_0_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2137 = need_to_rbk_dispatch ? _GEN_1873 : rob_uop_1_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2138 = need_to_rbk_dispatch ? _GEN_1874 : rob_uop_2_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2139 = need_to_rbk_dispatch ? _GEN_1875 : rob_uop_3_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2140 = need_to_rbk_dispatch ? _GEN_1876 : rob_uop_4_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2141 = need_to_rbk_dispatch ? _GEN_1877 : rob_uop_5_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2142 = need_to_rbk_dispatch ? _GEN_1878 : rob_uop_6_mem_type; // @[rob.scala 148:89 86:26]
-  wire [1:0] _GEN_2143 = need_to_rbk_dispatch ? _GEN_1879 : rob_uop_7_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2136 = need_to_rbk_dispatch ? _GEN_1872 : rob_uop_0_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2137 = need_to_rbk_dispatch ? _GEN_1873 : rob_uop_1_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2138 = need_to_rbk_dispatch ? _GEN_1874 : rob_uop_2_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2139 = need_to_rbk_dispatch ? _GEN_1875 : rob_uop_3_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2140 = need_to_rbk_dispatch ? _GEN_1876 : rob_uop_4_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2141 = need_to_rbk_dispatch ? _GEN_1877 : rob_uop_5_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2142 = need_to_rbk_dispatch ? _GEN_1878 : rob_uop_6_mem_type; // @[rob.scala 148:89 86:26]
+  wire [2:0] _GEN_2143 = need_to_rbk_dispatch ? _GEN_1879 : rob_uop_7_mem_type; // @[rob.scala 148:89 86:26]
   wire  _GEN_2144 = need_to_rbk_dispatch ? _GEN_1352 : rob_valid_0; // @[rob.scala 148:89 85:28]
   wire  _GEN_2145 = need_to_rbk_dispatch ? _GEN_1353 : rob_valid_1; // @[rob.scala 148:89 85:28]
   wire  _GEN_2146 = need_to_rbk_dispatch ? _GEN_1354 : rob_valid_2; // @[rob.scala 148:89 85:28]
@@ -2622,14 +2622,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_2398 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1605 : _GEN_2133; // @[rob.scala 139:83]
   wire [3:0] _GEN_2399 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1606 : _GEN_2134; // @[rob.scala 139:83]
   wire [3:0] _GEN_2400 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1607 : _GEN_2135; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2401 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1608 : _GEN_2136; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2402 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1609 : _GEN_2137; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2403 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1610 : _GEN_2138; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2404 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1611 : _GEN_2139; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2405 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1612 : _GEN_2140; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2406 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1613 : _GEN_2141; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2407 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1614 : _GEN_2142; // @[rob.scala 139:83]
-  wire [1:0] _GEN_2408 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1615 : _GEN_2143; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2401 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1608 : _GEN_2136; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2402 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1609 : _GEN_2137; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2403 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1610 : _GEN_2138; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2404 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1611 : _GEN_2139; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2405 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1612 : _GEN_2140; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2406 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1613 : _GEN_2141; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2407 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1614 : _GEN_2142; // @[rob.scala 139:83]
+  wire [2:0] _GEN_2408 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1615 : _GEN_2143; // @[rob.scala 139:83]
   wire  _GEN_2409 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1616 : _GEN_2144; // @[rob.scala 139:83]
   wire  _GEN_2410 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1617 : _GEN_2145; // @[rob.scala 139:83]
   wire  _GEN_2411 = io_i_rob_allocation_reqs_0_valid & io_i_rob_allocation_reqs_1_valid ? _GEN_1618 : _GEN_2146; // @[rob.scala 139:83]
@@ -2935,14 +2935,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_2671 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_2398; // @[rob.scala 158:{70,70}]
   wire [3:0] _GEN_2672 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_2399; // @[rob.scala 158:{70,70}]
   wire [3:0] _GEN_2673 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_2400; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2674 = 3'h0 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2401; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2675 = 3'h1 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2402; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2676 = 3'h2 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2403; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2677 = 3'h3 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2404; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2678 = 3'h4 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2405; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2679 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2406; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2680 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2407; // @[rob.scala 158:{70,70}]
-  wire [1:0] _GEN_2681 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2408; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2674 = 3'h0 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2401; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2675 = 3'h1 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2402; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2676 = 3'h2 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2403; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2677 = 3'h3 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2404; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2678 = 3'h4 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2405; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2679 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2406; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2680 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2407; // @[rob.scala 158:{70,70}]
+  wire [2:0] _GEN_2681 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_2408; // @[rob.scala 158:{70,70}]
   wire  _GEN_2690 = _GEN_5333 | _GEN_2417; // @[rob.scala 160:{71,71}]
   wire  _GEN_2691 = _GEN_5334 | _GEN_2418; // @[rob.scala 160:{71,71}]
   wire  _GEN_2692 = _GEN_5335 | _GEN_2419; // @[rob.scala 160:{71,71}]
@@ -3191,14 +3191,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_2943 = io_i_ex_res_packs_0_valid ? _GEN_2671 : _GEN_2398; // @[rob.scala 156:39]
   wire [3:0] _GEN_2944 = io_i_ex_res_packs_0_valid ? _GEN_2672 : _GEN_2399; // @[rob.scala 156:39]
   wire [3:0] _GEN_2945 = io_i_ex_res_packs_0_valid ? _GEN_2673 : _GEN_2400; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2946 = io_i_ex_res_packs_0_valid ? _GEN_2674 : _GEN_2401; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2947 = io_i_ex_res_packs_0_valid ? _GEN_2675 : _GEN_2402; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2948 = io_i_ex_res_packs_0_valid ? _GEN_2676 : _GEN_2403; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2949 = io_i_ex_res_packs_0_valid ? _GEN_2677 : _GEN_2404; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2950 = io_i_ex_res_packs_0_valid ? _GEN_2678 : _GEN_2405; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2951 = io_i_ex_res_packs_0_valid ? _GEN_2679 : _GEN_2406; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2952 = io_i_ex_res_packs_0_valid ? _GEN_2680 : _GEN_2407; // @[rob.scala 156:39]
-  wire [1:0] _GEN_2953 = io_i_ex_res_packs_0_valid ? _GEN_2681 : _GEN_2408; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2946 = io_i_ex_res_packs_0_valid ? _GEN_2674 : _GEN_2401; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2947 = io_i_ex_res_packs_0_valid ? _GEN_2675 : _GEN_2402; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2948 = io_i_ex_res_packs_0_valid ? _GEN_2676 : _GEN_2403; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2949 = io_i_ex_res_packs_0_valid ? _GEN_2677 : _GEN_2404; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2950 = io_i_ex_res_packs_0_valid ? _GEN_2678 : _GEN_2405; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2951 = io_i_ex_res_packs_0_valid ? _GEN_2679 : _GEN_2406; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2952 = io_i_ex_res_packs_0_valid ? _GEN_2680 : _GEN_2407; // @[rob.scala 156:39]
+  wire [2:0] _GEN_2953 = io_i_ex_res_packs_0_valid ? _GEN_2681 : _GEN_2408; // @[rob.scala 156:39]
   wire  _GEN_2962 = io_i_ex_res_packs_0_valid ? _GEN_2690 : _GEN_2417; // @[rob.scala 156:39]
   wire  _GEN_2963 = io_i_ex_res_packs_0_valid ? _GEN_2691 : _GEN_2418; // @[rob.scala 156:39]
   wire  _GEN_2964 = io_i_ex_res_packs_0_valid ? _GEN_2692 : _GEN_2419; // @[rob.scala 156:39]
@@ -3495,14 +3495,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_3215 = 3'h5 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_branch_type : _GEN_2943; // @[rob.scala 164:{70,70}]
   wire [3:0] _GEN_3216 = 3'h6 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_branch_type : _GEN_2944; // @[rob.scala 164:{70,70}]
   wire [3:0] _GEN_3217 = 3'h7 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_branch_type : _GEN_2945; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3218 = 3'h0 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2946; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3219 = 3'h1 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2947; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3220 = 3'h2 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2948; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3221 = 3'h3 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2949; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3222 = 3'h4 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2950; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3223 = 3'h5 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2951; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3224 = 3'h6 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2952; // @[rob.scala 164:{70,70}]
-  wire [1:0] _GEN_3225 = 3'h7 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2953; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3218 = 3'h0 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2946; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3219 = 3'h1 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2947; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3220 = 3'h2 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2948; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3221 = 3'h3 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2949; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3222 = 3'h4 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2950; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3223 = 3'h5 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2951; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3224 = 3'h6 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2952; // @[rob.scala 164:{70,70}]
+  wire [2:0] _GEN_3225 = 3'h7 == io_i_ex_res_packs_1_uop_rob_idx[2:0] ? io_i_ex_res_packs_1_uop_mem_type : _GEN_2953; // @[rob.scala 164:{70,70}]
   wire  _GEN_3234 = _GEN_5349 | _GEN_2962; // @[rob.scala 166:{71,71}]
   wire  _GEN_3235 = _GEN_5350 | _GEN_2963; // @[rob.scala 166:{71,71}]
   wire  _GEN_3236 = _GEN_5351 | _GEN_2964; // @[rob.scala 166:{71,71}]
@@ -3751,14 +3751,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_3487 = io_i_ex_res_packs_1_valid ? _GEN_3215 : _GEN_2943; // @[rob.scala 162:39]
   wire [3:0] _GEN_3488 = io_i_ex_res_packs_1_valid ? _GEN_3216 : _GEN_2944; // @[rob.scala 162:39]
   wire [3:0] _GEN_3489 = io_i_ex_res_packs_1_valid ? _GEN_3217 : _GEN_2945; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3490 = io_i_ex_res_packs_1_valid ? _GEN_3218 : _GEN_2946; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3491 = io_i_ex_res_packs_1_valid ? _GEN_3219 : _GEN_2947; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3492 = io_i_ex_res_packs_1_valid ? _GEN_3220 : _GEN_2948; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3493 = io_i_ex_res_packs_1_valid ? _GEN_3221 : _GEN_2949; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3494 = io_i_ex_res_packs_1_valid ? _GEN_3222 : _GEN_2950; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3495 = io_i_ex_res_packs_1_valid ? _GEN_3223 : _GEN_2951; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3496 = io_i_ex_res_packs_1_valid ? _GEN_3224 : _GEN_2952; // @[rob.scala 162:39]
-  wire [1:0] _GEN_3497 = io_i_ex_res_packs_1_valid ? _GEN_3225 : _GEN_2953; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3490 = io_i_ex_res_packs_1_valid ? _GEN_3218 : _GEN_2946; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3491 = io_i_ex_res_packs_1_valid ? _GEN_3219 : _GEN_2947; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3492 = io_i_ex_res_packs_1_valid ? _GEN_3220 : _GEN_2948; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3493 = io_i_ex_res_packs_1_valid ? _GEN_3221 : _GEN_2949; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3494 = io_i_ex_res_packs_1_valid ? _GEN_3222 : _GEN_2950; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3495 = io_i_ex_res_packs_1_valid ? _GEN_3223 : _GEN_2951; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3496 = io_i_ex_res_packs_1_valid ? _GEN_3224 : _GEN_2952; // @[rob.scala 162:39]
+  wire [2:0] _GEN_3497 = io_i_ex_res_packs_1_valid ? _GEN_3225 : _GEN_2953; // @[rob.scala 162:39]
   wire  _GEN_3506 = io_i_ex_res_packs_1_valid ? _GEN_3234 : _GEN_2962; // @[rob.scala 162:39]
   wire  _GEN_3507 = io_i_ex_res_packs_1_valid ? _GEN_3235 : _GEN_2963; // @[rob.scala 162:39]
   wire  _GEN_3508 = io_i_ex_res_packs_1_valid ? _GEN_3236 : _GEN_2964; // @[rob.scala 162:39]
@@ -4035,14 +4035,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_3793 = _next_will_commit_0_T_5 ? _GEN_3487 : rob_uop_5_branch_type; // @[rob.scala 138:38 86:26]
   wire [3:0] _GEN_3794 = _next_will_commit_0_T_5 ? _GEN_3488 : rob_uop_6_branch_type; // @[rob.scala 138:38 86:26]
   wire [3:0] _GEN_3795 = _next_will_commit_0_T_5 ? _GEN_3489 : rob_uop_7_branch_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3796 = _next_will_commit_0_T_5 ? _GEN_3490 : rob_uop_0_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3797 = _next_will_commit_0_T_5 ? _GEN_3491 : rob_uop_1_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3798 = _next_will_commit_0_T_5 ? _GEN_3492 : rob_uop_2_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3799 = _next_will_commit_0_T_5 ? _GEN_3493 : rob_uop_3_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3800 = _next_will_commit_0_T_5 ? _GEN_3494 : rob_uop_4_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3801 = _next_will_commit_0_T_5 ? _GEN_3495 : rob_uop_5_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3802 = _next_will_commit_0_T_5 ? _GEN_3496 : rob_uop_6_mem_type; // @[rob.scala 138:38 86:26]
-  wire [1:0] _GEN_3803 = _next_will_commit_0_T_5 ? _GEN_3497 : rob_uop_7_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3796 = _next_will_commit_0_T_5 ? _GEN_3490 : rob_uop_0_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3797 = _next_will_commit_0_T_5 ? _GEN_3491 : rob_uop_1_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3798 = _next_will_commit_0_T_5 ? _GEN_3492 : rob_uop_2_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3799 = _next_will_commit_0_T_5 ? _GEN_3493 : rob_uop_3_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3800 = _next_will_commit_0_T_5 ? _GEN_3494 : rob_uop_4_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3801 = _next_will_commit_0_T_5 ? _GEN_3495 : rob_uop_5_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3802 = _next_will_commit_0_T_5 ? _GEN_3496 : rob_uop_6_mem_type; // @[rob.scala 138:38 86:26]
+  wire [2:0] _GEN_3803 = _next_will_commit_0_T_5 ? _GEN_3497 : rob_uop_7_mem_type; // @[rob.scala 138:38 86:26]
   wire  _GEN_3804 = _next_will_commit_0_T_5 ? _GEN_3547 : rob_valid_0; // @[rob.scala 138:38 85:28]
   wire  _GEN_3805 = _next_will_commit_0_T_5 ? _GEN_3548 : rob_valid_1; // @[rob.scala 138:38 85:28]
   wire  _GEN_3806 = _next_will_commit_0_T_5 ? _GEN_3549 : rob_valid_2; // @[rob.scala 138:38 85:28]
@@ -4341,14 +4341,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_4075 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_3793; // @[rob.scala 183:{70,70}]
   wire [3:0] _GEN_4076 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_3794; // @[rob.scala 183:{70,70}]
   wire [3:0] _GEN_4077 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_branch_type : _GEN_3795; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4078 = 3'h0 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3796; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4079 = 3'h1 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3797; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4080 = 3'h2 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3798; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4081 = 3'h3 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3799; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4082 = 3'h4 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3800; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4083 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3801; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4084 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3802; // @[rob.scala 183:{70,70}]
-  wire [1:0] _GEN_4085 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3803; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4078 = 3'h0 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3796; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4079 = 3'h1 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3797; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4080 = 3'h2 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3798; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4081 = 3'h3 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3799; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4082 = 3'h4 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3800; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4083 = 3'h5 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3801; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4084 = 3'h6 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3802; // @[rob.scala 183:{70,70}]
+  wire [2:0] _GEN_4085 = 3'h7 == io_i_ex_res_packs_0_uop_rob_idx[2:0] ? io_i_ex_res_packs_0_uop_mem_type : _GEN_3803; // @[rob.scala 183:{70,70}]
   wire  _GEN_4094 = _GEN_5333 | _GEN_3812; // @[rob.scala 185:{71,71}]
   wire  _GEN_4095 = _GEN_5334 | _GEN_3813; // @[rob.scala 185:{71,71}]
   wire  _GEN_4096 = _GEN_5335 | _GEN_3814; // @[rob.scala 185:{71,71}]
@@ -4597,14 +4597,14 @@ module Reorder_Buffer(
   wire [3:0] _GEN_4347 = io_i_ex_res_packs_0_valid ? _GEN_4075 : _GEN_3793; // @[rob.scala 181:39]
   wire [3:0] _GEN_4348 = io_i_ex_res_packs_0_valid ? _GEN_4076 : _GEN_3794; // @[rob.scala 181:39]
   wire [3:0] _GEN_4349 = io_i_ex_res_packs_0_valid ? _GEN_4077 : _GEN_3795; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4350 = io_i_ex_res_packs_0_valid ? _GEN_4078 : _GEN_3796; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4351 = io_i_ex_res_packs_0_valid ? _GEN_4079 : _GEN_3797; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4352 = io_i_ex_res_packs_0_valid ? _GEN_4080 : _GEN_3798; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4353 = io_i_ex_res_packs_0_valid ? _GEN_4081 : _GEN_3799; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4354 = io_i_ex_res_packs_0_valid ? _GEN_4082 : _GEN_3800; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4355 = io_i_ex_res_packs_0_valid ? _GEN_4083 : _GEN_3801; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4356 = io_i_ex_res_packs_0_valid ? _GEN_4084 : _GEN_3802; // @[rob.scala 181:39]
-  wire [1:0] _GEN_4357 = io_i_ex_res_packs_0_valid ? _GEN_4085 : _GEN_3803; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4350 = io_i_ex_res_packs_0_valid ? _GEN_4078 : _GEN_3796; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4351 = io_i_ex_res_packs_0_valid ? _GEN_4079 : _GEN_3797; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4352 = io_i_ex_res_packs_0_valid ? _GEN_4080 : _GEN_3798; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4353 = io_i_ex_res_packs_0_valid ? _GEN_4081 : _GEN_3799; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4354 = io_i_ex_res_packs_0_valid ? _GEN_4082 : _GEN_3800; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4355 = io_i_ex_res_packs_0_valid ? _GEN_4083 : _GEN_3801; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4356 = io_i_ex_res_packs_0_valid ? _GEN_4084 : _GEN_3802; // @[rob.scala 181:39]
+  wire [2:0] _GEN_4357 = io_i_ex_res_packs_0_valid ? _GEN_4085 : _GEN_3803; // @[rob.scala 181:39]
   wire  _GEN_4366 = io_i_ex_res_packs_0_valid ? _GEN_4094 : _GEN_3812; // @[rob.scala 181:39]
   wire  _GEN_4367 = io_i_ex_res_packs_0_valid ? _GEN_4095 : _GEN_3813; // @[rob.scala 181:39]
   wire  _GEN_4368 = io_i_ex_res_packs_0_valid ? _GEN_4096 : _GEN_3814; // @[rob.scala 181:39]
@@ -5397,7 +5397,7 @@ module Reorder_Buffer(
       rob_uop_0_branch_type <= _GEN_3788;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_0_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_0_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h0 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -5847,7 +5847,7 @@ module Reorder_Buffer(
       rob_uop_1_branch_type <= _GEN_3789;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_1_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_1_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h1 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -6297,7 +6297,7 @@ module Reorder_Buffer(
       rob_uop_2_branch_type <= _GEN_3790;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_2_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_2_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h2 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -6747,7 +6747,7 @@ module Reorder_Buffer(
       rob_uop_3_branch_type <= _GEN_3791;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_3_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_3_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h3 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -7197,7 +7197,7 @@ module Reorder_Buffer(
       rob_uop_4_branch_type <= _GEN_3792;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_4_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_4_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h4 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -7647,7 +7647,7 @@ module Reorder_Buffer(
       rob_uop_5_branch_type <= _GEN_3793;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_5_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_5_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h5 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -8097,7 +8097,7 @@ module Reorder_Buffer(
       rob_uop_6_branch_type <= _GEN_3794;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_6_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_6_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h6 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -8547,7 +8547,7 @@ module Reorder_Buffer(
       rob_uop_7_branch_type <= _GEN_3795;
     end
     if (reset) begin // @[rob.scala 86:26]
-      rob_uop_7_mem_type <= 2'h0; // @[rob.scala 86:26]
+      rob_uop_7_mem_type <= 3'h0; // @[rob.scala 86:26]
     end else if (_next_will_commit_0_T_6) begin // @[rob.scala 179:36]
       if (io_i_ex_res_packs_1_valid) begin // @[rob.scala 187:39]
         if (3'h7 == io_i_ex_res_packs_1_uop_rob_idx[2:0]) begin // @[rob.scala 189:70]
@@ -8787,7 +8787,7 @@ initial begin
   _RAND_41 = {1{`RANDOM}};
   rob_uop_0_branch_type = _RAND_41[3:0];
   _RAND_42 = {1{`RANDOM}};
-  rob_uop_0_mem_type = _RAND_42[1:0];
+  rob_uop_0_mem_type = _RAND_42[2:0];
   _RAND_43 = {1{`RANDOM}};
   rob_uop_1_valid = _RAND_43[0:0];
   _RAND_44 = {1{`RANDOM}};
@@ -8847,7 +8847,7 @@ initial begin
   _RAND_71 = {1{`RANDOM}};
   rob_uop_1_branch_type = _RAND_71[3:0];
   _RAND_72 = {1{`RANDOM}};
-  rob_uop_1_mem_type = _RAND_72[1:0];
+  rob_uop_1_mem_type = _RAND_72[2:0];
   _RAND_73 = {1{`RANDOM}};
   rob_uop_2_valid = _RAND_73[0:0];
   _RAND_74 = {1{`RANDOM}};
@@ -8907,7 +8907,7 @@ initial begin
   _RAND_101 = {1{`RANDOM}};
   rob_uop_2_branch_type = _RAND_101[3:0];
   _RAND_102 = {1{`RANDOM}};
-  rob_uop_2_mem_type = _RAND_102[1:0];
+  rob_uop_2_mem_type = _RAND_102[2:0];
   _RAND_103 = {1{`RANDOM}};
   rob_uop_3_valid = _RAND_103[0:0];
   _RAND_104 = {1{`RANDOM}};
@@ -8967,7 +8967,7 @@ initial begin
   _RAND_131 = {1{`RANDOM}};
   rob_uop_3_branch_type = _RAND_131[3:0];
   _RAND_132 = {1{`RANDOM}};
-  rob_uop_3_mem_type = _RAND_132[1:0];
+  rob_uop_3_mem_type = _RAND_132[2:0];
   _RAND_133 = {1{`RANDOM}};
   rob_uop_4_valid = _RAND_133[0:0];
   _RAND_134 = {1{`RANDOM}};
@@ -9027,7 +9027,7 @@ initial begin
   _RAND_161 = {1{`RANDOM}};
   rob_uop_4_branch_type = _RAND_161[3:0];
   _RAND_162 = {1{`RANDOM}};
-  rob_uop_4_mem_type = _RAND_162[1:0];
+  rob_uop_4_mem_type = _RAND_162[2:0];
   _RAND_163 = {1{`RANDOM}};
   rob_uop_5_valid = _RAND_163[0:0];
   _RAND_164 = {1{`RANDOM}};
@@ -9087,7 +9087,7 @@ initial begin
   _RAND_191 = {1{`RANDOM}};
   rob_uop_5_branch_type = _RAND_191[3:0];
   _RAND_192 = {1{`RANDOM}};
-  rob_uop_5_mem_type = _RAND_192[1:0];
+  rob_uop_5_mem_type = _RAND_192[2:0];
   _RAND_193 = {1{`RANDOM}};
   rob_uop_6_valid = _RAND_193[0:0];
   _RAND_194 = {1{`RANDOM}};
@@ -9147,7 +9147,7 @@ initial begin
   _RAND_221 = {1{`RANDOM}};
   rob_uop_6_branch_type = _RAND_221[3:0];
   _RAND_222 = {1{`RANDOM}};
-  rob_uop_6_mem_type = _RAND_222[1:0];
+  rob_uop_6_mem_type = _RAND_222[2:0];
   _RAND_223 = {1{`RANDOM}};
   rob_uop_7_valid = _RAND_223[0:0];
   _RAND_224 = {1{`RANDOM}};
@@ -9207,7 +9207,7 @@ initial begin
   _RAND_251 = {1{`RANDOM}};
   rob_uop_7_branch_type = _RAND_251[3:0];
   _RAND_252 = {1{`RANDOM}};
-  rob_uop_7_mem_type = _RAND_252[1:0];
+  rob_uop_7_mem_type = _RAND_252[2:0];
   _RAND_253 = {1{`RANDOM}};
   rob_done_0 = _RAND_253[0:0];
   _RAND_254 = {1{`RANDOM}};

@@ -29,7 +29,7 @@ module Execute(
   input  [2:0]  io_i_issue_res_packs_0_op2_sel,
   input  [4:0]  io_i_issue_res_packs_0_alu_sel,
   input  [3:0]  io_i_issue_res_packs_0_branch_type,
-  input  [1:0]  io_i_issue_res_packs_0_mem_type,
+  input  [2:0]  io_i_issue_res_packs_0_mem_type,
   input         io_i_issue_res_packs_1_valid,
   input  [31:0] io_i_issue_res_packs_1_pc,
   input  [31:0] io_i_issue_res_packs_1_inst,
@@ -58,7 +58,7 @@ module Execute(
   input  [2:0]  io_i_issue_res_packs_1_op2_sel,
   input  [4:0]  io_i_issue_res_packs_1_alu_sel,
   input  [3:0]  io_i_issue_res_packs_1_branch_type,
-  input  [1:0]  io_i_issue_res_packs_1_mem_type,
+  input  [2:0]  io_i_issue_res_packs_1_mem_type,
   output [1:0]  io_o_available_funcs_0,
   output [1:0]  io_o_available_funcs_1,
   output [1:0]  io_o_available_funcs_2,
@@ -95,7 +95,7 @@ module Execute(
   output [2:0]  io_o_ex_res_packs_0_uop_op2_sel,
   output [4:0]  io_o_ex_res_packs_0_uop_alu_sel,
   output [3:0]  io_o_ex_res_packs_0_uop_branch_type,
-  output [1:0]  io_o_ex_res_packs_0_uop_mem_type,
+  output [2:0]  io_o_ex_res_packs_0_uop_mem_type,
   output        io_o_ex_res_packs_1_valid,
   output        io_o_ex_res_packs_1_uop_valid,
   output [31:0] io_o_ex_res_packs_1_uop_pc,
@@ -126,7 +126,7 @@ module Execute(
   output [2:0]  io_o_ex_res_packs_1_uop_op2_sel,
   output [4:0]  io_o_ex_res_packs_1_uop_alu_sel,
   output [3:0]  io_o_ex_res_packs_1_uop_branch_type,
-  output [1:0]  io_o_ex_res_packs_1_uop_mem_type,
+  output [2:0]  io_o_ex_res_packs_1_uop_mem_type,
   input  [3:0]  io_i_ROB_first_entry,
   input         io_dcache_io_data_valid,
   input         io_dcache_io_addr_ready,
@@ -136,6 +136,8 @@ module Execute(
   output [31:0] io_dcache_io_Mlen,
   input  [63:0] io_dcache_io_MdataIn,
   output [63:0] io_dcache_io_MdataOut,
+  input         io_dcache_io_flush_done,
+  output        io_dcache_io_flush,
   output        io_o_branch_resolve_pack_valid,
   output        io_o_branch_resolve_pack_mispred,
   output        io_o_branch_resolve_pack_taken,
@@ -189,7 +191,7 @@ module Execute(
   wire [2:0] alu1_io_i_uop_op2_sel; // @[execute.scala 41:22]
   wire [4:0] alu1_io_i_uop_alu_sel; // @[execute.scala 41:22]
   wire [3:0] alu1_io_i_uop_branch_type; // @[execute.scala 41:22]
-  wire [1:0] alu1_io_i_uop_mem_type; // @[execute.scala 41:22]
+  wire [2:0] alu1_io_i_uop_mem_type; // @[execute.scala 41:22]
   wire  alu1_io_i_select; // @[execute.scala 41:22]
   wire  alu1_io_i_select_to_commit; // @[execute.scala 41:22]
   wire  alu1_io_o_ex_res_pack_valid; // @[execute.scala 41:22]
@@ -222,7 +224,7 @@ module Execute(
   wire [2:0] alu1_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 41:22]
   wire [4:0] alu1_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 41:22]
   wire [3:0] alu1_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 41:22]
-  wire [1:0] alu1_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 41:22]
+  wire [2:0] alu1_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 41:22]
   wire  alu1_io_o_available; // @[execute.scala 41:22]
   wire  alu1_io_i_exception; // @[execute.scala 41:22]
   wire  alu1_io_i_rollback_valid; // @[execute.scala 41:22]
@@ -257,7 +259,7 @@ module Execute(
   wire [2:0] alu2_io_i_uop_op2_sel; // @[execute.scala 42:22]
   wire [4:0] alu2_io_i_uop_alu_sel; // @[execute.scala 42:22]
   wire [3:0] alu2_io_i_uop_branch_type; // @[execute.scala 42:22]
-  wire [1:0] alu2_io_i_uop_mem_type; // @[execute.scala 42:22]
+  wire [2:0] alu2_io_i_uop_mem_type; // @[execute.scala 42:22]
   wire  alu2_io_i_select; // @[execute.scala 42:22]
   wire  alu2_io_i_select_to_commit; // @[execute.scala 42:22]
   wire  alu2_io_o_ex_res_pack_valid; // @[execute.scala 42:22]
@@ -290,7 +292,7 @@ module Execute(
   wire [2:0] alu2_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 42:22]
   wire [4:0] alu2_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 42:22]
   wire [3:0] alu2_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 42:22]
-  wire [1:0] alu2_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 42:22]
+  wire [2:0] alu2_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 42:22]
   wire  alu2_io_o_available; // @[execute.scala 42:22]
   wire  alu2_io_i_exception; // @[execute.scala 42:22]
   wire  alu2_io_i_rollback_valid; // @[execute.scala 42:22]
@@ -333,7 +335,7 @@ module Execute(
   wire [2:0] bru_io_i_uop_op2_sel; // @[execute.scala 43:21]
   wire [4:0] bru_io_i_uop_alu_sel; // @[execute.scala 43:21]
   wire [3:0] bru_io_i_uop_branch_type; // @[execute.scala 43:21]
-  wire [1:0] bru_io_i_uop_mem_type; // @[execute.scala 43:21]
+  wire [2:0] bru_io_i_uop_mem_type; // @[execute.scala 43:21]
   wire  bru_io_i_select; // @[execute.scala 43:21]
   wire  bru_io_i_select_to_commit; // @[execute.scala 43:21]
   wire  bru_io_o_ex_res_pack_valid; // @[execute.scala 43:21]
@@ -366,7 +368,7 @@ module Execute(
   wire [2:0] bru_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 43:21]
   wire [4:0] bru_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 43:21]
   wire [3:0] bru_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 43:21]
-  wire [1:0] bru_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 43:21]
+  wire [2:0] bru_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 43:21]
   wire  bru_io_o_available; // @[execute.scala 43:21]
   wire  bru_io_i_exception; // @[execute.scala 43:21]
   wire  func_units_3_clock; // @[execute.scala 44:21]
@@ -399,7 +401,7 @@ module Execute(
   wire [2:0] func_units_3_io_i_uop_op2_sel; // @[execute.scala 44:21]
   wire [4:0] func_units_3_io_i_uop_alu_sel; // @[execute.scala 44:21]
   wire [3:0] func_units_3_io_i_uop_branch_type; // @[execute.scala 44:21]
-  wire [1:0] func_units_3_io_i_uop_mem_type; // @[execute.scala 44:21]
+  wire [2:0] func_units_3_io_i_uop_mem_type; // @[execute.scala 44:21]
   wire  func_units_3_io_i_select; // @[execute.scala 44:21]
   wire  func_units_3_io_i_select_to_commit; // @[execute.scala 44:21]
   wire  func_units_3_io_o_ex_res_pack_valid; // @[execute.scala 44:21]
@@ -432,7 +434,7 @@ module Execute(
   wire [2:0] func_units_3_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 44:21]
   wire [4:0] func_units_3_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 44:21]
   wire [3:0] func_units_3_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 44:21]
-  wire [1:0] func_units_3_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 44:21]
+  wire [2:0] func_units_3_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 44:21]
   wire  func_units_3_io_o_available; // @[execute.scala 44:21]
   wire [3:0] func_units_3_io_i_ROB_first_entry; // @[execute.scala 44:21]
   wire  func_units_3_io_dcache_io_data_valid; // @[execute.scala 44:21]
@@ -444,6 +446,8 @@ module Execute(
   wire [31:0] func_units_3_io_dcache_io_Mlen; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_dcache_io_MdataIn; // @[execute.scala 44:21]
   wire [63:0] func_units_3_io_dcache_io_MdataOut; // @[execute.scala 44:21]
+  wire  func_units_3_io_dcache_io_flush_done; // @[execute.scala 44:21]
+  wire  func_units_3_io_dcache_io_flush; // @[execute.scala 44:21]
   wire  func_units_3_io_o_lsu_uop_valid; // @[execute.scala 44:21]
   wire [3:0] func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 44:21]
   wire  func_units_3_io_i_exception; // @[execute.scala 44:21]
@@ -479,7 +483,7 @@ module Execute(
   wire [2:0] func_units_4_io_i_uop_op2_sel; // @[execute.scala 45:21]
   wire [4:0] func_units_4_io_i_uop_alu_sel; // @[execute.scala 45:21]
   wire [3:0] func_units_4_io_i_uop_branch_type; // @[execute.scala 45:21]
-  wire [1:0] func_units_4_io_i_uop_mem_type; // @[execute.scala 45:21]
+  wire [2:0] func_units_4_io_i_uop_mem_type; // @[execute.scala 45:21]
   wire  func_units_4_io_i_select; // @[execute.scala 45:21]
   wire  func_units_4_io_i_select_to_commit; // @[execute.scala 45:21]
   wire  func_units_4_io_o_ex_res_pack_valid; // @[execute.scala 45:21]
@@ -512,7 +516,7 @@ module Execute(
   wire [2:0] func_units_4_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 45:21]
   wire [4:0] func_units_4_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 45:21]
   wire [3:0] func_units_4_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 45:21]
-  wire [1:0] func_units_4_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 45:21]
+  wire [2:0] func_units_4_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 45:21]
   wire  func_units_4_io_o_available; // @[execute.scala 45:21]
   wire  func_units_4_io_i_exception; // @[execute.scala 45:21]
   wire  func_units_4_io_i_rollback_valid; // @[execute.scala 45:21]
@@ -547,7 +551,7 @@ module Execute(
   wire [2:0] div_io_i_uop_op2_sel; // @[execute.scala 46:21]
   wire [4:0] div_io_i_uop_alu_sel; // @[execute.scala 46:21]
   wire [3:0] div_io_i_uop_branch_type; // @[execute.scala 46:21]
-  wire [1:0] div_io_i_uop_mem_type; // @[execute.scala 46:21]
+  wire [2:0] div_io_i_uop_mem_type; // @[execute.scala 46:21]
   wire  div_io_i_select; // @[execute.scala 46:21]
   wire  div_io_i_select_to_commit; // @[execute.scala 46:21]
   wire  div_io_o_ex_res_pack_valid; // @[execute.scala 46:21]
@@ -580,7 +584,7 @@ module Execute(
   wire [2:0] div_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 46:21]
   wire [4:0] div_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 46:21]
   wire [3:0] div_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 46:21]
-  wire [1:0] div_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 46:21]
+  wire [2:0] div_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 46:21]
   wire  div_io_o_available; // @[execute.scala 46:21]
   wire  div_io_i_exception; // @[execute.scala 46:21]
   wire  div_io_i_rollback_valid; // @[execute.scala 46:21]
@@ -615,7 +619,7 @@ module Execute(
   wire [2:0] csr_bf_io_i_uop_op2_sel; // @[execute.scala 47:24]
   wire [4:0] csr_bf_io_i_uop_alu_sel; // @[execute.scala 47:24]
   wire [3:0] csr_bf_io_i_uop_branch_type; // @[execute.scala 47:24]
-  wire [1:0] csr_bf_io_i_uop_mem_type; // @[execute.scala 47:24]
+  wire [2:0] csr_bf_io_i_uop_mem_type; // @[execute.scala 47:24]
   wire  csr_bf_io_i_select; // @[execute.scala 47:24]
   wire  csr_bf_io_i_select_to_commit; // @[execute.scala 47:24]
   wire  csr_bf_io_o_ex_res_pack_valid; // @[execute.scala 47:24]
@@ -647,7 +651,7 @@ module Execute(
   wire [2:0] csr_bf_io_o_ex_res_pack_uop_op2_sel; // @[execute.scala 47:24]
   wire [4:0] csr_bf_io_o_ex_res_pack_uop_alu_sel; // @[execute.scala 47:24]
   wire [3:0] csr_bf_io_o_ex_res_pack_uop_branch_type; // @[execute.scala 47:24]
-  wire [1:0] csr_bf_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 47:24]
+  wire [2:0] csr_bf_io_o_ex_res_pack_uop_mem_type; // @[execute.scala 47:24]
   wire  csr_bf_io_o_available; // @[execute.scala 47:24]
   wire  csr_bf_io_i_exception; // @[execute.scala 47:24]
   wire  csr_bf_io_i_rollback_valid; // @[execute.scala 47:24]
@@ -668,74 +672,74 @@ module Execute(
     io_o_branch_resolve_pack_rob_idx,io_o_branch_resolve_pack_prediction_valid,io_o_branch_resolve_pack_branch_type}; // @[execute.scala 55:84]
   wire  new_br_resolve = _new_br_resolve_T != _new_br_resolve_T_1 & (io_o_branch_resolve_pack_valid &
     io_o_branch_resolve_pack_mispred); // @[execute.scala 55:91]
-  wire  _io_o_available_funcs_0_T_1 = alu1_io_o_available & ~alu2_io_o_available; // @[execute.scala 85:31]
-  wire  _io_o_available_funcs_0_T_2 = ~alu1_io_o_available; // @[execute.scala 86:10]
-  wire  _io_o_available_funcs_0_T_3 = ~alu1_io_o_available & alu2_io_o_available; // @[execute.scala 86:32]
-  wire  _io_o_available_funcs_0_T_4 = alu1_io_o_available & alu2_io_o_available; // @[execute.scala 87:31]
+  wire  _io_o_available_funcs_0_T_1 = alu1_io_o_available & ~alu2_io_o_available; // @[execute.scala 87:31]
+  wire  _io_o_available_funcs_0_T_2 = ~alu1_io_o_available; // @[execute.scala 88:10]
+  wire  _io_o_available_funcs_0_T_3 = ~alu1_io_o_available & alu2_io_o_available; // @[execute.scala 88:32]
+  wire  _io_o_available_funcs_0_T_4 = alu1_io_o_available & alu2_io_o_available; // @[execute.scala 89:31]
   wire [1:0] _io_o_available_funcs_0_T_5 = _io_o_available_funcs_0_T_4 ? 2'h2 : 2'h0; // @[Mux.scala 101:16]
   wire [1:0] _io_o_available_funcs_0_T_6 = _io_o_available_funcs_0_T_3 ? 2'h1 : _io_o_available_funcs_0_T_5; // @[Mux.scala 101:16]
-  wire  _io_o_available_funcs_1_T = bru_io_o_available; // @[execute.scala 89:33]
-  wire  _io_o_available_funcs_2_T = func_units_3_io_o_available; // @[execute.scala 90:33]
-  wire  _io_o_available_funcs_3_T = func_units_4_io_o_available; // @[execute.scala 91:33]
-  wire  _io_o_available_funcs_4_T = div_io_o_available; // @[execute.scala 92:33]
-  wire  _io_o_available_funcs_5_T = csr_bf_io_o_available; // @[execute.scala 93:33]
-  wire  _alu1_io_i_select_T = ~io_i_rollback_valid; // @[execute.scala 97:25]
-  wire  _alu1_io_i_select_T_1 = io_i_issue_res_packs_0_func_code == 7'h1; // @[execute.scala 97:123]
-  wire  _alu1_io_i_select_T_2 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h1; // @[execute.scala 97:86]
-  wire  _alu1_io_i_select_T_4 = io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code == 7'h1; // @[execute.scala 98:53]
+  wire  _io_o_available_funcs_1_T = bru_io_o_available; // @[execute.scala 91:33]
+  wire  _io_o_available_funcs_2_T = func_units_3_io_o_available; // @[execute.scala 92:33]
+  wire  _io_o_available_funcs_3_T = func_units_4_io_o_available; // @[execute.scala 93:33]
+  wire  _io_o_available_funcs_4_T = div_io_o_available; // @[execute.scala 94:33]
+  wire  _io_o_available_funcs_5_T = csr_bf_io_o_available; // @[execute.scala 95:33]
+  wire  _alu1_io_i_select_T = ~io_i_rollback_valid; // @[execute.scala 99:25]
+  wire  _alu1_io_i_select_T_1 = io_i_issue_res_packs_0_func_code == 7'h1; // @[execute.scala 99:123]
+  wire  _alu1_io_i_select_T_2 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h1; // @[execute.scala 99:86]
+  wire  _alu1_io_i_select_T_4 = io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code == 7'h1; // @[execute.scala 100:53]
   wire  _alu1_io_i_select_T_5 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h1 |
-    _alu1_io_i_select_T_4; // @[execute.scala 97:134]
-  wire  _alu1_io_i_select_T_6 = _alu1_io_i_select_T_5 & alu1_io_o_available; // @[execute.scala 98:103]
-  wire  _alu2_io_i_select_T_10 = _alu1_io_i_select_T_4 | _alu1_io_i_select_T_2; // @[execute.scala 102:92]
-  wire  _alu2_io_i_select_T_12 = _alu2_io_i_select_T_10 & _io_o_available_funcs_0_T_2; // @[execute.scala 103:9]
+    _alu1_io_i_select_T_4; // @[execute.scala 99:134]
+  wire  _alu1_io_i_select_T_6 = _alu1_io_i_select_T_5 & alu1_io_o_available; // @[execute.scala 100:103]
+  wire  _alu2_io_i_select_T_10 = _alu1_io_i_select_T_4 | _alu1_io_i_select_T_2; // @[execute.scala 104:92]
+  wire  _alu2_io_i_select_T_12 = _alu2_io_i_select_T_10 & _io_o_available_funcs_0_T_2; // @[execute.scala 105:9]
   wire  _alu2_io_i_select_T_13 = _alu1_io_i_select_T_4 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 |
-    _alu2_io_i_select_T_12; // @[execute.scala 101:171]
-  wire  _bru_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h2; // @[execute.scala 106:98]
-  wire  _bru_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h2; // @[execute.scala 106:61]
+    _alu2_io_i_select_T_12; // @[execute.scala 103:171]
+  wire  _bru_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h2; // @[execute.scala 108:98]
+  wire  _bru_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h2; // @[execute.scala 108:61]
   wire  _bru_io_i_select_T_7 = _alu1_io_i_select_T & (io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code
-     == 7'h2 | _bru_io_i_select_T_4); // @[execute.scala 105:45]
-  wire  _lsu_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h4; // @[execute.scala 109:98]
-  wire  _lsu_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h4; // @[execute.scala 109:61]
+     == 7'h2 | _bru_io_i_select_T_4); // @[execute.scala 107:45]
+  wire  _lsu_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h4; // @[execute.scala 111:98]
+  wire  _lsu_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h4; // @[execute.scala 111:61]
   wire  _lsu_io_i_select_T_7 = _alu1_io_i_select_T & (io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code
-     == 7'h4 | _lsu_io_i_select_T_4); // @[execute.scala 108:45]
-  wire  _mul_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h8; // @[execute.scala 112:98]
-  wire  _mul_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h8; // @[execute.scala 112:61]
+     == 7'h4 | _lsu_io_i_select_T_4); // @[execute.scala 110:45]
+  wire  _mul_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h8; // @[execute.scala 114:98]
+  wire  _mul_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h8; // @[execute.scala 114:61]
   wire  _mul_io_i_select_T_7 = _alu1_io_i_select_T & (io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code
-     == 7'h8 | _mul_io_i_select_T_4); // @[execute.scala 111:45]
-  wire  _div_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h10; // @[execute.scala 115:98]
-  wire  _div_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h10; // @[execute.scala 115:61]
+     == 7'h8 | _mul_io_i_select_T_4); // @[execute.scala 113:45]
+  wire  _div_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h10; // @[execute.scala 117:98]
+  wire  _div_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h10; // @[execute.scala 117:61]
   wire  _div_io_i_select_T_7 = _alu1_io_i_select_T & (io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code
-     == 7'h10 | _div_io_i_select_T_4); // @[execute.scala 114:45]
-  wire  _csr_bf_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h20; // @[execute.scala 118:98]
-  wire  _csr_bf_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h20; // @[execute.scala 118:61]
+     == 7'h10 | _div_io_i_select_T_4); // @[execute.scala 116:45]
+  wire  _csr_bf_io_i_select_T_3 = io_i_issue_res_packs_0_func_code == 7'h20; // @[execute.scala 120:98]
+  wire  _csr_bf_io_i_select_T_4 = io_i_issue_res_packs_0_valid & io_i_issue_res_packs_0_func_code == 7'h20; // @[execute.scala 120:61]
   wire [2:0] _issue_idx1_T = div_io_o_ex_res_pack_valid ? 3'h5 : 3'h6; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx1_T_1 = func_units_4_io_o_ex_res_pack_valid ? 3'h4 : _issue_idx1_T; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx1_T_2 = func_units_3_io_o_ex_res_pack_valid ? 3'h3 : _issue_idx1_T_1; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx1_T_3 = bru_io_o_ex_res_pack_valid ? 3'h2 : _issue_idx1_T_2; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx1_T_4 = alu2_io_o_ex_res_pack_valid ? 3'h1 : _issue_idx1_T_3; // @[Mux.scala 47:70]
   wire [2:0] issue_idx1 = alu1_io_o_ex_res_pack_valid ? 3'h0 : _issue_idx1_T_4; // @[Mux.scala 47:70]
-  wire [2:0] _issue_idx2_T_1 = 3'h7 - 3'h1; // @[execute.scala 176:40]
+  wire [2:0] _issue_idx2_T_1 = 3'h7 - 3'h1; // @[execute.scala 178:40]
   wire [2:0] _issue_idx2_T_2 = alu2_io_o_ex_res_pack_valid ? 3'h5 : 3'h6; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx2_T_3 = bru_io_o_ex_res_pack_valid ? 3'h4 : _issue_idx2_T_2; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx2_T_4 = func_units_3_io_o_ex_res_pack_valid ? 3'h3 : _issue_idx2_T_3; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx2_T_5 = func_units_4_io_o_ex_res_pack_valid ? 3'h2 : _issue_idx2_T_4; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx2_T_6 = div_io_o_ex_res_pack_valid ? 3'h1 : _issue_idx2_T_5; // @[Mux.scala 47:70]
   wire [2:0] _issue_idx2_T_7 = csr_bf_io_o_ex_res_pack_valid ? 3'h0 : _issue_idx2_T_6; // @[Mux.scala 47:70]
-  wire [2:0] issue_idx2 = _issue_idx2_T_1 - _issue_idx2_T_7; // @[execute.scala 176:44]
-  wire  _alu1_io_i_select_to_commit_T = 3'h0 == issue_idx1; // @[execute.scala 181:52]
-  wire  _alu1_io_i_select_to_commit_T_1 = 3'h0 == issue_idx2; // @[execute.scala 181:73]
-  wire  _alu2_io_i_select_to_commit_T = 3'h1 == issue_idx1; // @[execute.scala 181:52]
-  wire  _alu2_io_i_select_to_commit_T_1 = 3'h1 == issue_idx2; // @[execute.scala 181:73]
-  wire  _bru_io_i_select_to_commit_T = 3'h2 == issue_idx1; // @[execute.scala 181:52]
-  wire  _bru_io_i_select_to_commit_T_1 = 3'h2 == issue_idx2; // @[execute.scala 181:73]
-  wire  _lsu_io_i_select_to_commit_T = 3'h3 == issue_idx1; // @[execute.scala 181:52]
-  wire  _lsu_io_i_select_to_commit_T_1 = 3'h3 == issue_idx2; // @[execute.scala 181:73]
-  wire  _mul_io_i_select_to_commit_T = 3'h4 == issue_idx1; // @[execute.scala 181:52]
-  wire  _mul_io_i_select_to_commit_T_1 = 3'h4 == issue_idx2; // @[execute.scala 181:73]
-  wire  _div_io_i_select_to_commit_T = 3'h5 == issue_idx1; // @[execute.scala 181:52]
-  wire  _div_io_i_select_to_commit_T_1 = 3'h5 == issue_idx2; // @[execute.scala 181:73]
-  wire  _csr_bf_io_i_select_to_commit_T = 3'h6 == issue_idx1; // @[execute.scala 181:52]
-  wire  _csr_bf_io_i_select_to_commit_T_1 = 3'h6 == issue_idx2; // @[execute.scala 181:73]
+  wire [2:0] issue_idx2 = _issue_idx2_T_1 - _issue_idx2_T_7; // @[execute.scala 178:44]
+  wire  _alu1_io_i_select_to_commit_T = 3'h0 == issue_idx1; // @[execute.scala 183:52]
+  wire  _alu1_io_i_select_to_commit_T_1 = 3'h0 == issue_idx2; // @[execute.scala 183:73]
+  wire  _alu2_io_i_select_to_commit_T = 3'h1 == issue_idx1; // @[execute.scala 183:52]
+  wire  _alu2_io_i_select_to_commit_T_1 = 3'h1 == issue_idx2; // @[execute.scala 183:73]
+  wire  _bru_io_i_select_to_commit_T = 3'h2 == issue_idx1; // @[execute.scala 183:52]
+  wire  _bru_io_i_select_to_commit_T_1 = 3'h2 == issue_idx2; // @[execute.scala 183:73]
+  wire  _lsu_io_i_select_to_commit_T = 3'h3 == issue_idx1; // @[execute.scala 183:52]
+  wire  _lsu_io_i_select_to_commit_T_1 = 3'h3 == issue_idx2; // @[execute.scala 183:73]
+  wire  _mul_io_i_select_to_commit_T = 3'h4 == issue_idx1; // @[execute.scala 183:52]
+  wire  _mul_io_i_select_to_commit_T_1 = 3'h4 == issue_idx2; // @[execute.scala 183:73]
+  wire  _div_io_i_select_to_commit_T = 3'h5 == issue_idx1; // @[execute.scala 183:52]
+  wire  _div_io_i_select_to_commit_T_1 = 3'h5 == issue_idx2; // @[execute.scala 183:73]
+  wire  _csr_bf_io_i_select_to_commit_T = 3'h6 == issue_idx1; // @[execute.scala 183:52]
+  wire  _csr_bf_io_i_select_to_commit_T_1 = 3'h6 == issue_idx2; // @[execute.scala 183:73]
   wire  _io_o_ex_res_packs_0_uop_T_7_valid = _csr_bf_io_i_select_to_commit_T ? csr_bf_io_o_ex_res_pack_uop_valid :
     alu1_io_o_ex_res_pack_uop_valid; // @[Mux.scala 101:16]
   wire [31:0] _io_o_ex_res_packs_0_uop_T_7_pc = _csr_bf_io_i_select_to_commit_T ? csr_bf_io_o_ex_res_pack_uop_pc :
@@ -795,7 +799,7 @@ module Execute(
     csr_bf_io_o_ex_res_pack_uop_alu_sel : alu1_io_o_ex_res_pack_uop_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_7_branch_type = _csr_bf_io_i_select_to_commit_T ?
     csr_bf_io_o_ex_res_pack_uop_branch_type : alu1_io_o_ex_res_pack_uop_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_7_mem_type = _csr_bf_io_i_select_to_commit_T ?
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_7_mem_type = _csr_bf_io_i_select_to_commit_T ?
     csr_bf_io_o_ex_res_pack_uop_mem_type : alu1_io_o_ex_res_pack_uop_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_uop_T_8_valid = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_7_valid; // @[Mux.scala 101:16]
@@ -856,7 +860,7 @@ module Execute(
     _io_o_ex_res_packs_0_uop_T_7_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_8_branch_type = _div_io_i_select_to_commit_T ?
     div_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_0_uop_T_7_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_8_mem_type = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_mem_type :
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_8_mem_type = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_uop_mem_type :
     _io_o_ex_res_packs_0_uop_T_7_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_uop_T_9_valid = _mul_io_i_select_to_commit_T ? func_units_4_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_8_valid; // @[Mux.scala 101:16]
@@ -921,7 +925,7 @@ module Execute(
     func_units_4_io_o_ex_res_pack_uop_alu_sel : _io_o_ex_res_packs_0_uop_T_8_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_9_branch_type = _mul_io_i_select_to_commit_T ?
     func_units_4_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_0_uop_T_8_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_9_mem_type = _mul_io_i_select_to_commit_T ?
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_9_mem_type = _mul_io_i_select_to_commit_T ?
     func_units_4_io_o_ex_res_pack_uop_mem_type : _io_o_ex_res_packs_0_uop_T_8_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_uop_T_10_valid = _lsu_io_i_select_to_commit_T ? func_units_3_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_9_valid; // @[Mux.scala 101:16]
@@ -986,7 +990,7 @@ module Execute(
     func_units_3_io_o_ex_res_pack_uop_alu_sel : _io_o_ex_res_packs_0_uop_T_9_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_10_branch_type = _lsu_io_i_select_to_commit_T ?
     func_units_3_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_0_uop_T_9_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_10_mem_type = _lsu_io_i_select_to_commit_T ?
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_10_mem_type = _lsu_io_i_select_to_commit_T ?
     func_units_3_io_o_ex_res_pack_uop_mem_type : _io_o_ex_res_packs_0_uop_T_9_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_uop_T_11_valid = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_10_valid; // @[Mux.scala 101:16]
@@ -1047,7 +1051,7 @@ module Execute(
     _io_o_ex_res_packs_0_uop_T_10_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_11_branch_type = _bru_io_i_select_to_commit_T ?
     bru_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_0_uop_T_10_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_11_mem_type = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_mem_type
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_11_mem_type = _bru_io_i_select_to_commit_T ? bru_io_o_ex_res_pack_uop_mem_type
      : _io_o_ex_res_packs_0_uop_T_10_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_uop_T_12_valid = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_11_valid; // @[Mux.scala 101:16]
@@ -1108,7 +1112,7 @@ module Execute(
      : _io_o_ex_res_packs_0_uop_T_11_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_0_uop_T_12_branch_type = _alu2_io_i_select_to_commit_T ?
     alu2_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_0_uop_T_11_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_0_uop_T_12_mem_type = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_mem_type
+  wire [2:0] _io_o_ex_res_packs_0_uop_T_12_mem_type = _alu2_io_i_select_to_commit_T ? alu2_io_o_ex_res_pack_uop_mem_type
      : _io_o_ex_res_packs_0_uop_T_11_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_7_valid = _csr_bf_io_i_select_to_commit_T_1 ? csr_bf_io_o_ex_res_pack_uop_valid :
     alu1_io_o_ex_res_pack_uop_valid; // @[Mux.scala 101:16]
@@ -1169,7 +1173,7 @@ module Execute(
     csr_bf_io_o_ex_res_pack_uop_alu_sel : alu1_io_o_ex_res_pack_uop_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_7_branch_type = _csr_bf_io_i_select_to_commit_T_1 ?
     csr_bf_io_o_ex_res_pack_uop_branch_type : alu1_io_o_ex_res_pack_uop_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_7_mem_type = _csr_bf_io_i_select_to_commit_T_1 ?
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_7_mem_type = _csr_bf_io_i_select_to_commit_T_1 ?
     csr_bf_io_o_ex_res_pack_uop_mem_type : alu1_io_o_ex_res_pack_uop_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_8_valid = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_1_uop_T_7_valid; // @[Mux.scala 101:16]
@@ -1230,7 +1234,7 @@ module Execute(
     _io_o_ex_res_packs_1_uop_T_7_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_8_branch_type = _div_io_i_select_to_commit_T_1 ?
     div_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_1_uop_T_7_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_8_mem_type = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_mem_type
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_8_mem_type = _div_io_i_select_to_commit_T_1 ? div_io_o_ex_res_pack_uop_mem_type
      : _io_o_ex_res_packs_1_uop_T_7_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_9_valid = _mul_io_i_select_to_commit_T_1 ? func_units_4_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_1_uop_T_8_valid; // @[Mux.scala 101:16]
@@ -1295,7 +1299,7 @@ module Execute(
     func_units_4_io_o_ex_res_pack_uop_alu_sel : _io_o_ex_res_packs_1_uop_T_8_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_9_branch_type = _mul_io_i_select_to_commit_T_1 ?
     func_units_4_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_1_uop_T_8_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_9_mem_type = _mul_io_i_select_to_commit_T_1 ?
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_9_mem_type = _mul_io_i_select_to_commit_T_1 ?
     func_units_4_io_o_ex_res_pack_uop_mem_type : _io_o_ex_res_packs_1_uop_T_8_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_10_valid = _lsu_io_i_select_to_commit_T_1 ? func_units_3_io_o_ex_res_pack_uop_valid
      : _io_o_ex_res_packs_1_uop_T_9_valid; // @[Mux.scala 101:16]
@@ -1360,7 +1364,7 @@ module Execute(
     func_units_3_io_o_ex_res_pack_uop_alu_sel : _io_o_ex_res_packs_1_uop_T_9_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_10_branch_type = _lsu_io_i_select_to_commit_T_1 ?
     func_units_3_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_1_uop_T_9_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_10_mem_type = _lsu_io_i_select_to_commit_T_1 ?
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_10_mem_type = _lsu_io_i_select_to_commit_T_1 ?
     func_units_3_io_o_ex_res_pack_uop_mem_type : _io_o_ex_res_packs_1_uop_T_9_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_11_valid = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_1_uop_T_10_valid; // @[Mux.scala 101:16]
@@ -1421,7 +1425,7 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_10_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_11_branch_type = _bru_io_i_select_to_commit_T_1 ?
     bru_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_1_uop_T_10_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_11_mem_type = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_mem_type
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_11_mem_type = _bru_io_i_select_to_commit_T_1 ? bru_io_o_ex_res_pack_uop_mem_type
      : _io_o_ex_res_packs_1_uop_T_10_mem_type; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_uop_T_12_valid = _alu2_io_i_select_to_commit_T_1 ? alu2_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_1_uop_T_11_valid; // @[Mux.scala 101:16]
@@ -1482,9 +1486,9 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_11_alu_sel; // @[Mux.scala 101:16]
   wire [3:0] _io_o_ex_res_packs_1_uop_T_12_branch_type = _alu2_io_i_select_to_commit_T_1 ?
     alu2_io_o_ex_res_pack_uop_branch_type : _io_o_ex_res_packs_1_uop_T_11_branch_type; // @[Mux.scala 101:16]
-  wire [1:0] _io_o_ex_res_packs_1_uop_T_12_mem_type = _alu2_io_i_select_to_commit_T_1 ?
+  wire [2:0] _io_o_ex_res_packs_1_uop_T_12_mem_type = _alu2_io_i_select_to_commit_T_1 ?
     alu2_io_o_ex_res_pack_uop_mem_type : _io_o_ex_res_packs_1_uop_T_11_mem_type; // @[Mux.scala 101:16]
-  wire  _io_o_ex_res_packs_0_valid_T_1 = io_i_exception | io_i_rollback_valid | new_br_resolve; // @[execute.scala 187:76]
+  wire  _io_o_ex_res_packs_0_valid_T_1 = io_i_exception | io_i_rollback_valid | new_br_resolve; // @[execute.scala 189:76]
   wire  _io_o_ex_res_packs_0_valid_T_10 = _div_io_i_select_to_commit_T ? div_io_o_ex_res_pack_valid :
     _csr_bf_io_i_select_to_commit_T & csr_bf_io_o_ex_res_pack_valid; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_0_valid_T_11 = _mul_io_i_select_to_commit_T ? func_units_4_io_o_ex_res_pack_valid :
@@ -1509,7 +1513,7 @@ module Execute(
     _io_o_ex_res_packs_1_valid_T_13; // @[Mux.scala 101:16]
   wire  _io_o_ex_res_packs_1_valid_T_15 = _alu1_io_i_select_to_commit_T_1 ? alu1_io_o_ex_res_pack_valid :
     _io_o_ex_res_packs_1_valid_T_14; // @[Mux.scala 101:16]
-  wire  _T_4 = ~reset; // @[execute.scala 194:11]
+  wire  _T_4 = ~reset; // @[execute.scala 196:11]
   ALU alu1 ( // @[execute.scala 41:22]
     .clock(alu1_clock),
     .reset(alu1_reset),
@@ -1803,6 +1807,8 @@ module Execute(
     .io_dcache_io_Mlen(func_units_3_io_dcache_io_Mlen),
     .io_dcache_io_MdataIn(func_units_3_io_dcache_io_MdataIn),
     .io_dcache_io_MdataOut(func_units_3_io_dcache_io_MdataOut),
+    .io_dcache_io_flush_done(func_units_3_io_dcache_io_flush_done),
+    .io_dcache_io_flush(func_units_3_io_dcache_io_flush),
     .io_o_lsu_uop_valid(func_units_3_io_o_lsu_uop_valid),
     .io_o_lsu_uop_rob_idx(func_units_3_io_o_lsu_uop_rob_idx),
     .io_i_exception(func_units_3_io_i_exception),
@@ -2020,13 +2026,13 @@ module Execute(
     .io_i_rollback_rob_idx(csr_bf_io_i_rollback_rob_idx)
   );
   assign io_o_available_funcs_0 = _io_o_available_funcs_0_T_1 ? 2'h1 : _io_o_available_funcs_0_T_6; // @[Mux.scala 101:16]
-  assign io_o_available_funcs_1 = {{1'd0}, _io_o_available_funcs_1_T}; // @[execute.scala 89:28]
-  assign io_o_available_funcs_2 = {{1'd0}, _io_o_available_funcs_2_T}; // @[execute.scala 90:28]
-  assign io_o_available_funcs_3 = {{1'd0}, _io_o_available_funcs_3_T}; // @[execute.scala 91:28]
-  assign io_o_available_funcs_4 = {{1'd0}, _io_o_available_funcs_4_T}; // @[execute.scala 92:28]
-  assign io_o_available_funcs_5 = {{1'd0}, _io_o_available_funcs_5_T}; // @[execute.scala 93:28]
+  assign io_o_available_funcs_1 = {{1'd0}, _io_o_available_funcs_1_T}; // @[execute.scala 91:28]
+  assign io_o_available_funcs_2 = {{1'd0}, _io_o_available_funcs_2_T}; // @[execute.scala 92:28]
+  assign io_o_available_funcs_3 = {{1'd0}, _io_o_available_funcs_3_T}; // @[execute.scala 93:28]
+  assign io_o_available_funcs_4 = {{1'd0}, _io_o_available_funcs_4_T}; // @[execute.scala 94:28]
+  assign io_o_available_funcs_5 = {{1'd0}, _io_o_available_funcs_5_T}; // @[execute.scala 95:28]
   assign io_o_ex_res_packs_0_valid = io_i_exception | io_i_rollback_valid | new_br_resolve ? 1'h0 :
-    _io_o_ex_res_packs_0_valid_T_15; // @[execute.scala 187:37]
+    _io_o_ex_res_packs_0_valid_T_15; // @[execute.scala 189:37]
   assign io_o_ex_res_packs_0_uop_valid = _alu1_io_i_select_to_commit_T ? alu1_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_0_uop_T_12_valid; // @[Mux.scala 101:16]
   assign io_o_ex_res_packs_0_uop_pc = _alu1_io_i_select_to_commit_T ? alu1_io_o_ex_res_pack_uop_pc :
@@ -2089,7 +2095,7 @@ module Execute(
   assign io_o_ex_res_packs_0_uop_mem_type = _alu1_io_i_select_to_commit_T ? alu1_io_o_ex_res_pack_uop_mem_type :
     _io_o_ex_res_packs_0_uop_T_12_mem_type; // @[Mux.scala 101:16]
   assign io_o_ex_res_packs_1_valid = _io_o_ex_res_packs_0_valid_T_1 ? 1'h0 : _io_o_ex_res_packs_1_valid_T_15 &
-    issue_idx1 != issue_idx2; // @[execute.scala 188:37]
+    issue_idx1 != issue_idx2; // @[execute.scala 190:37]
   assign io_o_ex_res_packs_1_uop_valid = _alu1_io_i_select_to_commit_T_1 ? alu1_io_o_ex_res_pack_uop_valid :
     _io_o_ex_res_packs_1_uop_T_12_valid; // @[Mux.scala 101:16]
   assign io_o_ex_res_packs_1_uop_pc = _alu1_io_i_select_to_commit_T_1 ? alu1_io_o_ex_res_pack_uop_pc :
@@ -2151,452 +2157,454 @@ module Execute(
      : _io_o_ex_res_packs_1_uop_T_12_branch_type; // @[Mux.scala 101:16]
   assign io_o_ex_res_packs_1_uop_mem_type = _alu1_io_i_select_to_commit_T_1 ? alu1_io_o_ex_res_pack_uop_mem_type :
     _io_o_ex_res_packs_1_uop_T_12_mem_type; // @[Mux.scala 101:16]
-  assign io_dcache_io_Mwout = func_units_3_io_dcache_io_Mwout; // @[execute.scala 72:33]
-  assign io_dcache_io_Maddr = func_units_3_io_dcache_io_Maddr; // @[execute.scala 73:33]
-  assign io_dcache_io_Men = func_units_3_io_dcache_io_Men; // @[execute.scala 74:33]
-  assign io_dcache_io_Mlen = func_units_3_io_dcache_io_Mlen; // @[execute.scala 75:33]
-  assign io_dcache_io_MdataOut = func_units_3_io_dcache_io_MdataOut; // @[execute.scala 76:33]
-  assign io_o_branch_resolve_pack_valid = bru_io_o_branch_resolve_pack_valid; // @[execute.scala 168:36]
-  assign io_o_branch_resolve_pack_mispred = bru_io_o_branch_resolve_pack_mispred; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_taken = bru_io_o_branch_resolve_pack_taken; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_pc = bru_io_o_branch_resolve_pack_pc; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_target = bru_io_o_branch_resolve_pack_target; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_rob_idx = bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_prediction_valid = bru_io_o_branch_resolve_pack_prediction_valid; // @[execute.scala 166:30]
-  assign io_o_branch_resolve_pack_branch_type = bru_io_o_branch_resolve_pack_branch_type; // @[execute.scala 166:30]
-  assign io_o_lsu_uop_valid = func_units_3_io_o_lsu_uop_valid; // @[execute.scala 190:24]
-  assign io_o_lsu_uop_rob_idx = func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 191:26]
+  assign io_dcache_io_Mwout = func_units_3_io_dcache_io_Mwout; // @[execute.scala 73:33]
+  assign io_dcache_io_Maddr = func_units_3_io_dcache_io_Maddr; // @[execute.scala 74:33]
+  assign io_dcache_io_Men = func_units_3_io_dcache_io_Men; // @[execute.scala 75:33]
+  assign io_dcache_io_Mlen = func_units_3_io_dcache_io_Mlen; // @[execute.scala 76:33]
+  assign io_dcache_io_MdataOut = func_units_3_io_dcache_io_MdataOut; // @[execute.scala 77:33]
+  assign io_dcache_io_flush = func_units_3_io_dcache_io_flush; // @[execute.scala 78:33]
+  assign io_o_branch_resolve_pack_valid = bru_io_o_branch_resolve_pack_valid; // @[execute.scala 170:36]
+  assign io_o_branch_resolve_pack_mispred = bru_io_o_branch_resolve_pack_mispred; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_taken = bru_io_o_branch_resolve_pack_taken; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_pc = bru_io_o_branch_resolve_pack_pc; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_target = bru_io_o_branch_resolve_pack_target; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_rob_idx = bru_io_o_branch_resolve_pack_rob_idx; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_prediction_valid = bru_io_o_branch_resolve_pack_prediction_valid; // @[execute.scala 168:30]
+  assign io_o_branch_resolve_pack_branch_type = bru_io_o_branch_resolve_pack_branch_type; // @[execute.scala 168:30]
+  assign io_o_lsu_uop_valid = func_units_3_io_o_lsu_uop_valid; // @[execute.scala 192:24]
+  assign io_o_lsu_uop_rob_idx = func_units_3_io_o_lsu_uop_rob_idx; // @[execute.scala 193:26]
   assign alu1_clock = clock;
   assign alu1_reset = reset;
-  assign alu1_io_i_uop_valid = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 120:24]
-  assign alu1_io_i_uop_pc = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 120:24]
-  assign alu1_io_i_uop_inst = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 120:24]
+  assign alu1_io_i_uop_valid = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 122:24]
+  assign alu1_io_i_uop_pc = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 122:24]
+  assign alu1_io_i_uop_inst = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 122:24]
   assign alu1_io_i_uop_func_code = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_predict_pack_valid = _alu1_io_i_select_T_2 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 120:24]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_predict_pack_target = _alu1_io_i_select_T_2 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 120:24]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_predict_pack_branch_type = _alu1_io_i_select_T_2 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 120:24]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_predict_pack_select = _alu1_io_i_select_T_2 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 120:24]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_predict_pack_taken = _alu1_io_i_select_T_2 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 120:24]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 122:24]
   assign alu1_io_i_uop_phy_dst = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_stale_dst = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 122:24]
   assign alu1_io_i_uop_arch_dst = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 122:24]
   assign alu1_io_i_uop_inst_type = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 120:24]
-  assign alu1_io_i_uop_regWen = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 122:24]
+  assign alu1_io_i_uop_regWen = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 122:24]
   assign alu1_io_i_uop_src1_valid = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 122:24]
   assign alu1_io_i_uop_phy_rs1 = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_arch_rs1 = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 122:24]
   assign alu1_io_i_uop_src2_valid = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 122:24]
   assign alu1_io_i_uop_phy_rs2 = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_arch_rs2 = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 122:24]
   assign alu1_io_i_uop_rob_idx = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx
-    ; // @[execute.scala 120:24]
-  assign alu1_io_i_uop_imm = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
+  assign alu1_io_i_uop_imm = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 122:24]
   assign alu1_io_i_uop_src1_value = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 122:24]
   assign alu1_io_i_uop_src2_value = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 122:24]
   assign alu1_io_i_uop_op1_sel = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_op2_sel = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_alu_sel = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel
-    ; // @[execute.scala 120:24]
+    ; // @[execute.scala 122:24]
   assign alu1_io_i_uop_branch_type = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 120:24]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 122:24]
   assign alu1_io_i_uop_mem_type = _alu1_io_i_select_T_2 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 120:24]
-  assign alu1_io_i_select = ~io_i_rollback_valid & _alu1_io_i_select_T_6; // @[execute.scala 97:46]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 122:24]
+  assign alu1_io_i_select = ~io_i_rollback_valid & _alu1_io_i_select_T_6; // @[execute.scala 99:46]
   assign alu1_io_i_select_to_commit = (3'h0 == issue_idx1 | 3'h0 == issue_idx2) & alu1_io_o_ex_res_pack_valid &
-    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign alu1_io_i_exception = io_i_exception; // @[execute.scala 129:28]
-  assign alu1_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 137:30]
-  assign alu1_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 145:32]
+    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign alu1_io_i_exception = io_i_exception; // @[execute.scala 131:28]
+  assign alu1_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 139:30]
+  assign alu1_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 147:32]
   assign alu2_clock = clock;
   assign alu2_reset = reset;
   assign alu2_io_i_uop_valid = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 124:24]
   assign alu2_io_i_uop_pc = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 124:24]
   assign alu2_io_i_uop_inst = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 124:24]
   assign alu2_io_i_uop_func_code = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_func_code : io_i_issue_res_packs_1_func_code; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_func_code : io_i_issue_res_packs_1_func_code; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_predict_pack_valid = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid &
     _alu1_io_i_select_T_1 ? io_i_issue_res_packs_0_branch_predict_pack_valid :
-    io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 122:24]
+    io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_predict_pack_target = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid &
     _alu1_io_i_select_T_1 ? io_i_issue_res_packs_0_branch_predict_pack_target :
-    io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 122:24]
+    io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_predict_pack_branch_type = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid &
     _alu1_io_i_select_T_1 ? io_i_issue_res_packs_0_branch_predict_pack_branch_type :
-    io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 122:24]
+    io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_predict_pack_select = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid &
     _alu1_io_i_select_T_1 ? io_i_issue_res_packs_0_branch_predict_pack_select :
-    io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 122:24]
+    io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_predict_pack_taken = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid &
     _alu1_io_i_select_T_1 ? io_i_issue_res_packs_0_branch_predict_pack_taken :
-    io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 122:24]
+    io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 124:24]
   assign alu2_io_i_uop_phy_dst = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 124:24]
   assign alu2_io_i_uop_stale_dst = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_stale_dst : io_i_issue_res_packs_1_stale_dst; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_stale_dst : io_i_issue_res_packs_1_stale_dst; // @[execute.scala 124:24]
   assign alu2_io_i_uop_arch_dst = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_arch_dst : io_i_issue_res_packs_1_arch_dst; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_arch_dst : io_i_issue_res_packs_1_arch_dst; // @[execute.scala 124:24]
   assign alu2_io_i_uop_inst_type = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_inst_type : io_i_issue_res_packs_1_inst_type; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_inst_type : io_i_issue_res_packs_1_inst_type; // @[execute.scala 124:24]
   assign alu2_io_i_uop_regWen = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 124:24]
   assign alu2_io_i_uop_src1_valid = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1
-     ? io_i_issue_res_packs_0_src1_valid : io_i_issue_res_packs_1_src1_valid; // @[execute.scala 122:24]
+     ? io_i_issue_res_packs_0_src1_valid : io_i_issue_res_packs_1_src1_valid; // @[execute.scala 124:24]
   assign alu2_io_i_uop_phy_rs1 = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 124:24]
   assign alu2_io_i_uop_arch_rs1 = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_arch_rs1 : io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_arch_rs1 : io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 124:24]
   assign alu2_io_i_uop_src2_valid = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1
-     ? io_i_issue_res_packs_0_src2_valid : io_i_issue_res_packs_1_src2_valid; // @[execute.scala 122:24]
+     ? io_i_issue_res_packs_0_src2_valid : io_i_issue_res_packs_1_src2_valid; // @[execute.scala 124:24]
   assign alu2_io_i_uop_phy_rs2 = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 124:24]
   assign alu2_io_i_uop_arch_rs2 = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_arch_rs2 : io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_arch_rs2 : io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 124:24]
   assign alu2_io_i_uop_rob_idx = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 124:24]
   assign alu2_io_i_uop_imm = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 124:24]
   assign alu2_io_i_uop_src1_value = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1
-     ? io_i_issue_res_packs_0_src1_value : io_i_issue_res_packs_1_src1_value; // @[execute.scala 122:24]
+     ? io_i_issue_res_packs_0_src1_value : io_i_issue_res_packs_1_src1_value; // @[execute.scala 124:24]
   assign alu2_io_i_uop_src2_value = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1
-     ? io_i_issue_res_packs_0_src2_value : io_i_issue_res_packs_1_src2_value; // @[execute.scala 122:24]
+     ? io_i_issue_res_packs_0_src2_value : io_i_issue_res_packs_1_src2_value; // @[execute.scala 124:24]
   assign alu2_io_i_uop_op1_sel = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 124:24]
   assign alu2_io_i_uop_op2_sel = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 124:24]
   assign alu2_io_i_uop_alu_sel = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 122:24]
+    io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 124:24]
   assign alu2_io_i_uop_branch_type = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1
-     ? io_i_issue_res_packs_0_branch_type : io_i_issue_res_packs_1_branch_type; // @[execute.scala 122:24]
+     ? io_i_issue_res_packs_0_branch_type : io_i_issue_res_packs_1_branch_type; // @[execute.scala 124:24]
   assign alu2_io_i_uop_mem_type = _io_o_available_funcs_0_T_2 & io_i_issue_res_packs_0_valid & _alu1_io_i_select_T_1 ?
-    io_i_issue_res_packs_0_mem_type : io_i_issue_res_packs_1_mem_type; // @[execute.scala 122:24]
-  assign alu2_io_i_select = _alu1_io_i_select_T & (alu2_io_o_available & _alu2_io_i_select_T_13); // @[execute.scala 100:46]
+    io_i_issue_res_packs_0_mem_type : io_i_issue_res_packs_1_mem_type; // @[execute.scala 124:24]
+  assign alu2_io_i_select = _alu1_io_i_select_T & (alu2_io_o_available & _alu2_io_i_select_T_13); // @[execute.scala 102:46]
   assign alu2_io_i_select_to_commit = (3'h1 == issue_idx1 | 3'h1 == issue_idx2) & alu2_io_o_ex_res_pack_valid &
-    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign alu2_io_i_exception = io_i_exception; // @[execute.scala 130:28]
-  assign alu2_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 138:30]
-  assign alu2_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 146:32]
+    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign alu2_io_i_exception = io_i_exception; // @[execute.scala 132:28]
+  assign alu2_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 140:30]
+  assign alu2_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 148:32]
   assign bru_clock = clock;
   assign bru_reset = reset;
-  assign bru_io_i_uop_valid = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 123:24]
-  assign bru_io_i_uop_pc = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 123:24]
-  assign bru_io_i_uop_inst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 123:24]
+  assign bru_io_i_uop_valid = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 125:24]
+  assign bru_io_i_uop_pc = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 125:24]
+  assign bru_io_i_uop_inst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 125:24]
   assign bru_io_i_uop_func_code = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_predict_pack_valid = _bru_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 123:24]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_predict_pack_target = _bru_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 123:24]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_predict_pack_branch_type = _bru_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 123:24]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_predict_pack_select = _bru_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 123:24]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_predict_pack_taken = _bru_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 123:24]
-  assign bru_io_i_uop_phy_dst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 123:24]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 125:24]
+  assign bru_io_i_uop_phy_dst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 125:24]
   assign bru_io_i_uop_stale_dst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 125:24]
   assign bru_io_i_uop_arch_dst = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 125:24]
   assign bru_io_i_uop_inst_type = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 123:24]
-  assign bru_io_i_uop_regWen = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 125:24]
+  assign bru_io_i_uop_regWen = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 125:24]
   assign bru_io_i_uop_src1_valid = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 123:24]
-  assign bru_io_i_uop_phy_rs1 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 125:24]
+  assign bru_io_i_uop_phy_rs1 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 125:24]
   assign bru_io_i_uop_arch_rs1 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 125:24]
   assign bru_io_i_uop_src2_valid = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 123:24]
-  assign bru_io_i_uop_phy_rs2 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 125:24]
+  assign bru_io_i_uop_phy_rs2 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 125:24]
   assign bru_io_i_uop_arch_rs2 = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 123:24]
-  assign bru_io_i_uop_rob_idx = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 123:24]
-  assign bru_io_i_uop_imm = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 125:24]
+  assign bru_io_i_uop_rob_idx = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 125:24]
+  assign bru_io_i_uop_imm = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 125:24]
   assign bru_io_i_uop_src1_value = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 125:24]
   assign bru_io_i_uop_src2_value = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 123:24]
-  assign bru_io_i_uop_op1_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 123:24]
-  assign bru_io_i_uop_op2_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 123:24]
-  assign bru_io_i_uop_alu_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 125:24]
+  assign bru_io_i_uop_op1_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 125:24]
+  assign bru_io_i_uop_op2_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 125:24]
+  assign bru_io_i_uop_alu_sel = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 125:24]
   assign bru_io_i_uop_branch_type = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 123:24]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 125:24]
   assign bru_io_i_uop_mem_type = _bru_io_i_select_T_3 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 123:24]
-  assign bru_io_i_select = _bru_io_i_select_T_7 & bru_io_o_available; // @[execute.scala 106:127]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 125:24]
+  assign bru_io_i_select = _bru_io_i_select_T_7 & bru_io_o_available; // @[execute.scala 108:127]
   assign bru_io_i_select_to_commit = (3'h2 == issue_idx1 | 3'h2 == issue_idx2) & bru_io_o_ex_res_pack_valid &
-    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign bru_io_i_exception = io_i_exception; // @[execute.scala 131:28]
+    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign bru_io_i_exception = io_i_exception; // @[execute.scala 133:28]
   assign func_units_3_clock = clock;
   assign func_units_3_reset = reset;
   assign func_units_3_io_i_uop_valid = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_valid :
-    io_i_issue_res_packs_1_valid; // @[execute.scala 124:24]
-  assign func_units_3_io_i_uop_pc = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 124:24]
-  assign func_units_3_io_i_uop_inst = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_valid; // @[execute.scala 126:24]
+  assign func_units_3_io_i_uop_pc = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 126:24]
+  assign func_units_3_io_i_uop_inst = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_func_code = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_predict_pack_valid = _lsu_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 124:24]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_predict_pack_target = _lsu_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 124:24]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_predict_pack_branch_type = _lsu_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 124:24]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_predict_pack_select = _lsu_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 124:24]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_predict_pack_taken = _lsu_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 124:24]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_phy_dst = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst :
-    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_stale_dst = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_arch_dst = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_inst_type = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_regWen = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen :
-    io_i_issue_res_packs_1_regWen; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_regWen; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_src1_valid = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_phy_rs1 = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 :
-    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_arch_rs1 = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_src2_valid = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_phy_rs2 = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 :
-    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_arch_rs2 = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_rob_idx = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx :
-    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 124:24]
-  assign func_units_3_io_i_uop_imm = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 126:24]
+  assign func_units_3_io_i_uop_imm = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_src1_value = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_src2_value = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_op1_sel = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel :
-    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_op2_sel = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel :
-    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_alu_sel = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel :
-    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_branch_type = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 124:24]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 126:24]
   assign func_units_3_io_i_uop_mem_type = _lsu_io_i_select_T_3 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 124:24]
-  assign func_units_3_io_i_select = _lsu_io_i_select_T_7 & func_units_3_io_o_available; // @[execute.scala 109:127]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 126:24]
+  assign func_units_3_io_i_select = _lsu_io_i_select_T_7 & func_units_3_io_o_available; // @[execute.scala 111:127]
   assign func_units_3_io_i_select_to_commit = (3'h3 == issue_idx1 | 3'h3 == issue_idx2) &
-    func_units_3_io_o_ex_res_pack_valid & _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
+    func_units_3_io_o_ex_res_pack_valid & _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
   assign func_units_3_io_i_ROB_first_entry = io_i_ROB_first_entry; // @[execute.scala 65:30]
   assign func_units_3_io_dcache_io_data_valid = io_dcache_io_data_valid; // @[execute.scala 66:38]
-  assign func_units_3_io_dcache_io_addr_ready = io_dcache_io_addr_ready; // @[execute.scala 70:33]
+  assign func_units_3_io_dcache_io_addr_ready = io_dcache_io_addr_ready; // @[execute.scala 70:38]
   assign func_units_3_io_dcache_io_MdataIn = io_dcache_io_MdataIn; // @[execute.scala 67:38]
-  assign func_units_3_io_i_exception = io_i_exception; // @[execute.scala 132:28]
-  assign func_units_3_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 140:30]
-  assign func_units_3_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 148:31]
+  assign func_units_3_io_dcache_io_flush_done = io_dcache_io_flush_done; // @[execute.scala 71:38]
+  assign func_units_3_io_i_exception = io_i_exception; // @[execute.scala 134:28]
+  assign func_units_3_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 142:30]
+  assign func_units_3_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 150:31]
   assign func_units_4_clock = clock;
   assign func_units_4_reset = reset;
   assign func_units_4_io_i_uop_valid = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_valid :
-    io_i_issue_res_packs_1_valid; // @[execute.scala 125:24]
-  assign func_units_4_io_i_uop_pc = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 125:24]
-  assign func_units_4_io_i_uop_inst = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_valid; // @[execute.scala 127:24]
+  assign func_units_4_io_i_uop_pc = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 127:24]
+  assign func_units_4_io_i_uop_inst = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_func_code = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_predict_pack_valid = _mul_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 125:24]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_predict_pack_target = _mul_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 125:24]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_predict_pack_branch_type = _mul_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 125:24]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_predict_pack_select = _mul_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 125:24]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_predict_pack_taken = _mul_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 125:24]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_phy_dst = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst :
-    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_stale_dst = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_arch_dst = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_inst_type = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_regWen = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen :
-    io_i_issue_res_packs_1_regWen; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_regWen; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_src1_valid = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_phy_rs1 = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 :
-    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_arch_rs1 = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_src2_valid = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_phy_rs2 = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 :
-    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_arch_rs2 = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_rob_idx = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx :
-    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 125:24]
-  assign func_units_4_io_i_uop_imm = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 127:24]
+  assign func_units_4_io_i_uop_imm = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_src1_value = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_src2_value = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_op1_sel = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel :
-    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_op2_sel = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel :
-    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_alu_sel = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel :
-    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_branch_type = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 125:24]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 127:24]
   assign func_units_4_io_i_uop_mem_type = _mul_io_i_select_T_3 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 125:24]
-  assign func_units_4_io_i_select = _mul_io_i_select_T_7 & func_units_4_io_o_available; // @[execute.scala 112:127]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 127:24]
+  assign func_units_4_io_i_select = _mul_io_i_select_T_7 & func_units_4_io_o_available; // @[execute.scala 114:127]
   assign func_units_4_io_i_select_to_commit = (3'h4 == issue_idx1 | 3'h4 == issue_idx2) &
-    func_units_4_io_o_ex_res_pack_valid & _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign func_units_4_io_i_exception = io_i_exception; // @[execute.scala 133:28]
-  assign func_units_4_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 141:30]
-  assign func_units_4_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 149:31]
+    func_units_4_io_o_ex_res_pack_valid & _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign func_units_4_io_i_exception = io_i_exception; // @[execute.scala 135:28]
+  assign func_units_4_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 143:30]
+  assign func_units_4_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 151:31]
   assign div_clock = clock;
   assign div_reset = reset;
-  assign div_io_i_uop_valid = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 126:24]
-  assign div_io_i_uop_pc = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 126:24]
-  assign div_io_i_uop_inst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 126:24]
+  assign div_io_i_uop_valid = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 128:24]
+  assign div_io_i_uop_pc = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 128:24]
+  assign div_io_i_uop_inst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 128:24]
   assign div_io_i_uop_func_code = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_predict_pack_valid = _div_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 126:24]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_predict_pack_target = _div_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 126:24]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_predict_pack_branch_type = _div_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 126:24]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_predict_pack_select = _div_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 126:24]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_predict_pack_taken = _div_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 126:24]
-  assign div_io_i_uop_phy_dst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 126:24]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 128:24]
+  assign div_io_i_uop_phy_dst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst : io_i_issue_res_packs_1_phy_dst; // @[execute.scala 128:24]
   assign div_io_i_uop_stale_dst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 128:24]
   assign div_io_i_uop_arch_dst = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 128:24]
   assign div_io_i_uop_inst_type = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 126:24]
-  assign div_io_i_uop_regWen = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 128:24]
+  assign div_io_i_uop_regWen = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen : io_i_issue_res_packs_1_regWen; // @[execute.scala 128:24]
   assign div_io_i_uop_src1_valid = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 126:24]
-  assign div_io_i_uop_phy_rs1 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 128:24]
+  assign div_io_i_uop_phy_rs1 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 : io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 128:24]
   assign div_io_i_uop_arch_rs1 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 128:24]
   assign div_io_i_uop_src2_valid = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 126:24]
-  assign div_io_i_uop_phy_rs2 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 128:24]
+  assign div_io_i_uop_phy_rs2 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 : io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 128:24]
   assign div_io_i_uop_arch_rs2 = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 126:24]
-  assign div_io_i_uop_rob_idx = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 126:24]
-  assign div_io_i_uop_imm = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 128:24]
+  assign div_io_i_uop_rob_idx = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx : io_i_issue_res_packs_1_rob_idx; // @[execute.scala 128:24]
+  assign div_io_i_uop_imm = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 128:24]
   assign div_io_i_uop_src1_value = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 128:24]
   assign div_io_i_uop_src2_value = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 126:24]
-  assign div_io_i_uop_op1_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 126:24]
-  assign div_io_i_uop_op2_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 126:24]
-  assign div_io_i_uop_alu_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 128:24]
+  assign div_io_i_uop_op1_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel : io_i_issue_res_packs_1_op1_sel; // @[execute.scala 128:24]
+  assign div_io_i_uop_op2_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel : io_i_issue_res_packs_1_op2_sel; // @[execute.scala 128:24]
+  assign div_io_i_uop_alu_sel = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel : io_i_issue_res_packs_1_alu_sel; // @[execute.scala 128:24]
   assign div_io_i_uop_branch_type = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 126:24]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 128:24]
   assign div_io_i_uop_mem_type = _div_io_i_select_T_3 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 126:24]
-  assign div_io_i_select = _div_io_i_select_T_7 & div_io_o_available; // @[execute.scala 115:127]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 128:24]
+  assign div_io_i_select = _div_io_i_select_T_7 & div_io_o_available; // @[execute.scala 117:127]
   assign div_io_i_select_to_commit = (3'h5 == issue_idx1 | 3'h5 == issue_idx2) & div_io_o_ex_res_pack_valid &
-    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign div_io_i_exception = io_i_exception; // @[execute.scala 134:28]
-  assign div_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 142:30]
-  assign div_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 150:31]
+    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign div_io_i_exception = io_i_exception; // @[execute.scala 136:28]
+  assign div_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 144:30]
+  assign div_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 152:31]
   assign csr_bf_clock = clock;
   assign csr_bf_reset = reset;
-  assign csr_bf_io_i_uop_valid = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 127:27]
-  assign csr_bf_io_i_uop_pc = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 127:27]
-  assign csr_bf_io_i_uop_inst = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 127:27]
+  assign csr_bf_io_i_uop_valid = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_valid : io_i_issue_res_packs_1_valid; // @[execute.scala 129:27]
+  assign csr_bf_io_i_uop_pc = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_pc : io_i_issue_res_packs_1_pc; // @[execute.scala 129:27]
+  assign csr_bf_io_i_uop_inst = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_inst : io_i_issue_res_packs_1_inst; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_func_code = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_func_code :
-    io_i_issue_res_packs_1_func_code; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_func_code; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_predict_pack_valid = _csr_bf_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 127:27]
+    io_i_issue_res_packs_0_branch_predict_pack_valid : io_i_issue_res_packs_1_branch_predict_pack_valid; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_predict_pack_target = _csr_bf_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 127:27]
+    io_i_issue_res_packs_0_branch_predict_pack_target : io_i_issue_res_packs_1_branch_predict_pack_target; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_predict_pack_branch_type = _csr_bf_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 127:27]
+    io_i_issue_res_packs_0_branch_predict_pack_branch_type : io_i_issue_res_packs_1_branch_predict_pack_branch_type; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_predict_pack_select = _csr_bf_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 127:27]
+    io_i_issue_res_packs_0_branch_predict_pack_select : io_i_issue_res_packs_1_branch_predict_pack_select; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_predict_pack_taken = _csr_bf_io_i_select_T_3 ?
-    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 127:27]
+    io_i_issue_res_packs_0_branch_predict_pack_taken : io_i_issue_res_packs_1_branch_predict_pack_taken; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_phy_dst = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_dst :
-    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_phy_dst; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_stale_dst = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_stale_dst :
-    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_stale_dst; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_arch_dst = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_dst :
-    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_arch_dst; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_inst_type = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_inst_type :
-    io_i_issue_res_packs_1_inst_type; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_inst_type; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_regWen = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_regWen :
-    io_i_issue_res_packs_1_regWen; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_regWen; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_src1_valid = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_valid :
-    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_src1_valid; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_phy_rs1 = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs1 :
-    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_phy_rs1; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_arch_rs1 = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs1 :
-    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_arch_rs1; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_src2_valid = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_valid :
-    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_src2_valid; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_phy_rs2 = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_phy_rs2 :
-    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_phy_rs2; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_arch_rs2 = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_arch_rs2 :
-    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_arch_rs2; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_rob_idx = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_rob_idx :
-    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 127:27]
-  assign csr_bf_io_i_uop_imm = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_rob_idx; // @[execute.scala 129:27]
+  assign csr_bf_io_i_uop_imm = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_imm : io_i_issue_res_packs_1_imm; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_src1_value = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_src1_value :
-    io_i_issue_res_packs_1_src1_value; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_src1_value; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_src2_value = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_src2_value :
-    io_i_issue_res_packs_1_src2_value; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_src2_value; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_op1_sel = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_op1_sel :
-    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_op1_sel; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_op2_sel = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_op2_sel :
-    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_op2_sel; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_alu_sel = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_alu_sel :
-    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_alu_sel; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_branch_type = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_branch_type :
-    io_i_issue_res_packs_1_branch_type; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_branch_type; // @[execute.scala 129:27]
   assign csr_bf_io_i_uop_mem_type = _csr_bf_io_i_select_T_3 ? io_i_issue_res_packs_0_mem_type :
-    io_i_issue_res_packs_1_mem_type; // @[execute.scala 127:27]
+    io_i_issue_res_packs_1_mem_type; // @[execute.scala 129:27]
   assign csr_bf_io_i_select = _alu1_io_i_select_T & (io_i_issue_res_packs_1_valid & io_i_issue_res_packs_1_func_code == 7'h20
-     | _csr_bf_io_i_select_T_4); // @[execute.scala 117:48]
+     | _csr_bf_io_i_select_T_4); // @[execute.scala 119:48]
   assign csr_bf_io_i_select_to_commit = (3'h6 == issue_idx1 | 3'h6 == issue_idx2) & csr_bf_io_o_ex_res_pack_valid &
-    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 181:155]
-  assign csr_bf_io_i_exception = io_i_exception; // @[execute.scala 135:31]
-  assign csr_bf_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 143:33]
-  assign csr_bf_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 151:34]
+    _alu1_io_i_select_T & ~new_br_resolve; // @[execute.scala 183:155]
+  assign csr_bf_io_i_exception = io_i_exception; // @[execute.scala 137:31]
+  assign csr_bf_io_i_rollback_valid = io_i_rollback_valid; // @[execute.scala 145:33]
+  assign csr_bf_io_i_rollback_rob_idx = io_o_branch_resolve_pack_rob_idx; // @[execute.scala 153:34]
   always @(posedge clock) begin
     if (reset) begin // @[execute.scala 52:43]
       last_branch_resolve_pack_valid <= 1'h0; // @[execute.scala 52:43]
@@ -2644,8 +2652,8 @@ module Execute(
     `endif
         if (~reset & ~(io_o_ex_res_packs_0_valid & io_o_ex_res_packs_0_uop_valid | ~io_o_ex_res_packs_0_valid)) begin
           $fwrite(32'h80000002,
-            "Assertion failed: exu pack valid, but uop not valid\n    at execute.scala:194 assert(((io.o_ex_res_packs(0).valid && io.o_ex_res_packs(0).uop.valid)||(!io.o_ex_res_packs(0).valid)),\"exu pack valid, but uop not valid\")\n"
-            ); // @[execute.scala 194:11]
+            "Assertion failed: exu pack valid, but uop not valid\n    at execute.scala:196 assert(((io.o_ex_res_packs(0).valid && io.o_ex_res_packs(0).uop.valid)||(!io.o_ex_res_packs(0).valid)),\"exu pack valid, but uop not valid\")\n"
+            ); // @[execute.scala 196:11]
         end
     `ifdef PRINTF_COND
       end
@@ -2656,7 +2664,7 @@ module Execute(
       if (`STOP_COND) begin
     `endif
         if (~reset & ~(io_o_ex_res_packs_0_valid & io_o_ex_res_packs_0_uop_valid | ~io_o_ex_res_packs_0_valid)) begin
-          $fatal; // @[execute.scala 194:11]
+          $fatal; // @[execute.scala 196:11]
         end
     `ifdef STOP_COND
       end
@@ -2668,8 +2676,8 @@ module Execute(
     `endif
         if (_T_4 & ~(io_o_ex_res_packs_1_valid & io_o_ex_res_packs_1_uop_valid | ~io_o_ex_res_packs_1_valid)) begin
           $fwrite(32'h80000002,
-            "Assertion failed: exu pack valid, but uop not valid\n    at execute.scala:195 assert(((io.o_ex_res_packs(1).valid && io.o_ex_res_packs(1).uop.valid)||(!io.o_ex_res_packs(1).valid)),\"exu pack valid, but uop not valid\")\n"
-            ); // @[execute.scala 195:11]
+            "Assertion failed: exu pack valid, but uop not valid\n    at execute.scala:197 assert(((io.o_ex_res_packs(1).valid && io.o_ex_res_packs(1).uop.valid)||(!io.o_ex_res_packs(1).valid)),\"exu pack valid, but uop not valid\")\n"
+            ); // @[execute.scala 197:11]
         end
     `ifdef PRINTF_COND
       end
@@ -2680,7 +2688,7 @@ module Execute(
       if (`STOP_COND) begin
     `endif
         if (_T_4 & ~(io_o_ex_res_packs_1_valid & io_o_ex_res_packs_1_uop_valid | ~io_o_ex_res_packs_1_valid)) begin
-          $fatal; // @[execute.scala 195:11]
+          $fatal; // @[execute.scala 197:11]
         end
     `ifdef STOP_COND
       end

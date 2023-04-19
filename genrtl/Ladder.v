@@ -52,7 +52,7 @@ module Ladder(
   output [2:0]   io_o_dbg_commit_packs_0_uop_op2_sel,
   output [4:0]   io_o_dbg_commit_packs_0_uop_alu_sel,
   output [3:0]   io_o_dbg_commit_packs_0_uop_branch_type,
-  output [1:0]   io_o_dbg_commit_packs_0_uop_mem_type,
+  output [2:0]   io_o_dbg_commit_packs_0_uop_mem_type,
   output         io_o_dbg_commit_packs_1_valid,
   output         io_o_dbg_commit_packs_1_uop_valid,
   output [31:0]  io_o_dbg_commit_packs_1_uop_pc,
@@ -84,7 +84,7 @@ module Ladder(
   output [2:0]   io_o_dbg_commit_packs_1_uop_op2_sel,
   output [4:0]   io_o_dbg_commit_packs_1_uop_alu_sel,
   output [3:0]   io_o_dbg_commit_packs_1_uop_branch_type,
-  output [1:0]   io_o_dbg_commit_packs_1_uop_mem_type
+  output [2:0]   io_o_dbg_commit_packs_1_uop_mem_type
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -159,6 +159,8 @@ module Ladder(
   wire [31:0] back_end_io_dcache_io_Mlen; // @[soc_top.scala 20:24]
   wire [63:0] back_end_io_dcache_io_MdataIn; // @[soc_top.scala 20:24]
   wire [63:0] back_end_io_dcache_io_MdataOut; // @[soc_top.scala 20:24]
+  wire  back_end_io_dcache_io_flush_done; // @[soc_top.scala 20:24]
+  wire  back_end_io_dcache_io_flush; // @[soc_top.scala 20:24]
   wire  back_end_io_i_interrupt; // @[soc_top.scala 20:24]
   wire  back_end_io_o_dbg_commit_packs_0_valid; // @[soc_top.scala 20:24]
   wire  back_end_io_o_dbg_commit_packs_0_uop_valid; // @[soc_top.scala 20:24]
@@ -190,7 +192,7 @@ module Ladder(
   wire [2:0] back_end_io_o_dbg_commit_packs_0_uop_op2_sel; // @[soc_top.scala 20:24]
   wire [4:0] back_end_io_o_dbg_commit_packs_0_uop_alu_sel; // @[soc_top.scala 20:24]
   wire [3:0] back_end_io_o_dbg_commit_packs_0_uop_branch_type; // @[soc_top.scala 20:24]
-  wire [1:0] back_end_io_o_dbg_commit_packs_0_uop_mem_type; // @[soc_top.scala 20:24]
+  wire [2:0] back_end_io_o_dbg_commit_packs_0_uop_mem_type; // @[soc_top.scala 20:24]
   wire  back_end_io_o_dbg_commit_packs_1_valid; // @[soc_top.scala 20:24]
   wire  back_end_io_o_dbg_commit_packs_1_uop_valid; // @[soc_top.scala 20:24]
   wire [31:0] back_end_io_o_dbg_commit_packs_1_uop_pc; // @[soc_top.scala 20:24]
@@ -221,7 +223,7 @@ module Ladder(
   wire [2:0] back_end_io_o_dbg_commit_packs_1_uop_op2_sel; // @[soc_top.scala 20:24]
   wire [4:0] back_end_io_o_dbg_commit_packs_1_uop_alu_sel; // @[soc_top.scala 20:24]
   wire [3:0] back_end_io_o_dbg_commit_packs_1_uop_branch_type; // @[soc_top.scala 20:24]
-  wire [1:0] back_end_io_o_dbg_commit_packs_1_uop_mem_type; // @[soc_top.scala 20:24]
+  wire [2:0] back_end_io_o_dbg_commit_packs_1_uop_mem_type; // @[soc_top.scala 20:24]
   wire  back_end_io_o_dbg_stop; // @[soc_top.scala 20:24]
   wire [63:0] back_end_io_o_dbg_arch_regs_0; // @[soc_top.scala 20:24]
   wire [63:0] back_end_io_o_dbg_arch_regs_1; // @[soc_top.scala 20:24]
@@ -294,6 +296,8 @@ module Ladder(
   wire [31:0] dcache_io_cpu_mem_Mlen; // @[soc_top.scala 22:22]
   wire [63:0] dcache_io_cpu_mem_MdataIn; // @[soc_top.scala 22:22]
   wire [63:0] dcache_io_cpu_mem_MdataOut; // @[soc_top.scala 22:22]
+  wire  dcache_io_cpu_mem_flush_done; // @[soc_top.scala 22:22]
+  wire  dcache_io_cpu_mem_flush; // @[soc_top.scala 22:22]
   wire  dcache_io_mem_master_readAddr_valid; // @[soc_top.scala 22:22]
   wire [63:0] dcache_io_mem_master_readAddr_bits_addr; // @[soc_top.scala 22:22]
   wire  dcache_io_mem_master_readData_ready; // @[soc_top.scala 22:22]
@@ -500,6 +504,8 @@ module Ladder(
     .io_dcache_io_Mlen(back_end_io_dcache_io_Mlen),
     .io_dcache_io_MdataIn(back_end_io_dcache_io_MdataIn),
     .io_dcache_io_MdataOut(back_end_io_dcache_io_MdataOut),
+    .io_dcache_io_flush_done(back_end_io_dcache_io_flush_done),
+    .io_dcache_io_flush(back_end_io_dcache_io_flush),
     .io_i_interrupt(back_end_io_i_interrupt),
     .io_o_dbg_commit_packs_0_valid(back_end_io_o_dbg_commit_packs_0_valid),
     .io_o_dbg_commit_packs_0_uop_valid(back_end_io_o_dbg_commit_packs_0_uop_valid),
@@ -649,6 +655,8 @@ module Ladder(
     .io_cpu_mem_Mlen(dcache_io_cpu_mem_Mlen),
     .io_cpu_mem_MdataIn(dcache_io_cpu_mem_MdataIn),
     .io_cpu_mem_MdataOut(dcache_io_cpu_mem_MdataOut),
+    .io_cpu_mem_flush_done(dcache_io_cpu_mem_flush_done),
+    .io_cpu_mem_flush(dcache_io_cpu_mem_flush),
     .io_mem_master_readAddr_valid(dcache_io_mem_master_readAddr_valid),
     .io_mem_master_readAddr_bits_addr(dcache_io_mem_master_readAddr_bits_addr),
     .io_mem_master_readData_ready(dcache_io_mem_master_readData_ready),
@@ -904,6 +912,7 @@ module Ladder(
   assign back_end_io_dcache_io_data_valid = dcache_io_cpu_mem_data_valid; // @[soc_top.scala 72:21]
   assign back_end_io_dcache_io_addr_ready = dcache_io_cpu_mem_addr_ready; // @[soc_top.scala 72:21]
   assign back_end_io_dcache_io_MdataIn = dcache_io_cpu_mem_MdataIn; // @[soc_top.scala 72:21]
+  assign back_end_io_dcache_io_flush_done = dcache_io_cpu_mem_flush_done; // @[soc_top.scala 72:21]
   assign back_end_io_i_interrupt = io_i_interrupt; // @[soc_top.scala 54:27]
   assign icache_clock = clock;
   assign icache_reset = reset;
@@ -927,6 +936,7 @@ module Ladder(
   assign dcache_io_cpu_mem_Men = back_end_io_dcache_io_Men; // @[soc_top.scala 72:21]
   assign dcache_io_cpu_mem_Mlen = back_end_io_dcache_io_Mlen; // @[soc_top.scala 72:21]
   assign dcache_io_cpu_mem_MdataOut = back_end_io_dcache_io_MdataOut; // @[soc_top.scala 72:21]
+  assign dcache_io_cpu_mem_flush = back_end_io_dcache_io_flush; // @[soc_top.scala 72:21]
   assign dcache_io_mem_master_readData_valid = axi_arbiter_io_in2_readData_valid; // @[soc_top.scala 75:22]
   assign dcache_io_mem_master_readData_bits_data = axi_arbiter_io_in2_readData_bits_data; // @[soc_top.scala 75:22]
   assign dcache_io_mem_master_writeAddr_ready = axi_arbiter_io_in2_writeAddr_ready; // @[soc_top.scala 75:22]

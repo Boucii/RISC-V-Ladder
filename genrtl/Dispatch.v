@@ -28,7 +28,7 @@ module Dispatch(
   input  [2:0]  io_i_rename_packs_0_op2_sel,
   input  [4:0]  io_i_rename_packs_0_alu_sel,
   input  [3:0]  io_i_rename_packs_0_branch_type,
-  input  [1:0]  io_i_rename_packs_0_mem_type,
+  input  [2:0]  io_i_rename_packs_0_mem_type,
   input         io_i_rename_packs_1_valid,
   input  [31:0] io_i_rename_packs_1_pc,
   input  [31:0] io_i_rename_packs_1_inst,
@@ -56,7 +56,7 @@ module Dispatch(
   input  [2:0]  io_i_rename_packs_1_op2_sel,
   input  [4:0]  io_i_rename_packs_1_alu_sel,
   input  [3:0]  io_i_rename_packs_1_branch_type,
-  input  [1:0]  io_i_rename_packs_1_mem_type,
+  input  [2:0]  io_i_rename_packs_1_mem_type,
   input         io_i_rob_busy,
   input  [3:0]  io_i_rob_allocation_ress_0_rob_idx,
   input  [3:0]  io_i_rob_allocation_ress_1_rob_idx,
@@ -91,7 +91,7 @@ module Dispatch(
   output [2:0]  io_o_rob_allocation_reqs_0_uop_op2_sel,
   output [4:0]  io_o_rob_allocation_reqs_0_uop_alu_sel,
   output [3:0]  io_o_rob_allocation_reqs_0_uop_branch_type,
-  output [1:0]  io_o_rob_allocation_reqs_0_uop_mem_type,
+  output [2:0]  io_o_rob_allocation_reqs_0_uop_mem_type,
   output        io_o_rob_allocation_reqs_1_valid,
   output        io_o_rob_allocation_reqs_1_uop_valid,
   output [31:0] io_o_rob_allocation_reqs_1_uop_pc,
@@ -120,7 +120,7 @@ module Dispatch(
   output [2:0]  io_o_rob_allocation_reqs_1_uop_op2_sel,
   output [4:0]  io_o_rob_allocation_reqs_1_uop_alu_sel,
   output [3:0]  io_o_rob_allocation_reqs_1_uop_branch_type,
-  output [1:0]  io_o_rob_allocation_reqs_1_uop_mem_type,
+  output [2:0]  io_o_rob_allocation_reqs_1_uop_mem_type,
   output        io_o_dispatch_packs_0_valid,
   output [31:0] io_o_dispatch_packs_0_pc,
   output [31:0] io_o_dispatch_packs_0_inst,
@@ -149,7 +149,7 @@ module Dispatch(
   output [2:0]  io_o_dispatch_packs_0_op2_sel,
   output [4:0]  io_o_dispatch_packs_0_alu_sel,
   output [3:0]  io_o_dispatch_packs_0_branch_type,
-  output [1:0]  io_o_dispatch_packs_0_mem_type,
+  output [2:0]  io_o_dispatch_packs_0_mem_type,
   output        io_o_dispatch_packs_1_valid,
   output [31:0] io_o_dispatch_packs_1_pc,
   output [31:0] io_o_dispatch_packs_1_inst,
@@ -178,7 +178,7 @@ module Dispatch(
   output [2:0]  io_o_dispatch_packs_1_op2_sel,
   output [4:0]  io_o_dispatch_packs_1_alu_sel,
   output [3:0]  io_o_dispatch_packs_1_branch_type,
-  output [1:0]  io_o_dispatch_packs_1_mem_type,
+  output [2:0]  io_o_dispatch_packs_1_mem_type,
   input         io_i_exception
 );
 `ifdef RANDOMIZE_REG_INIT
@@ -267,7 +267,7 @@ module Dispatch(
   reg [2:0] uops_0_op2_sel; // @[dispatch.scala 33:21]
   reg [4:0] uops_0_alu_sel; // @[dispatch.scala 33:21]
   reg [3:0] uops_0_branch_type; // @[dispatch.scala 33:21]
-  reg [1:0] uops_0_mem_type; // @[dispatch.scala 33:21]
+  reg [2:0] uops_0_mem_type; // @[dispatch.scala 33:21]
   reg  uops_1_valid; // @[dispatch.scala 33:21]
   reg [31:0] uops_1_pc; // @[dispatch.scala 33:21]
   reg [31:0] uops_1_inst; // @[dispatch.scala 33:21]
@@ -295,7 +295,7 @@ module Dispatch(
   reg [2:0] uops_1_op2_sel; // @[dispatch.scala 33:21]
   reg [4:0] uops_1_alu_sel; // @[dispatch.scala 33:21]
   reg [3:0] uops_1_branch_type; // @[dispatch.scala 33:21]
-  reg [1:0] uops_1_mem_type; // @[dispatch.scala 33:21]
+  reg [2:0] uops_1_mem_type; // @[dispatch.scala 33:21]
   wire  _T_1 = io_i_branch_resolve_pack_valid & io_i_branch_resolve_pack_mispred; // @[dispatch.scala 36:60]
   wire  _io_o_rob_allocation_reqs_0_valid_T_3 = stall & ~(io_i_branch_resolve_pack_mispred &
     io_i_branch_resolve_pack_valid); // @[dispatch.scala 50:94]
@@ -555,7 +555,7 @@ module Dispatch(
       uops_0_branch_type <= io_i_rename_packs_0_branch_type;
     end
     if (reset) begin // @[dispatch.scala 33:21]
-      uops_0_mem_type <= 2'h0; // @[dispatch.scala 33:21]
+      uops_0_mem_type <= 3'h0; // @[dispatch.scala 33:21]
     end else if (!(stall)) begin // @[dispatch.scala 34:14]
       uops_0_mem_type <= io_i_rename_packs_0_mem_type;
     end
@@ -697,7 +697,7 @@ module Dispatch(
       uops_1_branch_type <= io_i_rename_packs_1_branch_type;
     end
     if (reset) begin // @[dispatch.scala 33:21]
-      uops_1_mem_type <= 2'h0; // @[dispatch.scala 33:21]
+      uops_1_mem_type <= 3'h0; // @[dispatch.scala 33:21]
     end else if (!(stall)) begin // @[dispatch.scala 34:14]
       uops_1_mem_type <= io_i_rename_packs_1_mem_type;
     end
@@ -793,7 +793,7 @@ initial begin
   _RAND_26 = {1{`RANDOM}};
   uops_0_branch_type = _RAND_26[3:0];
   _RAND_27 = {1{`RANDOM}};
-  uops_0_mem_type = _RAND_27[1:0];
+  uops_0_mem_type = _RAND_27[2:0];
   _RAND_28 = {1{`RANDOM}};
   uops_1_valid = _RAND_28[0:0];
   _RAND_29 = {1{`RANDOM}};
@@ -849,7 +849,7 @@ initial begin
   _RAND_54 = {1{`RANDOM}};
   uops_1_branch_type = _RAND_54[3:0];
   _RAND_55 = {1{`RANDOM}};
-  uops_1_mem_type = _RAND_55[1:0];
+  uops_1_mem_type = _RAND_55[2:0];
 `endif // RANDOMIZE_REG_INIT
   `endif // RANDOMIZE
 end // initial

@@ -111,13 +111,15 @@ class Back_End_With_Decode extends Module with consts{
     execute.io.dcache_io.MdataIn     := io.dcache_io.MdataIn  
     io.dcache_io.addr_valid          :=execute.io.dcache_io.addr_valid  
     io.dcache_io.data_ready          :=execute.io.dcache_io.data_ready
-    execute.io.dcache_io.addr_ready := io.dcache_io.addr_ready
+    execute.io.dcache_io.addr_ready  := io.dcache_io.addr_ready
+    execute.io.dcache_io.flush_done  := io.dcache_io.flush_done
 
     io.dcache_io.Mwout              :=execute.io.dcache_io.Mwout  
     io.dcache_io.Maddr              :=execute.io.dcache_io.Maddr  
     io.dcache_io.Men                :=execute.io.dcache_io.Men    
     io.dcache_io.Mlen               :=execute.io.dcache_io.Mlen   
     io.dcache_io.MdataOut           :=execute.io.dcache_io.MdataOut
+    io.dcache_io.flush              :=execute.io.dcache_io.flush
 
     //connect rob input
     rob.io.i_rob_allocation_reqs := dispatch.io.o_rob_allocation_reqs

@@ -135,8 +135,9 @@ when(crossline && !should_write_back  &&(hit||read_done||write_done)){
 }
 read_data := MuxCase(0.U,Seq(//this is ugly and coincidental, cause hit readout data next cyc
     (state === s_idle) -> MuxCase(0.U,Seq(
-        hit_bank(0) -> data_array(0).io.o_rdata,
-        hit_bank(1) -> data_array(1).io.o_rdata
+        (!uncache && hit_bank(0)) -> data_array(0).io.o_rdata,
+        (!uncache && hit_bank(1)) -> data_array(1).io.o_rdata,
+        uncache -> read_from_mem_buf
     )),
     (state === s_bus && io.mem_master.readData.valid) -> io.mem_master.readData.bits.data
     )
@@ -266,7 +267,7 @@ next_write_state := MuxCase(write_state,Seq(
     (write_state === s_widle && (next_state =/= s_bus) && (!flushing))          -> s_widle,
     (write_state === s_widle && !hit && cpu_mem.Mwout.asBool)                   -> s_bus_addr,
     (write_state === s_widle && should_write_back)                              -> s_bus_addr,
-    (write_state === s_widle && should_flush)                                       -> s_bus_addr
+    (write_state === s_widle && should_flush &&flushing)                        -> s_bus_addr
 ))
 //axi control signals
 io.mem_master.readAddr.valid := (state === s_bus) && (!cpu_mem.Mwout) && (cpu_mem.Men) && (write_state===s_widle)

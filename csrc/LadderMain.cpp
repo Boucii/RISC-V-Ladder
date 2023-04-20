@@ -22,7 +22,7 @@ uint64_t GTK_EN_CYC = 1;
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 //#define GTK_EN 1
-int GTK_EN = 1;
+int GTK_EN = 0;
 #define LOG_EN 0
 #define MAX_TIME 1000000000//10000000
 //#define MAX_TIME 300000
@@ -187,7 +187,7 @@ void dump_gpr() {
 }
 extern "C" void pmem_read_dpi(long long raddr, long long *rdata) {
 	bool uncache = (raddr==(RTC_PORT_BASE+8))||(raddr==(RTC_PORT_BASE+12))||(raddr==(KBD_PORT_BASE+8))||
-	  (raddr==(VGA_CTL_BASE+8))||(raddr==(VGA_CTL_BASE+12));//||(raddr=(0xa1000004+SCRN_W*SCRN_H*4));
+	  (raddr==(VGA_CTL_BASE+8))||(raddr==(VGA_CTL_BASE+10))||(raddr==(VGA_CTL_BASE+12));//||(raddr=(0xa1000004+SCRN_W*SCRN_H*4));
 	    if(uncache){
 	//printf("uncache1!!!!!addris=%llx \n",raddr);
 	*rdata=0;

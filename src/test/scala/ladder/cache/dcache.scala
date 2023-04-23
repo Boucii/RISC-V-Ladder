@@ -73,6 +73,7 @@ val crossline_read_data = Wire(UInt(128.W))
 val crossline_buf_cond = Wire(Bool())
 val last_crossline_buf_cond = RegInit(false.B)
 val last_writeback_cross_done =RegInit(false.B)
+val last_cyc_addr = RegInit(0.U(64.W))
 //fence.i access-----------------------------------------------------
 val flushing = RegInit(false.B)
 val should_flush = Wire(Bool())
@@ -109,6 +110,7 @@ crossline_buf_cond := last_crossline_buf_cond || (crossline&&(read_done))
 last_crossline_buf_cond := crossline && hit
 last_writeback_cross_done := crossline && write_done
 crossline := (((offset+cpu_mem.Mlen)&(0x10.U))(4).asBool)&&((offset+cpu_mem.Mlen)(3,0)=/=0.U)&&(!new_req)
+last_cyc_addr := cpu_mem.Maddr
 val last_hit_bank0 = RegInit(false.B)
 last_hit_bank0 := hit_bank(0)
 val first_half_data=Wire(UInt(128.W))
@@ -154,7 +156,7 @@ io.cpu_mem.MdataIn := MuxCase(0.U,Seq(
     )
 )*/
 //when write back, only when s_widle, the data is written into the dataarray
-io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout) && (write_state===s_widle) && (!crossline) && !(last_crossline_buf_cond) && !(last_writeback_cross_done)
+io.cpu_mem.data_valid := (next_state =/= s_bus)&&(!new_req)&&(cpu_mem.Men)&&(!cpu_mem.Mwout) && (write_state===s_widle) && (!crossline) && !(last_crossline_buf_cond) && !(last_writeback_cross_done)&&((last_cyc_addr===cpu_mem.Maddr&&hit)||(!hit))
 io.cpu_mem.addr_ready := state === s_idle && !crossline
 
 tag := cpu_mem.Maddr(63,11)

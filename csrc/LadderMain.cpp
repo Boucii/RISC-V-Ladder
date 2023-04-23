@@ -18,7 +18,7 @@
 #include "VLadder__Dpi.h"
 
 //#define GTK_EN_CYC  47900000//47800000//27100000 //2400000
-uint64_t GTK_EN_CYC = 1;
+uint64_t GTK_EN_CYC = 2100000;
 #define DIFFTEST_EN 1
 #define ITRACE_EN 0
 //#define GTK_EN 1

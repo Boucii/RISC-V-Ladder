@@ -1,8 +1,0 @@
-,,0,1,2,3,4,5,6,7,8,9,10,11
-input,i_fetch_pack.bits.insts(0),0.U,0x7b03bfd3.U,0x04a9872f.U,0xfd330713.U,,,,,,,,
-,i_fetch_pack.bits.insts(1),0.U,0xa4af3f73.U,0xfd330713.U,0xbf337793.U,,,,,,,,
-,i_fetch_pack.bits.pc(0),0x80000.U,0x80008.U,0x80014.U,0x80000.U,,,,,,,,
-,i_fetch_pack.bits.pc(1),0x80004.U,0x8000C.U,0x8001C.U,0x80000.U,,,,,,,,
-,i_fetch_pack.valid,1.U,1.U,1.U,1.U,,,,,,,,
-output,o_decode_packs(0).inst,0.U,0x7b03bfd3.U,0x04a9872f.U,0xfd330713.U,,,,,,,,
-,o_decode_packs(1).inst,0.U,0xa4af3f73.U,0xfd330713.U,0xbf337793.U,,,,,,,,

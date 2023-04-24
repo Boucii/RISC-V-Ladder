@@ -1,0 +1,68 @@
+Date : 2023-01-31 16:38:27
+Directory : d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder
+Total : 33 files,  2691 codes, 493 comments, 489 blanks, all 3673 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Scala    |         33 |      2,691 |        493 |        489 |      3,673 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                    | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                       |         33 |      2,691 |        493 |        489 |      3,673 |
+| . (Files)                                                                                                                               |          6 |        508 |        200 |         71 |        779 |
+| back_end                                                                                                                                |         18 |      1,808 |        253 |        355 |      2,416 |
+| back_end (Files)                                                                                                                        |          4 |        271 |         18 |         33 |        322 |
+| back_end\commit                                                                                                                         |          1 |        161 |         40 |         31 |        232 |
+| back_end\dispatch                                                                                                                       |          1 |         38 |          8 |          6 |         52 |
+| back_end\execute                                                                                                                        |          6 |        820 |         86 |        161 |      1,067 |
+| back_end\execute (Files)                                                                                                                |          2 |        463 |         63 |        101 |        627 |
+| back_end\execute\mul_div                                                                                                                |          4 |        357 |         23 |         60 |        440 |
+| back_end\issue                                                                                                                          |          2 |        246 |         41 |         61 |        348 |
+| back_end\rename                                                                                                                         |          4 |        272 |         60 |         63 |        395 |
+| front_end                                                                                                                               |          9 |        375 |         40 |         63 |        478 |
++-----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                                                | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\arch_regfile.scala                   | Scala    |         17 |          0 |          3 |         20 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\commit\rob.scala                     | Scala    |        161 |         40 |         31 |        232 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\csr.scala                            | Scala    |         86 |          7 |          8 |        101 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\decoder.scala                        | Scala    |        115 |          9 |         10 |        134 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\dispatch\dispatch.scala              | Scala    |         38 |          8 |          6 |         52 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\execute.scala                | Scala    |        120 |         33 |         33 |        186 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\execute_unit.scala           | Scala    |        343 |         30 |         68 |        441 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\mul_div\booth.scala          | Scala    |         56 |          1 |          6 |         63 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\mul_div\div.scala            | Scala    |        103 |          2 |         18 |        123 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\mul_div\mul.scala            | Scala    |         71 |          9 |         13 |         93 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\execute\mul_div\wallace_tree.scala   | Scala    |        127 |         11 |         23 |        161 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\issue\reservation_station.scala      | Scala    |        109 |         32 |         30 |        171 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\issue\reservation_station_slot.scala | Scala    |        137 |          9 |         31 |        177 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\regfile.scala                        | Scala    |         53 |          2 |         12 |         67 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\rename\busy_table.scala              | Scala    |         69 |         14 |         18 |        101 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\rename\free_list.scala               | Scala    |         89 |         27 |         21 |        137 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\rename\rename.scala                  | Scala    |         54 |         14 |         15 |         83 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\back_end\rename\rename_table.scala            | Scala    |         60 |          5 |          9 |         74 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\backend_with_decode.scala                     | Scala    |        103 |         23 |         21 |        147 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\consts.scala                                  | Scala    |         80 |         25 |          7 |        112 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\defs.scala                                    | Scala    |        118 |         84 |         22 |        224 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\branch_predictor.scala              | Scala    |         87 |         20 |          9 |        116 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\branch_presolve.scala               | Scala    |         48 |          8 |          3 |         59 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\fetch_queue.scala                   | Scala    |         26 |          0 |          4 |         30 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\fetchres.scala                      | Scala    |         24 |          0 |          3 |         27 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\front_end.scala                     | Scala    |         62 |         12 |         19 |         93 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\front_end_control.scala             | Scala    |         31 |          0 |          5 |         36 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\if1_if2.scala                       | Scala    |         30 |          0 |          7 |         37 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\if2_if3.scala                       | Scala    |         31 |          0 |          6 |         37 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\front_end\pc_gen.scala                        | Scala    |         36 |          0 |          7 |         43 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\insts.scala                                   | Scala    |        154 |         10 |          8 |        172 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\ladder.scala                                  | Scala    |         18 |         51 |          2 |         71 |
+| d:\StudyDocuments\OOOCoreDesign\sbttest\chisel-template - ladder_be\src\test\scala\ladder\muldiv_test.scala                             | Scala    |         35 |          7 |         11 |         53 |
+| Total                                                                                                                                   |          |      2,691 |        493 |        489 |      3,673 |
++-----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
